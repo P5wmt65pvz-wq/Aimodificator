@@ -619,6 +619,9 @@
 
     $('#theme-toggle').addEventListener('click', function () {
       var now = document.documentElement.getAttribute('data-theme');
+      if (!now) {
+        now = (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark';
+      }
       var next = now === 'dark' ? 'light' : 'dark';
       applyTheme(next);
       write(KEYS.theme, next);
@@ -640,8 +643,9 @@
   }
 
   function init() {
-    var savedTheme = read(KEYS.theme, 'dark');
-    applyTheme(savedTheme);
+    // Sans choix explicite, on laisse la préférence du système décider.
+    var savedTheme = read(KEYS.theme, null);
+    if (savedTheme) applyTheme(savedTheme);
 
     var savedLang = read(KEYS.lang, null);
     state.lang = savedLang || ((navigator.language || 'fr').toLowerCase().indexOf('fr') === 0 ? 'fr' : 'en');

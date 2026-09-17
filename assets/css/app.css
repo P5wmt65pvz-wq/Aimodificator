@@ -1,41 +1,13 @@
 /*! PromptForge — feuille de style unique, sans dépendance. */
 
 /* ---------------------------------------------------------------- tokens */
+/* Palette claire sur :root nu, palette sombre redéclarée deux fois :
+   une fois pour la préférence système, une fois pour le choix explicite.
+   color-scheme reste « light dark » sur :root, sinon le navigateur fige
+   prefers-color-scheme et la préférence système n'est plus jamais lue. */
 :root {
-  color-scheme: dark;
-  --bg: #0b0b10;
-  --bg-glow: radial-gradient(1100px 520px at 18% -8%, rgba(139,123,255,.16), transparent 62%),
-             radial-gradient(900px 480px at 92% 4%, rgba(55,214,214,.10), transparent 60%);
-  --surface: #131319;
-  --surface-2: #1a1a22;
-  --surface-3: #22222c;
-  --border: #272733;
-  --border-strong: #3a3a4a;
-  --text: #f3f3f7;
-  --text-2: #a9a9b8;
-  --muted: #7d7d8e;
-  --accent: #8b7bff;
-  --accent-hover: #9d90ff;
-  --accent-ink: #0b0b10;
-  --accent-soft: rgba(139,123,255,.15);
-  --accent-2: #37d6d6;
+  color-scheme: light dark;
 
-  /* palette d'état, identique dans les deux thèmes */
-  --good: #0ca30c;
-  --warning: #fab219;
-  --serious: #ec835a;
-  --critical: #d03b3b;
-
-  --radius: 14px;
-  --radius-sm: 9px;
-  --shadow: 0 1px 2px rgba(0,0,0,.34), 0 12px 32px rgba(0,0,0,.28);
-  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
-  --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --maxw: 1240px;
-}
-
-:root[data-theme="light"] {
-  color-scheme: light;
   --bg: #f7f7f4;
   --bg-glow: radial-gradient(1000px 480px at 15% -10%, rgba(91,70,229,.10), transparent 60%),
              radial-gradient(900px 460px at 95% 0%, rgba(20,160,160,.08), transparent 58%);
@@ -53,18 +25,65 @@
   --accent-soft: rgba(91,70,229,.10);
   --accent-2: #0f9c9c;
   --shadow: 0 1px 2px rgba(20,20,26,.05), 0 10px 28px rgba(20,20,26,.07);
+
+  /* palette d'état : identique dans les deux thèmes */
+  --good: #0ca30c;
+  --warning: #fab219;
+  --serious: #ec835a;
+  --critical: #d03b3b;
+
+  --radius: 14px;
+  --radius-sm: 9px;
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --maxw: 1240px;
 }
 
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme]) {
-    color-scheme: light;
-    --bg: #f7f7f4; --surface: #ffffff; --surface-2: #f4f4f1; --surface-3: #eaeae5;
-    --border: #e3e3dd; --border-strong: #c9c9c1; --text: #14141a; --text-2: #55555f;
-    --muted: #76767f; --accent: #5b46e5; --accent-hover: #4a35d6; --accent-ink: #ffffff;
-    --accent-soft: rgba(91,70,229,.10); --accent-2: #0f9c9c;
-    --shadow: 0 1px 2px rgba(20,20,26,.05), 0 10px 28px rgba(20,20,26,.07);
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --bg: #0b0b10;
+    --bg-glow: radial-gradient(1100px 520px at 18% -8%, rgba(139,123,255,.16), transparent 62%),
+               radial-gradient(900px 480px at 92% 4%, rgba(55,214,214,.10), transparent 60%);
+    --surface: #131319;
+    --surface-2: #1a1a22;
+    --surface-3: #22222c;
+    --border: #272733;
+    --border-strong: #3a3a4a;
+    --text: #f3f3f7;
+    --text-2: #a9a9b8;
+    --muted: #7d7d8e;
+    --accent: #8b7bff;
+    --accent-hover: #9d90ff;
+    --accent-ink: #0b0b10;
+    --accent-soft: rgba(139,123,255,.15);
+    --accent-2: #37d6d6;
+    --shadow: 0 1px 2px rgba(0,0,0,.34), 0 12px 32px rgba(0,0,0,.28);
   }
 }
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0b0b10;
+  --bg-glow: radial-gradient(1100px 520px at 18% -8%, rgba(139,123,255,.16), transparent 62%),
+             radial-gradient(900px 480px at 92% 4%, rgba(55,214,214,.10), transparent 60%);
+  --surface: #131319;
+  --surface-2: #1a1a22;
+  --surface-3: #22222c;
+  --border: #272733;
+  --border-strong: #3a3a4a;
+  --text: #f3f3f7;
+  --text-2: #a9a9b8;
+  --muted: #7d7d8e;
+  --accent: #8b7bff;
+  --accent-hover: #9d90ff;
+  --accent-ink: #0b0b10;
+  --accent-soft: rgba(139,123,255,.15);
+  --accent-2: #37d6d6;
+  --shadow: 0 1px 2px rgba(0,0,0,.34), 0 12px 32px rgba(0,0,0,.28);
+}
+
+:root[data-theme="light"] { color-scheme: light; }
 
 /* ----------------------------------------------------------------- base */
 *, *::before, *::after { box-sizing: border-box; }
@@ -118,7 +137,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 
 /* --------------------------------------------------------------- header */
 .site-header {
-  position: sticky; top: 0; z-index: 20;
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
   display: flex; align-items: center; justify-content: space-between; gap: 16px;
   padding: 14px max(16px, (100vw - var(--maxw)) / 2);
   background: color-mix(in srgb, var(--bg) 93%, transparent);
@@ -152,13 +171,14 @@ button, input, select, textarea { font: inherit; color: inherit; }
   transition: border-color .15s ease, background .15s ease;
 }
 .icon-btn:hover { border-color: var(--border-strong); background: var(--surface-2); }
-.icon-moon { display: none; }
-:root[data-theme="light"] .icon-sun { display: none; }
-:root[data-theme="light"] .icon-moon { display: block; }
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme]) .icon-sun { display: none; }
-  :root:not([data-theme]) .icon-moon { display: block; }
+.icon-sun { display: none; }
+.icon-moon { display: block; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .icon-sun { display: block; }
+  :root:not([data-theme="light"]) .icon-moon { display: none; }
 }
+:root[data-theme="dark"] .icon-sun { display: block; }
+:root[data-theme="dark"] .icon-moon { display: none; }
 
 @media (max-width: 760px) {
   .site-header { padding-left: 14px; padding-right: 14px; gap: 10px; }
