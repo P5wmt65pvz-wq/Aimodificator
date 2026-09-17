@@ -1,0 +1,11 @@
+{
+  "name": "promptforge",
+  "version": "1.0.0",
+  "description": "Transformez n'importe quelle demande en un prompt professionnel. Site statique, sans dependance, 100 % local.",
+  "private": true,
+  "license": "GPL-3.0",
+  "scripts": {
+    "test": "node --test tests/engine.test.mjs",
+    "start": "npx http-server -p 8099 ."
+  }
+}

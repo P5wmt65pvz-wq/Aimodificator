@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PromptForge — transformez n'importe quelle demande en prompt professionnel</title>
+<meta name="description" content="Transformez n'importe quelle demande en un prompt professionnel, prêt à envoyer à ChatGPT, Claude, Gemini ou Mistral. Gratuit, sans compte, entièrement local.">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#0b0b10">
+<meta property="og:title" content="PromptForge — l'atelier de prompts">
+<meta property="og:description" content="Votre idée, transformée en prompt de niveau professionnel. Gratuit, sans compte, 100 % local.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='26' font-size='26'%3E%E2%9A%92%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+<a class="skip-link" href="#workshop">Aller à l'atelier</a>
+
+<header class="site-header">
+  <a class="brand" href="#top" aria-label="PromptForge">
+    <span class="brand-mark" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 19h16"/><path d="M7 19l3-8"/><path d="M17 19l-3-8"/><path d="M9 11h6"/><path d="M12 3v4"/><path d="M9.5 5.5L12 7l2.5-1.5"/>
+      </svg>
+    </span>
+    <span class="brand-text">
+      <strong>PromptForge</strong>
+      <small data-i18n="app.tagline"></small>
+    </span>
+  </a>
+  <nav class="site-nav" aria-label="Navigation principale">
+    <a href="#workshop" data-i18n="nav.workshop"></a>
+    <a href="#library" data-i18n="nav.library"></a>
+    <a href="#method" data-i18n="nav.method"></a>
+    <div class="nav-tools">
+      <button type="button" id="lang-toggle" class="icon-btn" data-i18n-aria="nav.lang">
+        <span id="lang-label">EN</span>
+      </button>
+      <button type="button" id="theme-toggle" class="icon-btn" data-i18n-aria="nav.theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<main id="top">
+
+  <section class="hero">
+    <p class="eyebrow"><span class="dot" aria-hidden="true"></span><span data-i18n="hero.local"></span></p>
+    <h1 data-i18n="hero.title"></h1>
+    <p class="lede" data-i18n="hero.lede"></p>
+    <ul class="hero-stats">
+      <li><b id="stat-domains">17</b><span data-i18n="hero.stat1"></span></li>
+      <li><b id="stat-templates">24</b><span data-i18n="hero.stat2"></span></li>
+      <li><b>0</b><span data-i18n="hero.stat3"></span></li>
+    </ul>
+  </section>
+
+  <section class="workspace" id="workshop">
+
+    <!-- ------------------------------------------------ composer -->
+    <form class="panel composer" id="composer" novalidate>
+      <div class="panel-head">
+        <h2 data-i18n="composer.title"></h2>
+        <p class="panel-hint" data-i18n="composer.hint"></p>
+      </div>
+
+      <div class="field-textarea">
+        <label class="sr-only" for="request" data-i18n="composer.title"></label>
+        <textarea id="request" rows="5" spellcheck="true" data-i18n-ph="composer.placeholder"></textarea>
+        <div class="composer-meta">
+          <span id="live-domain" class="chip chip-domain" hidden></span>
+          <span id="live-count" class="muted"></span>
+        </div>
+      </div>
+
+      <div class="composer-actions">
+        <button type="submit" class="btn btn-primary" id="generate">
+          <span data-i18n="composer.generate"></span>
+          <kbd>⌘ ⏎</kbd>
+        </button>
+        <button type="button" class="btn btn-ghost" id="example" data-i18n="composer.surprise"></button>
+        <button type="button" class="btn btn-ghost" id="clear" data-i18n="composer.clear"></button>
+      </div>
+
+      <div class="settings">
+        <div class="grid-2">
+          <p class="field">
+            <label for="opt-domain" data-i18n="field.domain"></label>
+            <select id="opt-domain"></select>
+          </p>
+          <p class="field">
+            <label for="opt-model" data-i18n="field.model"></label>
+            <select id="opt-model">
+              <option value="any">Claude · ChatGPT · Gemini…</option>
+              <option value="claude">Claude</option>
+              <option value="gpt">ChatGPT / GPT</option>
+              <option value="gemini">Gemini</option>
+              <option value="mistral">Mistral / Le Chat</option>
+              <option value="llama">Llama</option>
+              <option value="deepseek">DeepSeek</option>
+              <option value="perplexity">Perplexity</option>
+              <option value="image">Midjourney · DALL·E · Stable Diffusion</option>
+            </select>
+          </p>
+          <p class="field">
+            <label for="opt-depth" data-i18n="field.depth"></label>
+            <select id="opt-depth">
+              <option value="direct" data-i18n="depth.direct"></option>
+              <option value="balanced" selected data-i18n="depth.balanced"></option>
+              <option value="deep" data-i18n="depth.deep"></option>
+            </select>
+          </p>
+          <p class="field">
+            <label for="opt-shape" data-i18n="field.outputShape"></label>
+            <select id="opt-shape">
+              <option value="auto" data-i18n="shape.auto"></option>
+              <option value="prose" data-i18n="shape.prose"></option>
+              <option value="bullets" data-i18n="shape.bullets"></option>
+              <option value="markdown" data-i18n="shape.markdown"></option>
+              <option value="table" data-i18n="shape.table"></option>
+              <option value="steps" data-i18n="shape.steps"></option>
+              <option value="json" data-i18n="shape.json"></option>
+              <option value="code" data-i18n="shape.code"></option>
+              <option value="email" data-i18n="shape.email"></option>
+              <option value="slides" data-i18n="shape.slides"></option>
+            </select>
+          </p>
+        </div>
+
+        <details class="advanced" id="advanced">
+          <summary data-i18n="composer.advanced"></summary>
+          <div class="advanced-body">
+            <div class="grid-2">
+              <p class="field">
+                <label for="opt-lang" data-i18n="field.lang"></label>
+                <select id="opt-lang">
+                  <option value="fr">Français</option>
+                  <option value="en">English</option>
+                </select>
+              </p>
+              <p class="field">
+                <label for="opt-answer-lang" data-i18n="field.answerLang"></label>
+                <select id="opt-answer-lang">
+                  <option value="" data-i18n="field.answerLang.same"></option>
+                  <option value="fr">Français</option>
+                  <option value="en">English</option>
+                  <option value="es">Español</option>
+                  <option value="de">Deutsch</option>
+                  <option value="it">Italiano</option>
+                  <option value="pt">Português</option>
+                  <option value="nl">Nederlands</option>
+                  <option value="ar">العربية</option>
+                  <option value="zh">中文</option>
+                  <option value="ja">日本語</option>
+                  <option value="ru">Русский</option>
+                </select>
+              </p>
+              <p class="field">
+                <label for="opt-audience" data-i18n="field.audience"></label>
+                <input type="text" id="opt-audience" data-i18n-ph="field.audience.ph" autocomplete="off">
+              </p>
+              <p class="field">
+                <label for="opt-tone" data-i18n="field.tone"></label>
+                <input type="text" id="opt-tone" data-i18n-ph="field.tone.ph" autocomplete="off">
+              </p>
+              <p class="field">
+                <label for="opt-length" data-i18n="field.length"></label>
+                <input type="text" id="opt-length" data-i18n-ph="field.length.ph" autocomplete="off">
+              </p>
+              <p class="field">
+                <label for="opt-clarif" data-i18n="field.clarification"></label>
+                <select id="opt-clarif">
+                  <option value="assume" data-i18n="clarif.assume"></option>
+                  <option value="ask" data-i18n="clarif.ask"></option>
+                  <option value="none" data-i18n="clarif.none"></option>
+                </select>
+              </p>
+            </div>
+            <p class="field">
+              <label for="opt-persona" data-i18n="field.persona"></label>
+              <input type="text" id="opt-persona" data-i18n-ph="field.persona.ph" autocomplete="off">
+            </p>
+            <p class="field">
+              <label for="opt-context" data-i18n="field.context"></label>
+              <textarea id="opt-context" rows="3" data-i18n-ph="field.context.ph"></textarea>
+            </p>
+            <fieldset class="toggles">
+              <legend class="sr-only">Options</legend>
+              <label class="switch"><input type="checkbox" data-flag="role" checked><span data-i18n="toggle.role"></span></label>
+              <label class="switch"><input type="checkbox" data-flag="method" checked><span data-i18n="toggle.method"></span></label>
+              <label class="switch"><input type="checkbox" data-flag="constraints" checked><span data-i18n="toggle.constraints"></span></label>
+              <label class="switch"><input type="checkbox" data-flag="quality" checked><span data-i18n="toggle.quality"></span></label>
+              <label class="switch"><input type="checkbox" data-flag="pitfalls" checked><span data-i18n="toggle.pitfalls"></span></label>
+              <label class="switch"><input type="checkbox" data-flag="noHallucination" checked><span data-i18n="toggle.noHallucination"></span></label>
+              <label class="switch"><input type="checkbox" data-flag="reasoning" checked><span data-i18n="toggle.reasoning"></span></label>
+              <label class="switch"><input type="checkbox" data-flag="selfCheck" checked><span data-i18n="toggle.selfCheck"></span></label>
+              <label class="switch"><input type="checkbox" data-flag="examples"><span data-i18n="toggle.examples"></span></label>
+            </fieldset>
+          </div>
+        </details>
+      </div>
+    </form>
+
+    <!-- ------------------------------------------------ result -->
+    <section class="panel result" aria-live="polite">
+      <div class="tabs" role="tablist">
+        <button type="button" role="tab" id="tab-prompt" aria-controls="panel-prompt" class="tab is-active" data-tab="prompt" aria-selected="true" data-i18n="tab.prompt"></button>
+        <button type="button" role="tab" id="tab-analysis" aria-controls="panel-analysis" class="tab" data-tab="analysis" aria-selected="false" data-i18n="tab.analysis"></button>
+      </div>
+
+      <div class="tabpanel is-active" id="panel-prompt" role="tabpanel" aria-labelledby="tab-prompt" tabindex="0" data-panel="prompt">
+        <div class="result-toolbar">
+          <div class="format-chips" id="format-chips" role="group"></div>
+          <div class="toolbar-actions">
+            <span class="muted" id="token-count"></span>
+            <button type="button" class="btn btn-small" id="copy" data-i18n="result.copy"></button>
+            <button type="button" class="btn btn-small btn-ghost" id="download" data-i18n="result.download"></button>
+            <button type="button" class="btn btn-small btn-ghost" id="share" data-i18n="result.share"></button>
+            <button type="button" class="btn btn-small btn-ghost" id="refine-open" data-i18n="result.refine"></button>
+          </div>
+        </div>
+        <p class="format-help muted" id="format-help"></p>
+        <div class="output-wrap">
+          <pre id="output" tabindex="0"></pre>
+          <div class="empty-state" id="empty-state">
+            <h3 data-i18n="result.empty.title"></h3>
+            <p data-i18n="result.empty.body"></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="tabpanel" id="panel-analysis" role="tabpanel" aria-labelledby="tab-analysis" tabindex="0" data-panel="analysis">
+        <div id="analysis-body">
+          <p class="muted" data-i18n="result.empty.body"></p>
+        </div>
+      </div>
+    </section>
+  </section>
+
+  <!-- ------------------------------------------------ history -->
+  <section class="history" id="history-section" hidden>
+    <div class="section-head">
+      <h2 data-i18n="history.title"></h2>
+      <button type="button" class="btn btn-small btn-ghost" id="history-clear" data-i18n="history.clear"></button>
+    </div>
+    <ul class="history-list" id="history-list"></ul>
+  </section>
+
+  <!-- ------------------------------------------------ library -->
+  <section class="library" id="library">
+    <div class="section-head">
+      <div>
+        <h2 data-i18n="library.title"></h2>
+        <p class="lede" data-i18n="library.lede"></p>
+      </div>
+      <label class="search">
+        <span class="sr-only" data-i18n="library.search"></span>
+        <input type="search" id="library-search" data-i18n-ph="library.search" autocomplete="off">
+      </label>
+    </div>
+    <div class="filters" id="library-filters" role="group"></div>
+    <div class="cards" id="library-cards"></div>
+  </section>
+
+  <!-- ------------------------------------------------ method -->
+  <section class="method" id="method">
+    <div class="section-head">
+      <div>
+        <h2 data-i18n="method.title"></h2>
+        <p class="lede" data-i18n="method.lede"></p>
+      </div>
+    </div>
+    <div class="method-grid">
+      <article class="method-card"><span class="num">01</span><h3 data-i18n="method.c1.t"></h3><p data-i18n="method.c1.b"></p></article>
+      <article class="method-card"><span class="num">02</span><h3 data-i18n="method.c2.t"></h3><p data-i18n="method.c2.b"></p></article>
+      <article class="method-card"><span class="num">03</span><h3 data-i18n="method.c3.t"></h3><p data-i18n="method.c3.b"></p></article>
+      <article class="method-card"><span class="num">04</span><h3 data-i18n="method.c4.t"></h3><p data-i18n="method.c4.b"></p></article>
+      <article class="method-card"><span class="num">05</span><h3 data-i18n="method.c5.t"></h3><p data-i18n="method.c5.b"></p></article>
+      <article class="method-card"><span class="num">06</span><h3 data-i18n="method.c6.t"></h3><p data-i18n="method.c6.b"></p></article>
+      <article class="method-card"><span class="num">07</span><h3 data-i18n="method.c7.t"></h3><p data-i18n="method.c7.b"></p></article>
+      <article class="method-card"><span class="num">08</span><h3 data-i18n="method.c8.t"></h3><p data-i18n="method.c8.b"></p></article>
+      <article class="method-card"><span class="num">09</span><h3 data-i18n="method.c9.t"></h3><p data-i18n="method.c9.b"></p></article>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <p data-i18n="footer.privacy"></p>
+  <p class="muted"><span data-i18n="footer.built"></span> · <a href="https://github.com/P5wmt65pvz-wq/Aimodificator" rel="noopener" data-i18n="footer.open"></a></p>
+</footer>
+
+<!-- ------------------------------------------------ refine dialog -->
+<dialog class="dialog" id="refine-dialog">
+  <form method="dialog" class="dialog-body" id="refine-form">
+    <h2 data-i18n="refine.title"></h2>
+    <p class="muted" data-i18n="refine.lede"></p>
+    <div class="grid-2">
+      <p class="field">
+        <label for="refine-provider" data-i18n="refine.provider"></label>
+        <select id="refine-provider">
+          <option value="anthropic">Anthropic (Claude)</option>
+          <option value="openai">OpenAI</option>
+          <option value="custom">API compatible OpenAI</option>
+        </select>
+      </p>
+      <p class="field">
+        <label for="refine-model" data-i18n="refine.model"></label>
+        <input type="text" id="refine-model" autocomplete="off" spellcheck="false">
+      </p>
+    </div>
+    <p class="field" id="refine-endpoint-field" hidden>
+      <label for="refine-endpoint">Endpoint</label>
+      <input type="url" id="refine-endpoint" placeholder="https://…/v1/chat/completions" autocomplete="off" spellcheck="false">
+    </p>
+    <p class="field">
+      <label for="refine-key" data-i18n="refine.key"></label>
+      <input type="password" id="refine-key" autocomplete="off" spellcheck="false">
+    </p>
+    <label class="switch"><input type="checkbox" id="refine-remember"><span data-i18n="refine.remember"></span></label>
+    <p class="warning" data-i18n="refine.warning"></p>
+    <p class="dialog-error" id="refine-error" hidden></p>
+    <div class="dialog-actions">
+      <button type="button" class="btn btn-ghost" id="refine-close" data-i18n="refine.cancel"></button>
+      <button type="button" class="btn btn-primary" id="refine-run" data-i18n="refine.run"></button>
+    </div>
+  </form>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="assets/js/profiles.js"></script>
+<script src="assets/js/templates.js"></script>
+<script src="assets/js/i18n.js"></script>
+<script src="assets/js/engine.js"></script>
+<script src="assets/js/ai.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>
