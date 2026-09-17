@@ -218,3 +218,78 @@ test('l\'extraction de réponse gère les deux formats', () => {
   assert.equal(ai.extractText('openai', { choices: [{ message: { content: 'B' } }] }), 'B');
   assert.equal(ai.extractText('anthropic', {}), '');
 });
+
+/* ------------------------------------------------ destinations et mode agent */
+
+test('le format conseillé dépend de la destination', () => {
+  assert.equal(engine.recommendedFormat('claude', 'writing'), 'xml');
+  assert.equal(engine.recommendedFormat('gpt', 'writing'), 'structured');
+  assert.equal(engine.recommendedFormat('claudecode', 'code'), 'structured');
+  assert.equal(engine.recommendedFormat('image', 'writing'), 'compact');
+  assert.equal(engine.recommendedFormat('any', 'image'), 'compact');
+});
+
+test('la destination oriente le domaine quand il est en détection automatique', () => {
+  assert.equal(engine.domainForModel('image', 'writing'), 'image');
+  assert.equal(engine.domainForModel('claudecode', 'general'), 'code');
+  assert.equal(engine.domainForModel('claudecode', 'data'), 'data', 'un domaine précis doit être conservé');
+  assert.equal(engine.domainForModel('claude', 'writing'), 'writing');
+  assert.equal(engine.build('fais un truc pour moi', { model: 'image' }).analysis.domain.id, 'image');
+});
+
+test('un domaine imposé par l\'utilisateur prime sur la destination', () => {
+  const out = engine.build('un texte quelconque', { model: 'image', domain: 'legal' });
+  assert.equal(out.analysis.domain.id, 'legal');
+});
+
+test('le mode Claude Code ajoute périmètre, vérification et livraison', () => {
+  const out = engine.build('ajoute un endpoint /health', { model: 'claudecode' });
+  const keys = out.sections.map(s => s.key);
+  for (const k of ['repo', 'scope', 'verify', 'delivery', 'notes']) {
+    assert.ok(keys.includes(k), `section ${k} manquante`);
+  }
+  assert.ok(out.text.includes('pull request'), 'la règle sur les pull requests doit être présente');
+  assert.ok(/tests|lint|build/i.test(out.text), 'les vérifications du projet doivent être citées');
+});
+
+test('le contexte du dépôt est repris tel quel quand il est fourni', () => {
+  const out = engine.build('corrige le bug de connexion', {
+    model: 'claudecode', stack: 'Node 22, Express 4', files: 'src/auth.js', testCmd: 'npm test'
+  });
+  assert.ok(out.text.includes('Node 22, Express 4'));
+  assert.ok(out.text.includes('src/auth.js'));
+  assert.ok(out.text.includes('npm test'));
+});
+
+test('sans contexte de dépôt, le prompt demande d\'explorer avant de modifier', () => {
+  const out = engine.build('corrige le bug de connexion', { model: 'claudecode' });
+  assert.ok(/explorer|exploring/i.test(out.text));
+});
+
+test('le mode agent ne s\'active que pour Claude Code', () => {
+  for (const model of ['claude', 'gpt', 'gemini', 'mistral', 'any']) {
+    const keys = engine.build('ajoute un endpoint /health', { model }).sections.map(s => s.key);
+    assert.ok(!keys.includes('scope'), `${model} ne doit pas avoir de section périmètre`);
+    assert.ok(!keys.includes('delivery'), `${model} ne doit pas avoir de section livraison`);
+  }
+});
+
+test('chaque destination a ses conventions de réponse, sauf « peu importe »', () => {
+  for (const model of ['claude', 'gpt', 'gemini', 'mistral', 'claudecode']) {
+    const out = engine.build('rédige une note de service', { model });
+    assert.ok(out.sections.some(s => s.key === 'notes'), `${model} sans conventions`);
+    assert.ok(engine.MODEL_NOTES[model].fr.length && engine.MODEL_NOTES[model].en.length);
+  }
+  const neutral = engine.build('rédige une note de service', { model: 'any' });
+  assert.ok(!neutral.sections.some(s => s.key === 'notes'));
+});
+
+test('les prompts Claude Code restent valides dans les deux langues et tous les formats', () => {
+  for (const lang of ['fr', 'en']) {
+    for (const format of engine.FORMATS) {
+      const out = engine.build('migre la base vers PostgreSQL 17', { model: 'claudecode', lang, format });
+      assert.ok(out.text.length > 400, `${lang}/${format} trop court`);
+      assert.ok(out.meta.after >= 62, `${lang}/${format} score ${out.meta.after}`);
+    }
+  }
+});

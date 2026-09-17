@@ -9,11 +9,24 @@
   var KEYS = { theme: 'pf.theme', lang: 'pf.lang', history: 'pf.history', settings: 'pf.settings', ai: 'pf.ai' };
   var MAX_HISTORY = 12;
 
+  var TARGETS = [
+    { id: 'claude', icon: '✳' },
+    { id: 'gpt', icon: '◉' },
+    { id: 'gemini', icon: '✦' },
+    { id: 'mistral', icon: '◈' },
+    { id: 'claudecode', icon: '❯_', badge: true },
+    { id: 'image', icon: '◐' },
+    { id: 'any', icon: '✶' }
+  ];
+
   var state = {
     lang: 'fr',
     result: null,
     localResult: null,
     format: 'structured',
+    target: 'any',
+    formatTouched: false,
+    domainSetByTarget: false,
     libraryFilter: 'all',
     librarySearch: ''
   };
@@ -104,11 +117,91 @@
       ? "PromptForge — transformez n'importe quelle demande en prompt professionnel"
       : 'PromptForge — turn any request into a professional prompt';
     fillDomainSelect();
+    renderTargets();
     renderFormatChips();
     renderLibraryFilters();
     renderLibrary();
     renderHistory();
     if (state.result) render(state.result);
+  }
+
+  function renderTargets() {
+    var box = $('#targets');
+    box.innerHTML = '';
+    TARGETS.forEach(function (target) {
+      var label = document.createElement('label');
+      label.className = 'target' + (target.badge ? ' has-badge' : '');
+      label.innerHTML =
+        '<input type="radio" name="target" value="' + target.id + '"' + (target.id === state.target ? ' checked' : '') + '>' +
+        '<span class="target-body">' +
+        '<span class="target-top"><span class="target-icon" aria-hidden="true">' + escapeHtml(target.icon) + '</span>' +
+        '<span class="target-name">' + escapeHtml(t('target.' + target.id + '.name')) + '</span>' +
+        (target.badge ? '<span class="target-badge">' + escapeHtml(t('target.badge')) + '</span>' : '') + '</span>' +
+        '<span class="target-desc">' + escapeHtml(t('target.' + target.id + '.desc')) + '</span>' +
+        '</span>';
+      label.querySelector('input').addEventListener('change', function () {
+        state.target = this.value;
+        state.formatTouched = false;
+        syncTarget();
+        persistSettings();
+        if ($('#request').value.trim()) generate({ silent: true, noHistory: true });
+        else { renderFormatChips(); renderSummaryChips(); }
+      });
+      box.appendChild(label);
+    });
+    syncTarget();
+  }
+
+  /** Affiche les champs propres à la destination et aligne le format conseillé. */
+  function syncTarget() {
+    $('#agent-fields').hidden = state.target !== 'claudecode';
+
+    // Choisir « génération d'images » comme destination fixe le domaine :
+    // le changement est visible dans les réglages, et réversible.
+    var domainEl = $('#opt-domain');
+    if (state.target === 'image' && domainEl.value !== 'image') {
+      domainEl.value = 'image';
+      state.domainSetByTarget = true;
+    } else if (state.target !== 'image' && state.domainSetByTarget) {
+      domainEl.value = 'auto';
+      state.domainSetByTarget = false;
+    }
+
+    if (!state.formatTouched) {
+      var domainSel = $('#opt-domain').value;
+      var detected = domainSel !== 'auto' ? domainSel : engine.detectDomain($('#request').value).id;
+      state.format = engine.recommendedFormat(state.target, engine.domainForModel(state.target, detected));
+    }
+    updateLive();
+    renderSummaryChips();
+  }
+
+  /* Réglages non standard : on les compte pour que l'utilisateur sache
+     qu'il y a quelque chose sous le volet, sans avoir à l'ouvrir. */
+  var DEFAULT_SETTINGS = {
+    'opt-domain': 'auto', 'opt-depth': 'balanced', 'opt-shape': 'auto', 'opt-clarif': 'assume',
+    'opt-answer-lang': '', 'opt-audience': '', 'opt-tone': '', 'opt-length': '', 'opt-persona': '', 'opt-context': ''
+  };
+
+  function countChangedSettings() {
+    var n = 0;
+    Object.keys(DEFAULT_SETTINGS).forEach(function (id) {
+      var el = $('#' + id);
+      if (el && String(el.value).trim() !== DEFAULT_SETTINGS[id]) n++;
+    });
+    $$('[data-flag]').forEach(function (cb) {
+      var expected = cb.getAttribute('data-flag') !== 'examples';
+      if (cb.checked !== expected) n++;
+    });
+    return n;
+  }
+
+  function renderSummaryChips() {
+    var n = countChangedSettings();
+    $('#summary-chips').textContent = n
+      ? n + ' ' + t(n === 1 ? 'summary.setting' : 'summary.settings')
+      : t('summary.default');
+    $('#summary-chips').classList.toggle('is-changed', n > 0);
   }
 
   function fillDomainSelect() {
@@ -147,7 +240,10 @@
       lang: $('#opt-lang').value,
       format: state.format,
       domain: $('#opt-domain').value,
-      model: $('#opt-model').value,
+      model: state.target,
+      stack: $('#opt-stack').value.trim(),
+      files: $('#opt-files').value.trim(),
+      testCmd: $('#opt-test').value.trim(),
       depth: $('#opt-depth').value,
       outputShape: $('#opt-shape').value,
       clarification: $('#opt-clarif').value,
@@ -164,8 +260,18 @@
   function applyOptions(o) {
     if (!o) return;
     var set = function (sel, v) { if (v !== undefined && v !== null && v !== '') $(sel).value = v; };
-    set('#opt-lang', o.lang); set('#opt-domain', o.domain); set('#opt-model', o.model);
+    set('#opt-lang', o.lang); set('#opt-domain', o.domain);
     set('#opt-depth', o.depth); set('#opt-shape', o.outputShape); set('#opt-clarif', o.clarification);
+    if (o.stack !== undefined) $('#opt-stack').value = o.stack;
+    if (o.files !== undefined) $('#opt-files').value = o.files;
+    if (o.testCmd !== undefined) $('#opt-test').value = o.testCmd;
+    if (o.model) {
+      var known = TARGETS.some(function (x) { return x.id === o.model; });
+      state.target = known ? o.model : 'any';
+      var radio = document.querySelector('input[name="target"][value="' + state.target + '"]');
+      if (radio) radio.checked = true;
+      $('#agent-fields').hidden = state.target !== 'claudecode';
+    }
     if (o.answerLang !== undefined) $('#opt-answer-lang').value = o.answerLang;
     if (o.audience !== undefined) $('#opt-audience').value = o.audience;
     if (o.tone !== undefined) $('#opt-tone').value = o.tone;
@@ -202,6 +308,7 @@
       b.innerHTML = escapeHtml(t('format.' + f)) + (f === recommended ? ' <span class="rec" title="recommandé">◆</span>' : '');
       b.addEventListener('click', function () {
         state.format = f;
+        state.formatTouched = true;
         persistSettings();
         if ($('#request').value.trim()) generate({ silent: true });
         else { renderFormatChips(); updateFormatHelp(); }
@@ -311,6 +418,7 @@
     var result = engine.build(raw, currentOptions());
     state.localResult = result.text;
     render(result);
+    renderSummaryChips();
     persistSettings();
     if (!opts.noHistory) pushHistory(raw, currentOptions());
     if (!opts.silent) toast(t('toast.generated'));
@@ -425,11 +533,13 @@
   function useTemplate(tpl) {
     $('#request').value = tpl.request[state.lang];
     if (tpl.opts) {
-      if (tpl.opts.format) state.format = tpl.opts.format;
       applyOptions({
         outputShape: tpl.opts.outputShape, depth: tpl.opts.depth,
         model: tpl.opts.model, domain: tpl.domain
       });
+      if (tpl.opts.format) { state.format = tpl.opts.format; state.formatTouched = true; }
+      else state.formatTouched = false;
+      renderTargets();
     }
     updateLive();
     generate({ silent: true });
@@ -546,6 +656,7 @@
     $('#clear').addEventListener('click', function () {
       $('#request').value = '';
       $('#opt-context').value = '';
+      $('#opt-stack').value = ''; $('#opt-files').value = ''; $('#opt-test').value = '';
       $('#output').textContent = '';
       $('#empty-state').hidden = false;
       $('#token-count').textContent = '';
@@ -601,11 +712,26 @@
     });
 
     $$('#composer select, #composer input, #composer textarea').forEach(function (el) {
+      if (el.name === 'target') return;
       el.addEventListener('change', function () {
         persistSettings();
-        if (el.id === 'opt-domain') updateLive();
+        renderSummaryChips();
+        if (el.id === 'opt-domain') { state.domainSetByTarget = false; state.formatTouched = false; syncTarget(); }
         if (state.result && el.id !== 'request') generate({ silent: true, noHistory: true });
       });
+    });
+
+    $('#reset-settings').addEventListener('click', function () {
+      Object.keys(DEFAULT_SETTINGS).forEach(function (id) {
+        var el = $('#' + id);
+        if (el) el.value = DEFAULT_SETTINGS[id];
+      });
+      $$('[data-flag]').forEach(function (cb) { cb.checked = cb.getAttribute('data-flag') !== 'examples'; });
+      $('#opt-stack').value = ''; $('#opt-files').value = ''; $('#opt-test').value = '';
+      state.formatTouched = false;
+      syncTarget();
+      persistSettings();
+      if (state.result) generate({ silent: true, noHistory: true });
     });
 
     $('#history-clear').addEventListener('click', function () {
@@ -654,7 +780,10 @@
     $('#stat-templates').textContent = String(templates.list.length);
 
     bind();
-    applyOptions(read(KEYS.settings, null));
+    var saved = read(KEYS.settings, null);
+    if (saved && saved.model) state.target = TARGETS.some(function (x) { return x.id === saved.model; }) ? saved.model : 'any';
+    if (saved && saved.format) { state.format = saved.format; state.formatTouched = true; }
+    applyOptions(saved);
     $('#opt-lang').value = state.lang;
 
     var fromHash = loadFromHash();

@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>PromptForge — transformez n'importe quelle demande en prompt professionnel</title>
 <meta name="description" content="Transformez n'importe quelle demande en un prompt professionnel, prêt à envoyer à ChatGPT, Claude, Gemini ou Mistral. Gratuit, sans compte, entièrement local.">
 <meta name="color-scheme" content="light dark">
@@ -61,146 +61,166 @@
 
     <!-- ------------------------------------------------ composer -->
     <form class="panel composer" id="composer" novalidate>
-      <div class="panel-head">
-        <h2 data-i18n="composer.title"></h2>
-        <p class="panel-hint" data-i18n="composer.hint"></p>
-      </div>
 
-      <div class="field-textarea">
-        <label class="sr-only" for="request" data-i18n="composer.title"></label>
-        <textarea id="request" rows="5" spellcheck="true" data-i18n-ph="composer.placeholder"></textarea>
-        <div class="composer-meta">
-          <span id="live-domain" class="chip chip-domain" hidden></span>
-          <span id="live-count" class="muted"></span>
+      <section class="step">
+        <span class="step-num" aria-hidden="true">1</span>
+        <div class="step-body">
+          <h2><label for="request" data-i18n="step1.title"></label></h2>
+          <p class="panel-hint" data-i18n="step1.hint"></p>
+          <textarea id="request" rows="4" spellcheck="true" data-i18n-ph="composer.placeholder"></textarea>
+          <div class="composer-meta">
+            <span id="live-domain" class="chip chip-domain" hidden></span>
+            <span id="live-count" class="muted"></span>
+          </div>
+          <div class="starter-row">
+            <button type="button" class="link-btn" id="example" data-i18n="composer.surprise"></button>
+            <span class="sep" aria-hidden="true">·</span>
+            <a class="link-btn" href="#library" data-i18n="composer.browse"></a>
+            <span class="sep" aria-hidden="true">·</span>
+            <button type="button" class="link-btn" id="clear" data-i18n="composer.clear"></button>
+          </div>
         </div>
-      </div>
+      </section>
 
-      <div class="composer-actions">
-        <button type="submit" class="btn btn-primary" id="generate">
-          <span data-i18n="composer.generate"></span>
-          <kbd>⌘ ⏎</kbd>
-        </button>
-        <button type="button" class="btn btn-ghost" id="example" data-i18n="composer.surprise"></button>
-        <button type="button" class="btn btn-ghost" id="clear" data-i18n="composer.clear"></button>
-      </div>
+      <section class="step">
+        <span class="step-num" aria-hidden="true">2</span>
+        <div class="step-body">
+          <h2 id="targets-label" data-i18n="step2.title"></h2>
+          <p class="panel-hint" data-i18n="step2.hint"></p>
+          <div class="targets" id="targets" role="radiogroup" aria-labelledby="targets-label"></div>
 
-      <div class="settings">
-        <div class="grid-2">
-          <p class="field">
-            <label for="opt-domain" data-i18n="field.domain"></label>
-            <select id="opt-domain"></select>
-          </p>
-          <p class="field">
-            <label for="opt-model" data-i18n="field.model"></label>
-            <select id="opt-model">
-              <option value="any">Claude · ChatGPT · Gemini…</option>
-              <option value="claude">Claude</option>
-              <option value="gpt">ChatGPT / GPT</option>
-              <option value="gemini">Gemini</option>
-              <option value="mistral">Mistral / Le Chat</option>
-              <option value="llama">Llama</option>
-              <option value="deepseek">DeepSeek</option>
-              <option value="perplexity">Perplexity</option>
-              <option value="image">Midjourney · DALL·E · Stable Diffusion</option>
-            </select>
-          </p>
-          <p class="field">
-            <label for="opt-depth" data-i18n="field.depth"></label>
-            <select id="opt-depth">
-              <option value="direct" data-i18n="depth.direct"></option>
-              <option value="balanced" selected data-i18n="depth.balanced"></option>
-              <option value="deep" data-i18n="depth.deep"></option>
-            </select>
-          </p>
-          <p class="field">
-            <label for="opt-shape" data-i18n="field.outputShape"></label>
-            <select id="opt-shape">
-              <option value="auto" data-i18n="shape.auto"></option>
-              <option value="prose" data-i18n="shape.prose"></option>
-              <option value="bullets" data-i18n="shape.bullets"></option>
-              <option value="markdown" data-i18n="shape.markdown"></option>
-              <option value="table" data-i18n="shape.table"></option>
-              <option value="steps" data-i18n="shape.steps"></option>
-              <option value="json" data-i18n="shape.json"></option>
-              <option value="code" data-i18n="shape.code"></option>
-              <option value="email" data-i18n="shape.email"></option>
-              <option value="slides" data-i18n="shape.slides"></option>
-            </select>
-          </p>
-        </div>
-
-        <details class="advanced" id="advanced">
-          <summary data-i18n="composer.advanced"></summary>
-          <div class="advanced-body">
+          <div class="target-extra" id="agent-fields" hidden>
+            <p class="target-extra-head" data-i18n="agent.title"></p>
             <div class="grid-2">
               <p class="field">
-                <label for="opt-lang" data-i18n="field.lang"></label>
-                <select id="opt-lang">
-                  <option value="fr">Français</option>
-                  <option value="en">English</option>
-                </select>
+                <label for="opt-stack" data-i18n="field.stack"></label>
+                <input type="text" id="opt-stack" data-i18n-ph="field.stack.ph" autocomplete="off">
               </p>
               <p class="field">
-                <label for="opt-answer-lang" data-i18n="field.answerLang"></label>
-                <select id="opt-answer-lang">
-                  <option value="" data-i18n="field.answerLang.same"></option>
-                  <option value="fr">Français</option>
-                  <option value="en">English</option>
-                  <option value="es">Español</option>
-                  <option value="de">Deutsch</option>
-                  <option value="it">Italiano</option>
-                  <option value="pt">Português</option>
-                  <option value="nl">Nederlands</option>
-                  <option value="ar">العربية</option>
-                  <option value="zh">中文</option>
-                  <option value="ja">日本語</option>
-                  <option value="ru">Русский</option>
-                </select>
-              </p>
-              <p class="field">
-                <label for="opt-audience" data-i18n="field.audience"></label>
-                <input type="text" id="opt-audience" data-i18n-ph="field.audience.ph" autocomplete="off">
-              </p>
-              <p class="field">
-                <label for="opt-tone" data-i18n="field.tone"></label>
-                <input type="text" id="opt-tone" data-i18n-ph="field.tone.ph" autocomplete="off">
-              </p>
-              <p class="field">
-                <label for="opt-length" data-i18n="field.length"></label>
-                <input type="text" id="opt-length" data-i18n-ph="field.length.ph" autocomplete="off">
-              </p>
-              <p class="field">
-                <label for="opt-clarif" data-i18n="field.clarification"></label>
-                <select id="opt-clarif">
-                  <option value="assume" data-i18n="clarif.assume"></option>
-                  <option value="ask" data-i18n="clarif.ask"></option>
-                  <option value="none" data-i18n="clarif.none"></option>
-                </select>
+                <label for="opt-test" data-i18n="field.test"></label>
+                <input type="text" id="opt-test" data-i18n-ph="field.test.ph" autocomplete="off" spellcheck="false">
               </p>
             </div>
             <p class="field">
-              <label for="opt-persona" data-i18n="field.persona"></label>
-              <input type="text" id="opt-persona" data-i18n-ph="field.persona.ph" autocomplete="off">
+              <label for="opt-files" data-i18n="field.files"></label>
+              <input type="text" id="opt-files" data-i18n-ph="field.files.ph" autocomplete="off" spellcheck="false">
             </p>
-            <p class="field">
-              <label for="opt-context" data-i18n="field.context"></label>
-              <textarea id="opt-context" rows="3" data-i18n-ph="field.context.ph"></textarea>
-            </p>
-            <fieldset class="toggles">
-              <legend class="sr-only">Options</legend>
-              <label class="switch"><input type="checkbox" data-flag="role" checked><span data-i18n="toggle.role"></span></label>
-              <label class="switch"><input type="checkbox" data-flag="method" checked><span data-i18n="toggle.method"></span></label>
-              <label class="switch"><input type="checkbox" data-flag="constraints" checked><span data-i18n="toggle.constraints"></span></label>
-              <label class="switch"><input type="checkbox" data-flag="quality" checked><span data-i18n="toggle.quality"></span></label>
-              <label class="switch"><input type="checkbox" data-flag="pitfalls" checked><span data-i18n="toggle.pitfalls"></span></label>
-              <label class="switch"><input type="checkbox" data-flag="noHallucination" checked><span data-i18n="toggle.noHallucination"></span></label>
-              <label class="switch"><input type="checkbox" data-flag="reasoning" checked><span data-i18n="toggle.reasoning"></span></label>
-              <label class="switch"><input type="checkbox" data-flag="selfCheck" checked><span data-i18n="toggle.selfCheck"></span></label>
-              <label class="switch"><input type="checkbox" data-flag="examples"><span data-i18n="toggle.examples"></span></label>
-            </fieldset>
           </div>
-        </details>
-      </div>
+        </div>
+      </section>
+
+      <section class="step">
+        <span class="step-num" aria-hidden="true">3</span>
+        <div class="step-body">
+          <button type="submit" class="btn btn-primary btn-forge" id="generate">
+            <span data-i18n="composer.generate"></span>
+            <kbd>⌘ ⏎</kbd>
+          </button>
+
+          <details class="advanced" id="advanced">
+            <summary>
+              <span data-i18n="composer.advanced"></span>
+              <span class="summary-chips" id="summary-chips"></span>
+            </summary>
+            <div class="advanced-body">
+              <div class="grid-2">
+                <p class="field">
+                  <label for="opt-domain" data-i18n="field.domain"></label>
+                  <select id="opt-domain"></select>
+                </p>
+                <p class="field">
+                  <label for="opt-depth" data-i18n="field.depth"></label>
+                  <select id="opt-depth">
+                    <option value="direct" data-i18n="depth.direct"></option>
+                    <option value="balanced" selected data-i18n="depth.balanced"></option>
+                    <option value="deep" data-i18n="depth.deep"></option>
+                  </select>
+                </p>
+                <p class="field">
+                  <label for="opt-shape" data-i18n="field.outputShape"></label>
+                  <select id="opt-shape">
+                    <option value="auto" data-i18n="shape.auto"></option>
+                    <option value="prose" data-i18n="shape.prose"></option>
+                    <option value="bullets" data-i18n="shape.bullets"></option>
+                    <option value="markdown" data-i18n="shape.markdown"></option>
+                    <option value="table" data-i18n="shape.table"></option>
+                    <option value="steps" data-i18n="shape.steps"></option>
+                    <option value="json" data-i18n="shape.json"></option>
+                    <option value="code" data-i18n="shape.code"></option>
+                    <option value="email" data-i18n="shape.email"></option>
+                    <option value="slides" data-i18n="shape.slides"></option>
+                  </select>
+                </p>
+                <p class="field">
+                  <label for="opt-clarif" data-i18n="field.clarification"></label>
+                  <select id="opt-clarif">
+                    <option value="assume" data-i18n="clarif.assume"></option>
+                    <option value="ask" data-i18n="clarif.ask"></option>
+                    <option value="none" data-i18n="clarif.none"></option>
+                  </select>
+                </p>
+                <p class="field">
+                  <label for="opt-lang" data-i18n="field.lang"></label>
+                  <select id="opt-lang">
+                    <option value="fr">Français</option>
+                    <option value="en">English</option>
+                  </select>
+                </p>
+                <p class="field">
+                  <label for="opt-answer-lang" data-i18n="field.answerLang"></label>
+                  <select id="opt-answer-lang">
+                    <option value="" data-i18n="field.answerLang.same"></option>
+                    <option value="fr">Français</option>
+                    <option value="en">English</option>
+                    <option value="es">Español</option>
+                    <option value="de">Deutsch</option>
+                    <option value="it">Italiano</option>
+                    <option value="pt">Português</option>
+                    <option value="nl">Nederlands</option>
+                    <option value="ar">العربية</option>
+                    <option value="zh">中文</option>
+                    <option value="ja">日本語</option>
+                    <option value="ru">Русский</option>
+                  </select>
+                </p>
+                <p class="field">
+                  <label for="opt-audience" data-i18n="field.audience"></label>
+                  <input type="text" id="opt-audience" data-i18n-ph="field.audience.ph" autocomplete="off">
+                </p>
+                <p class="field">
+                  <label for="opt-tone" data-i18n="field.tone"></label>
+                  <input type="text" id="opt-tone" data-i18n-ph="field.tone.ph" autocomplete="off">
+                </p>
+                <p class="field">
+                  <label for="opt-length" data-i18n="field.length"></label>
+                  <input type="text" id="opt-length" data-i18n-ph="field.length.ph" autocomplete="off">
+                </p>
+                <p class="field">
+                  <label for="opt-persona" data-i18n="field.persona"></label>
+                  <input type="text" id="opt-persona" data-i18n-ph="field.persona.ph" autocomplete="off">
+                </p>
+              </div>
+              <p class="field">
+                <label for="opt-context" data-i18n="field.context"></label>
+                <textarea id="opt-context" rows="3" data-i18n-ph="field.context.ph"></textarea>
+              </p>
+              <fieldset class="toggles">
+                <legend data-i18n="toggles.legend"></legend>
+                <label class="switch"><input type="checkbox" data-flag="role" checked><span data-i18n="toggle.role"></span></label>
+                <label class="switch"><input type="checkbox" data-flag="method" checked><span data-i18n="toggle.method"></span></label>
+                <label class="switch"><input type="checkbox" data-flag="constraints" checked><span data-i18n="toggle.constraints"></span></label>
+                <label class="switch"><input type="checkbox" data-flag="quality" checked><span data-i18n="toggle.quality"></span></label>
+                <label class="switch"><input type="checkbox" data-flag="pitfalls" checked><span data-i18n="toggle.pitfalls"></span></label>
+                <label class="switch"><input type="checkbox" data-flag="noHallucination" checked><span data-i18n="toggle.noHallucination"></span></label>
+                <label class="switch"><input type="checkbox" data-flag="reasoning" checked><span data-i18n="toggle.reasoning"></span></label>
+                <label class="switch"><input type="checkbox" data-flag="selfCheck" checked><span data-i18n="toggle.selfCheck"></span></label>
+                <label class="switch"><input type="checkbox" data-flag="examples"><span data-i18n="toggle.examples"></span></label>
+              </fieldset>
+              <p><button type="button" class="btn btn-small btn-ghost" id="reset-settings" data-i18n="composer.reset"></button></p>
+            </div>
+          </details>
+        </div>
+      </section>
     </form>
 
     <!-- ------------------------------------------------ result -->

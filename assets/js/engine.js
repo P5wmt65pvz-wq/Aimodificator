@@ -293,6 +293,9 @@
     var domain = detectDomain(text);
     if (opts.domain && opts.domain !== 'auto') {
       domain = { id: opts.domain, score: domain.score, confidence: 100, scores: domain.scores, ranked: domain.ranked, forced: true };
+    } else if (opts.model) {
+      var steered = domainForModel(opts.model, domain.id);
+      if (steered !== domain.id) domain = { id: steered, score: domain.score, confidence: domain.confidence, scores: domain.scores, ranked: domain.ranked, steered: true };
     }
     var sc = scoreText(text, lang);
     return {
@@ -375,13 +378,19 @@
     examples: { fr: 'EXEMPLES', en: 'EXAMPLES' },
     clarify: { fr: 'INFORMATIONS MANQUANTES', en: 'MISSING INFORMATION' },
     reasoning: { fr: 'RAISONNEMENT', en: 'REASONING' },
-    check: { fr: 'VÉRIFICATION FINALE', en: 'FINAL CHECK' }
+    check: { fr: 'VÉRIFICATION FINALE', en: 'FINAL CHECK' },
+    scope: { fr: 'PÉRIMÈTRE', en: 'SCOPE' },
+    repo: { fr: 'ENVIRONNEMENT DE TRAVAIL', en: 'WORKING ENVIRONMENT' },
+    verify: { fr: 'VÉRIFICATION AVANT DE RENDRE', en: 'VERIFY BEFORE HANDING BACK' },
+    delivery: { fr: 'LIVRAISON', en: 'DELIVERY' },
+    notes: { fr: 'CONVENTIONS DE RÉPONSE', en: 'RESPONSE CONVENTIONS' }
   };
 
   var XML_TAGS = {
     role: 'role', context: 'context', objective: 'objective', method: 'method', inputs: 'inputs',
     constraints: 'constraints', output: 'output_format', quality: 'quality_bar', avoid: 'avoid',
     examples: 'examples', clarify: 'missing_info', reasoning: 'reasoning', check: 'final_check',
+    scope: 'scope', repo: 'working_environment', verify: 'verification', delivery: 'delivery', notes: 'conventions',
     brief: 'prompt', subject: 'subject', composition: 'composition', light: 'lighting',
     style: 'style', tech: 'technical_parameters', negative: 'negative_prompt'
   };
@@ -428,6 +437,48 @@
     deliverables: { fr: 'Livrable attendu : ', en: 'Deliverable: ' }
   };
 
+  var AGENT = {
+    role: {
+      fr: 'un agent de développement autonome qui travaille directement dans un dépôt Git : tu lis les fichiers, tu modifies le code, tu exécutes les vérifications et tu rends compte',
+      en: 'an autonomous coding agent working directly inside a Git repository: you read files, change code, run the checks and report back'
+    },
+    scope: {
+      fr: ['À faire : uniquement ce qui est décrit dans l\'objectif ci-dessus.',
+           'À ne pas faire : élargir la tâche, refactoriser du code non concerné, renommer des fichiers, changer la mise en forme de lignes que tu ne modifies pas.',
+           'Si une amélioration hors périmètre te paraît nécessaire, signale-la en fin de réponse au lieu de la faire.',
+           'Ne crée pas de pull request et ne pousse rien tant que ce n\'est pas demandé explicitement.'],
+      en: ['In scope: only what the objective above describes.',
+           'Out of scope: widening the task, refactoring untouched code, renaming files, reformatting lines you are not changing.',
+           'If an out-of-scope improvement looks necessary, report it at the end instead of doing it.',
+           'Do not open a pull request and do not push anything unless explicitly asked.']
+    },
+    verify: {
+      fr: ['Relis ton propre diff avant de rendre : cherche ce qui ferait échouer une relecture.',
+           'Exécute les vérifications du projet (tests, lint, build) et montre la sortie réelle, pas un résumé.',
+           'Si une vérification échoue, corrige puis relance : ne rends pas un travail rouge en le signalant simplement.',
+           'Si tu ne peux pas exécuter une vérification, dis-le explicitement au lieu de supposer qu\'elle passe.'],
+      en: ['Re-read your own diff before handing back: look for what would fail review.',
+           'Run the project checks (tests, lint, build) and show the real output, not a summary of it.',
+           'If a check fails, fix it and re-run: do not hand back red work with a note.',
+           'If you cannot run a check, say so explicitly instead of assuming it passes.']
+    },
+    delivery: {
+      fr: ['Termine par un compte rendu court : ce qui a été modifié (fichier par fichier), ce qui a été vérifié et avec quel résultat, ce qui reste ouvert.',
+           'Propose un message de commit à l\'impératif, une ligne de titre puis le détail si nécessaire.',
+           'Ne réécris pas l\'historique Git et ne force pas de push.'],
+      en: ['End with a short report: what changed (file by file), what was verified and with what result, what is still open.',
+           'Propose a commit message in the imperative, a title line then detail if needed.',
+           'Do not rewrite Git history and do not force-push.']
+    },
+    stack: { fr: 'Stack et versions : ', en: 'Stack and versions: ' },
+    files: { fr: 'Fichiers ou dossiers concernés : ', en: 'Files or folders involved: ' },
+    test: { fr: 'Commande de vérification à exécuter : ', en: 'Verification command to run: ' },
+    unknownRepo: {
+      fr: 'Le dépôt n\'est pas décrit ici : commence par l\'explorer (structure, gestionnaire de paquets, scripts de test) avant de modifier quoi que ce soit.',
+      en: 'The repository is not described here: start by exploring it (structure, package manager, test scripts) before changing anything.'
+    }
+  };
+
   var LANG_NAMES = {
     fr: { fr: 'français', en: 'French' }, en: { fr: 'anglais', en: 'English' },
     es: { fr: 'espagnol', en: 'Spanish' }, de: { fr: 'allemand', en: 'German' },
@@ -439,8 +490,55 @@
 
   var MODEL_NAMES = {
     claude: 'Claude', gpt: 'ChatGPT / GPT', gemini: 'Gemini', mistral: 'Mistral / Le Chat',
-    llama: 'Llama', deepseek: 'DeepSeek', perplexity: 'Perplexity', image: { fr: 'un modèle de génération d\'images', en: 'an image-generation model' },
+    llama: 'Llama', deepseek: 'DeepSeek', perplexity: 'Perplexity',
+    claudecode: { fr: 'Claude Code, un agent qui travaille directement dans un dépôt de code', en: 'Claude Code, an agent working directly inside a code repository' },
+    image: { fr: 'un modèle de génération d\'images', en: 'an image-generation model' },
     any: { fr: 'tout assistant IA généraliste', en: 'any general-purpose AI assistant' }
+  };
+
+  /* Conventions de mise en forme propres à chaque destination.
+     Il s'agit de conventions de format, pas de recettes miracles. */
+  var MODEL_NOTES = {
+    claude: {
+      fr: ['Les consignes ci-dessus sont découpées en sections balisées : traite chaque section comme une contrainte, pas comme une suggestion.',
+           'Pas de préambule ni de récapitulatif de la consigne : commence directement par le livrable.'],
+      en: ['The instructions above are split into tagged sections: treat each one as a constraint, not a suggestion.',
+           'No preamble and no restatement of the brief: open directly with the deliverable.']
+    },
+    gpt: {
+      fr: ['Suis les titres de sections ci-dessus dans l\'ordre où ils sont donnés.',
+           'Pas de préambule, pas de « Bien sûr ! », pas de récapitulatif de la demande.'],
+      en: ['Follow the section headings above in the order given.',
+           'No preamble, no "Sure!", no restatement of the request.']
+    },
+    gemini: {
+      fr: ['Produis la réponse complète en une seule fois, sans demander de confirmation intermédiaire.',
+           'Pas de préambule ni de conclusion de politesse.'],
+      en: ['Produce the complete answer in one go, without asking for intermediate confirmation.',
+           'No preamble and no polite sign-off.']
+    },
+    mistral: {
+      fr: ['Suis les sections ci-dessus dans l\'ordre. Réponds en une seule fois.',
+           'Pas de préambule ni de récapitulatif de la consigne.'],
+      en: ['Follow the sections above in order. Answer in one pass.',
+           'No preamble and no restatement of the brief.']
+    },
+    claudecode: {
+      fr: ['Lis les fichiers concernés avant d\'écrire quoi que ce soit : ne suppose jamais le contenu d\'un fichier.',
+           'Modifie le code réellement, ne te contente pas de décrire les changements.',
+           'Une réponse finale courte : ce qui a été fait, ce qui a été vérifié, ce qui reste ouvert.'],
+      en: ['Read the relevant files before writing anything: never assume a file\'s contents.',
+           'Actually change the code; do not merely describe the changes.',
+           'Keep the final answer short: what was done, what was verified, what is still open.']
+    },
+    image: {
+      fr: ['Le prompt compact est la version à coller dans l\'outil ; les blocs le détaillent.'],
+      en: ['The compact prompt is the one to paste into the tool; the blocks expand on it.']
+    },
+    any: {
+      fr: ['Suis les sections ci-dessus dans l\'ordre. Pas de préambule, pas de récapitulatif de la demande.'],
+      en: ['Follow the sections above in order. No preamble, no restatement of the request.']
+    }
   };
 
   var OUTPUT_SHAPES = {
@@ -504,7 +602,7 @@
   var DEFAULTS = {
     lang: 'fr', format: 'structured', domain: 'auto', model: 'any', persona: '', audience: '', tone: '',
     length: '', outputShape: 'auto', depth: 'balanced', context: '', answerLang: '', clarification: 'assume',
-    flags: {}
+    stack: '', files: '', testCmd: '', flags: {}
   };
 
   var DEFAULT_FLAGS = {
@@ -566,9 +664,12 @@
       return sections;
     }
 
+    var isAgent = o.model === 'claudecode';
+
     // RÔLE
     if (o.flags.role) {
-      var persona = o.persona || p.persona[l];
+      var persona = o.persona || (isAgent ? AGENT.role[l] + ', avec l\'expertise d\'' + p.persona[l] : p.persona[l]);
+      if (isAgent && l === 'en' && !o.persona) persona = AGENT.role[l] + ', with the expertise of ' + p.persona[l];
       push('role', L.role[l], [
         T.youAre[l] + persona + '.',
         l === 'fr'
@@ -588,6 +689,16 @@
     }
     push('context', L.context[l], ctxLines);
 
+    // ENVIRONNEMENT DE TRAVAIL — uniquement pour un agent qui touche au dépôt
+    if (isAgent) {
+      var repoLines = [];
+      if (o.stack) repoLines.push('- ' + AGENT.stack[l] + o.stack);
+      if (o.files) repoLines.push('- ' + AGENT.files[l] + o.files);
+      if (o.testCmd) repoLines.push('- ' + AGENT.test[l] + '`' + o.testCmd + '`');
+      if (!repoLines.length) repoLines.push('- ' + AGENT.unknownRepo[l]);
+      push('repo', L.repo[l], repoLines);
+    }
+
     // OBJECTIF
     var objLines = [toObjective(raw, l)];
     objLines.push(DEPTH_LABEL[o.depth] ? DEPTH_LABEL[o.depth][l] : DEPTH_LABEL.balanced[l]);
@@ -600,6 +711,9 @@
     if (o.flags.method && o.depth !== 'direct') {
       push('method', L.method[l], p.method[l].map(function (s, i) { return (i + 1) + '. ' + s; }));
     }
+
+    // PÉRIMÈTRE — ce qui borne un agent autonome
+    if (isAgent) push('scope', L.scope[l], AGENT.scope[l].map(function (x) { return '- ' + x; }));
 
     // CONTRAINTES
     if (o.flags.constraints) {
@@ -624,6 +738,12 @@
       : 'Deliver the requested result directly: no preamble, no restating the instructions, no commentary on your own answer.');
     push('output', L.output[l], outLines);
 
+    // VÉRIFICATION ET LIVRAISON — propres au travail dans un dépôt
+    if (isAgent) {
+      push('verify', L.verify[l], AGENT.verify[l].map(function (x) { return '- ' + x; }));
+      push('delivery', L.delivery[l], AGENT.delivery[l].map(function (x) { return '- ' + x; }));
+    }
+
     // EXEMPLES
     if (o.flags.examples) {
       push('examples', L.examples[l], [T.fewShot[l], '', T.fewShotPlaceholder[l]]);
@@ -647,6 +767,10 @@
     // INFORMATIONS MANQUANTES
     if (o.clarification === 'ask') push('clarify', L.clarify[l], [T.askFirst[l]]);
     else if (o.clarification === 'assume') push('clarify', L.clarify[l], [T.assume[l]]);
+
+    // CONVENTIONS DE RÉPONSE liées à la destination choisie
+    var notes = MODEL_NOTES[o.model];
+    if (notes && o.model !== 'any') push('notes', L.notes[l], notes[l].map(function (x) { return '- ' + x; }));
 
     // VÉRIFICATION FINALE
     if (o.flags.selfCheck) push('check', L.check[l], [T.selfCheck[l], T.startNow[l]]);
@@ -707,10 +831,18 @@
   var FORMATS = ['structured', 'xml', 'compact', 'json', 'systemuser'];
 
   function recommendedFormat(model, domainId) {
-    if (domainId === 'image') return 'compact';
+    if (model === 'image' || domainId === 'image') return 'compact';
+    if (model === 'claudecode') return 'structured';
     if (model === 'claude') return 'xml';
-    if (model === 'gpt' || model === 'gemini' || model === 'mistral') return 'structured';
     return 'structured';
+  }
+
+  /* La destination choisie peut décider du domaine quand l'utilisateur
+     n'en a pas imposé un : une cible « images » parle d'images. */
+  function domainForModel(model, detectedId) {
+    if (model === 'image') return 'image';
+    if (model === 'claudecode' && (detectedId === 'general' || detectedId === 'writing')) return 'code';
+    return detectedId;
   }
 
   /**
@@ -719,7 +851,7 @@
    */
   function build(raw, opts) {
     var o = withDefaults(opts);
-    var a = analyze(raw, { lang: o.lang, domain: o.domain });
+    var a = analyze(raw, { lang: o.lang, domain: o.domain, model: o.model });
     var sections = buildSections(raw, o, a);
     var text;
     switch (o.format) {
@@ -762,6 +894,8 @@
     FORMATS: FORMATS,
     OUTPUT_SHAPES: OUTPUT_SHAPES,
     LANG_NAMES: LANG_NAMES,
-    MODEL_NAMES: MODEL_NAMES
+    MODEL_NAMES: MODEL_NAMES,
+    MODEL_NOTES: MODEL_NOTES,
+    domainForModel: domainForModel
   };
 });
