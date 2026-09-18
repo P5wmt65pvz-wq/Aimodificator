@@ -32,7 +32,7 @@ Pourquoi ce créneau, après recherche :
 | # | Outil | Ce qu'il fait | État |
 |---|---|---|---|
 | 1 | **Empreinte** | Ce qu'un site lit sur vous sans rien demander : canvas, polices, carte graphique, matériel. Score d'identifiabilité. | ✅ en ligne |
-| 2 | **Photo nue** | Déposez une photo : l'outil affiche ce qu'elle révèle (GPS, appareil, date, logiciel) et vous la rend nettoyée. Rien ne quitte l'appareil. | à faire |
+| 2 | **Photo nue** | Déposez une photo : l'outil affiche ce qu'elle révèle (GPS, appareil, date, logiciel) et vous la rend nettoyée. Rien ne quitte l'appareil. | ✅ en ligne |
 | 3 | **Clause** | Collez une politique de confidentialité : l'outil surligne ce qui compte vraiment — revente de données, durée de conservation, transferts hors UE, consentement présumé. | à faire |
 | 4 | **Passe** | Test de résistance d'un mot de passe, calculé hors ligne, avec le raisonnement affiché. Générateur de phrases de passe en français. | à faire |
 | 5 | **Traces** | Ce que votre historique et vos cookies révèlent : explication concrète du pistage inter-sites, et comment cloisonner. | à faire |
@@ -87,7 +87,7 @@ source citable.**
 
 ## Ordre de construction
 
-2 → 3 → 11 → 4 → 16 → 7 → 12 → 6 → 9 → 5 → 13 → 21 → 8 → 17 → 24 → 10 → puis le reste du tableau.
+3 → 11 → 4 → 16 → 7 → 12 → 6 → 9 → 5 → 13 → 21 → 8 → 17 → 24 → 10 → puis le reste du tableau.
 
 L'outil 2 (**Photo nue**) est prioritaire : le plus démonstratif, le plus
 partageable, et il renforce le même thème que l'outil 1.
