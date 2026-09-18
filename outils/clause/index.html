@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="fr" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Clause — lit une politique de confidentialité à votre place</title>
+<meta name="description" content="Collez une politique de confidentialité : l'outil surligne les clauses qui comptent — revente, transferts hors UE, consentement présumé — et signale ce qui manque. Tout reste dans votre navigateur.">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#0b0b10">
+<link rel="canonical" href="https://p5wmt65pvz-wq.github.io/Aimodificator/outils/clause/">
+<meta property="og:title" content="Clause — lit une politique de confidentialité à votre place">
+<meta property="og:description" content="Ce que le document autorise vraiment, et ce qu'il oublie de dire. Analyse instantanée, entièrement locale.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://p5wmt65pvz-wq.github.io/Aimodificator/outils/clause/">
+<meta property="og:locale" content="fr_FR">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='26' font-size='26'%3E%F0%9F%93%9C%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="clause.css">
+</head>
+<body>
+<a class="skip-link" href="#texte">Aller au champ de texte</a>
+
+<header class="site-header">
+  <a class="brand" href="./">
+    <span class="brand-mark" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 3h9l4 4v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/>
+        <path d="M14 3v5h5"/><path d="M9 13h6"/><path d="M9 17h4"/>
+      </svg>
+    </span>
+    <span class="brand-text"><strong>Clause</strong><small>Ce que le document autorise vraiment</small></span>
+  </a>
+  <button type="button" id="theme-toggle" class="icon-btn" aria-label="Changer de thème">
+    <svg class="icon-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    <svg class="icon-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+  </button>
+</header>
+
+<main>
+  <section class="hero">
+    <h1>Personne ne lit les politiques de confidentialité.<br><em>Celle-ci va être lue.</em></h1>
+    <p class="lede">
+      Collez le texte complet : l'outil retrouve les clauses qui ont des conséquences réelles,
+      cite le passage exact, et vous dit ce qu'il veut dire en français courant.
+      Il signale aussi ce qui <b>manque</b> — souvent plus parlant que ce qui est écrit.
+    </p>
+    <p class="pledge">
+      <b>Le texte reste chez vous.</b> Il n'est envoyé à aucun serveur, et aucun service
+      extérieur n'est appelé. Vous pouvez couper votre connexion, la page fonctionnera.
+    </p>
+  </section>
+
+  <section class="saisie">
+    <div class="saisie-head">
+      <label for="texte">La politique à analyser</label>
+      <div class="saisie-tools">
+        <span class="muted" id="compteur"></span>
+        <button type="button" class="btn-ghost" id="vider">Vider</button>
+      </div>
+    </div>
+    <textarea id="texte" rows="9" spellcheck="false"
+      placeholder="Collez ici la page entière de la politique de confidentialité — pas seulement un paragraphe."></textarea>
+  </section>
+
+  <section id="resultat" hidden aria-live="polite">
+    <p class="verdict" id="verdict"></p>
+    <div class="cards" id="liste"></div>
+
+    <div class="manques" id="manques" hidden>
+      <h2>Ce que le document ne dit pas</h2>
+      <p class="lede">Un silence n'est pas neutre : ce qui n'est pas annoncé n'est pas vérifiable.</p>
+      <ul id="liste-manques"></ul>
+    </div>
+  </section>
+
+  <section class="explain">
+    <h2>Ce que cet outil est, et ce qu'il n'est pas</h2>
+    <p>
+      Il repère des formulations connues et vous les traduit. Il <b>ne remplace pas un avis
+      juridique</b> et ne dit pas si un document est légal : une clause peut être parfaitement
+      licite et rester très défavorable pour vous. C'est ce déséquilibre-là qu'il met en évidence.
+    </p>
+    <p>
+      Il travaille sur le texte que vous collez, donc il ne voit rien de ce qui n'y figure pas :
+      les pratiques réelles d'une entreprise peuvent différer de ce qu'elle écrit.
+    </p>
+    <h2>Les trois passages à lire en premier</h2>
+    <p>
+      Dans n'importe quelle politique, allez directement voir : <b>à qui les données sont
+      transmises</b>, <b>combien de temps elles sont gardées</b>, et <b>comment demander leur
+      effacement</b>. Si ces trois réponses sont absentes ou floues, le reste a peu d'importance.
+    </p>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <p>Tout est calculé dans votre navigateur. Aucune donnée n'est transmise, stockée ni analysée ailleurs.</p>
+  <p class="muted"><a href="../empreinte/">Empreinte</a> · <a href="../photo/">Photo nue</a> · <a href="../../">PromptForge</a> · <a href="https://github.com/P5wmt65pvz-wq/Aimodificator" rel="noopener">Code source ouvert</a></p>
+</footer>
+
+<script src="clause.js"></script>
+</body>
+</html>
