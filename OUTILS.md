@@ -42,9 +42,52 @@ Pourquoi ce créneau, après recherche :
 | 9 | **TJM** | Calculateur de tarif journalier freelance : revenu net visé, jours réellement facturables, charges. Public qui paie. | à faire |
 | 10 | **Partage** | Répartiteur de dépenses de groupe, partageable par simple lien, sans compte ni application. | à faire |
 
+## Vague 2 — l'argent du quotidien
+
+Issue d'une recherche sur les avis négatifs récurrents (sept. 2026) : la plainte
+la plus transversale dans les avis d'utilisateurs français porte sur les
+**abonnements reconduits automatiquement** sans que la personne l'ait compris,
+devant le service client et les bugs. C'est un besoin réel, documenté, et
+traitable sans serveur.
+
+| # | Outil | Ce qu'il fait | État |
+|---|---|---|---|
+| 11 | **Abonnements** | Recensez vos abonnements : coût annuel réel, prochaine reconduction, alerte avant la date. Stocké dans votre navigateur uniquement. | à faire |
+| 12 | **Résiliation** | Génère la lettre de résiliation correcte selon le type de contrat. **Toute référence juridique doit être vérifiée et sourcée dans la page — ne rien citer de mémoire.** | à faire |
+| 13 | **Vrai prix** | Le coût réel d'un abonnement sur 1, 3 et 5 ans, comparé à l'achat unique équivalent. | à faire |
+| 14 | **Engagement** | Décryptage d'une offre : ce que « sans engagement », « offre découverte » et « préavis » veulent dire concrètement. Sourcé. | à faire |
+| 15 | **Partage d'abonnements** | Répartition du coût d'un abonnement familial entre plusieurs personnes, avec rappel des dates. | à faire |
+
+## Vague 3 — écrire et publier
+
+| # | Outil | Ce qu'il fait | État |
+|---|---|---|---|
+| 16 | **Tics** | Détecte et corrige les tics d'écriture d'IA dans un texte : formules creuses, listes artificielles, transitions vides. | à faire |
+| 17 | **Titre** | Teste un titre : longueur, promesse, clarté. Pour articles, vidéos, pages. | à faire |
+| 18 | **Alt** | Aide à écrire les textes alternatifs d'images correctement, avec les règles d'accessibilité. | à faire |
+| 19 | **Extrait** | Génère les balises de partage d'une page et montre l'aperçu obtenu sur les réseaux. | à faire |
+| 20 | **Relecture** | Passe de relecture structurée : répétitions, phrases trop longues, incohérences de ton. | à faire |
+
+## Vague 4 — travailler à son compte
+
+| # | Outil | Ce qu'il fait | État |
+|---|---|---|---|
+| 21 | **Devis** | Construit un devis présentable à partir de lignes de prestation. Export imprimable. | à faire |
+| 22 | **Retard** | Calcule ce qu'une facture impayée coûte réellement, et génère la relance. Sourcé. | à faire |
+| 23 | **Charge** | Répartit une charge de travail sur un calendrier réel, jours fériés et congés déduits. | à faire |
+| 24 | **Tarif horaire** | Convertit un objectif de revenu en tarif horaire tenable, jours non facturables inclus. | à faire |
+| 25 | **Brief** | Transforme une demande client floue en cahier des charges exploitable. | à faire |
+
+## Vagues suivantes
+
+Les entrées 26 à 30 ne sont pas fixées d'avance : elles seront choisies par la
+session de recherche hebdomadaire, à partir de plaintes réellement observées,
+pas d'intuitions. **Une idée n'entre dans ce tableau que si elle s'appuie sur une
+source citable.**
+
 ## Ordre de construction
 
-2 → 3 → 4 → 7 → 6 → 9 → 5 → 8 → 10.
+2 → 3 → 11 → 4 → 16 → 7 → 12 → 6 → 9 → 5 → 13 → 21 → 8 → 17 → 24 → 10 → puis le reste du tableau.
 
 L'outil 2 (**Photo nue**) est prioritaire : le plus démonstratif, le plus
 partageable, et il renforce le même thème que l'outil 1.
