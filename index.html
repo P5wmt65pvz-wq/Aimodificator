@@ -32,6 +32,7 @@
     <a href="#workshop" data-i18n="nav.workshop"></a>
     <a href="#library" data-i18n="nav.library"></a>
     <a href="#method" data-i18n="nav.method"></a>
+    <a href="#support" id="nav-offers" data-i18n="nav.offers" hidden></a>
     <div class="nav-tools">
       <button type="button" id="lang-toggle" class="icon-btn" data-i18n-aria="nav.lang">
         <span id="lang-label">EN</span>
@@ -284,6 +285,21 @@
       <article class="method-card"><span class="num">09</span><h3 data-i18n="method.c9.t"></h3><p data-i18n="method.c9.b"></p></article>
     </div>
   </section>
+  <!-- --------------------------------------- offres — tout se règle dans assets/js/offers.js -->
+  <section class="offers" id="support" hidden>
+    <div class="section-head">
+      <div>
+        <h2 data-i18n="offers.title"></h2>
+        <p class="lede" data-i18n="offers.lede"></p>
+      </div>
+    </div>
+    <div class="cards offers-cards" id="offers-cards"></div>
+    <div class="offers-setup" id="offers-setup" hidden>
+      <h3 data-i18n="offers.setup.title"></h3>
+      <p data-i18n="offers.setup.body"></p>
+      <p class="muted" data-i18n="offers.setup.only"></p>
+    </div>
+  </section>
 </main>
 
 <footer class="site-footer">
@@ -335,6 +351,7 @@
 <script src="assets/js/i18n.js"></script>
 <script src="assets/js/engine.js"></script>
 <script src="assets/js/ai.js"></script>
+<script src="assets/js/offers.js"></script>
 <script src="assets/js/app.js"></script>
 </body>
 </html>
