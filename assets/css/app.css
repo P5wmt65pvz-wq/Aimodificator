@@ -431,6 +431,31 @@ select {
 .method-card h3 { font-size: .97rem; margin: 8px 0 6px; }
 .method-card p { color: var(--text-2); font-size: .88rem; }
 
+/* --------------------------------------------------------------- offres */
+.offers { margin-top: 72px; scroll-margin-top: 90px; }
+
+.offer-card { text-decoration: none; color: inherit; }
+.offer-card.is-featured {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+  background: linear-gradient(180deg, var(--accent-soft), transparent 55%), var(--surface);
+}
+.offer-card .offer-note { color: var(--muted); font-size: .78rem; }
+.offer-foot {
+  display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 10px;
+  margin-top: auto; padding-top: 12px; border-top: 1px solid var(--border);
+}
+.offer-price { font-size: .95rem; }
+.offer-cta { color: var(--accent); font-size: .85rem; font-weight: 600; }
+.offer-card:hover .offer-cta { text-decoration: underline; }
+
+/* rappel de configuration — visible uniquement en local, jamais pour un visiteur */
+.offers-setup {
+  padding: 20px; border: 1px dashed var(--border-strong); border-radius: var(--radius);
+  background: var(--surface); display: grid; gap: 8px;
+}
+.offers-setup h3 { font-size: .97rem; }
+.offers-setup p { color: var(--text-2); font-size: .88rem; }
+
 /* --------------------------------------------------------------- footer */
 .site-footer {
   border-top: 1px solid var(--border); margin-top: 80px;

@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  var engine = PF.engine, i18n = PF.i18n, profiles = PF.profiles, templates = PF.templates;
+  var engine = PF.engine, i18n = PF.i18n, profiles = PF.profiles, templates = PF.templates, offers = PF.offers;
   var $ = function (sel, ctx) { return (ctx || document).querySelector(sel); };
   var $$ = function (sel, ctx) { return Array.prototype.slice.call((ctx || document).querySelectorAll(sel)); };
 
@@ -108,6 +108,7 @@
     renderLibraryFilters();
     renderLibrary();
     renderHistory();
+    renderOffers();
     if (state.result) render(state.result);
   }
 
@@ -420,6 +421,44 @@
       card.addEventListener('click', function () { useTemplate(tpl); });
       box.appendChild(card);
     });
+  }
+
+  /* --------------------------------------------------------------- offres */
+
+  /* Une offre n'apparaît que si son URL de paiement est renseignée dans
+     offers.js. Sans aucune offre branchée, la section reste invisible pour les
+     visiteurs ; en local, elle affiche à la place le rappel de configuration. */
+  function renderOffers() {
+    var section = $('#support');
+    if (!section || !offers) return;
+    var box = $('#offers-cards');
+    var setup = $('#offers-setup');
+    var navLink = $('#nav-offers');
+    var items = offers.live();
+    var local = offers.isLocal(location.hostname, location.protocol);
+
+    box.innerHTML = '';
+    items.forEach(function (o) {
+      var card = document.createElement('a');
+      card.className = 'card offer-card' + (o.featured ? ' is-featured' : '');
+      card.href = o.url;
+      card.target = '_blank';
+      card.rel = 'noopener noreferrer';
+      card.innerHTML =
+        '<div class="card-top"><span class="card-icon" aria-hidden="true">' + escapeHtml(o.icon) + '</span>' +
+        '<h3>' + escapeHtml(o.title[state.lang]) + '</h3></div>' +
+        '<p>' + escapeHtml(o.desc[state.lang]) + '</p>' +
+        (o.note ? '<p class="offer-note">' + escapeHtml(o.note[state.lang]) + '</p>' : '') +
+        '<span class="offer-foot">' +
+        '<b class="offer-price">' + escapeHtml(o.price[state.lang]) + '</b>' +
+        '<span class="offer-cta">' + escapeHtml(o.cta[state.lang]) + ' \u2192</span></span>';
+      box.appendChild(card);
+    });
+
+    box.hidden = items.length === 0;
+    setup.hidden = items.length > 0 || !local;
+    navLink.hidden = items.length === 0;
+    section.hidden = items.length === 0 && !local;
   }
 
   function useTemplate(tpl) {

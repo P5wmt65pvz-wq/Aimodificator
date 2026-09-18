@@ -108,7 +108,7 @@
   /* --------------------------------------------------------------- signals */
 
   var SIGNAL_RULES = {
-    quantity: /(\d+)\s*(mots?|words?|caracteres?|characters?|signes?|lignes?|lines?|pages?|slides?|diapositives?|minutes?|secondes?|seconds?|paragraphes?|paragraphs?)/g,
+    quantity: /((?:\d{1,3}(?:[ .,]\d{3})+)|\d+)\s*(mots?|words?|caracteres?|characters?|signes?|lignes?|lines?|pages?|slides?|diapositives?|minutes?|secondes?|seconds?|paragraphes?|paragraphs?)/g,
     count: /(\d+)\s*(idees?|ideas?|exemples?|examples?|points?|conseils?|tips?|variantes?|variants?|options?|etapes?|steps?|questions?)/g,
     format: /\b(json|xml|yaml|csv|markdown|tableau|table|liste a puces|bullet points?|bullet|liste|list|code|schema|diagramme|diagram|slides?)\b/g,
     tone: /\b(formel|informel|professionnel|amical|humoristique|drole|serieux|percutant|chaleureux|neutre|direct|academique|familier|persuasif|inspirant|formal|casual|friendly|funny|serious|punchy|professional|persuasive)\b/g,
@@ -520,6 +520,7 @@
       o.flags[k] = (opts && opts.flags && opts.flags[k] !== undefined) ? !!opts.flags[k] : DEFAULT_FLAGS[k];
     });
     if (o.lang !== 'en') o.lang = 'fr';
+    if (!MODEL_NAMES[o.model]) o.model = 'any';
     return o;
   }
 

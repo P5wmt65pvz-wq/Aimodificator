@@ -9,6 +9,7 @@ const profiles = require('../assets/js/profiles.js');
 const templates = require('../assets/js/templates.js');
 const i18n = require('../assets/js/i18n.js');
 const ai = require('../assets/js/ai.js');
+const offers = require('../assets/js/offers.js');
 
 test('chaque profil de domaine est complet en FR et en EN', () => {
   assert.ok(profiles.list.length >= 15);
@@ -217,4 +218,63 @@ test('l\'extraction de réponse gère les deux formats', () => {
   assert.equal(ai.extractText('anthropic', { content: [{ type: 'text', text: 'A' }, { type: 'thinking' }] }), 'A');
   assert.equal(ai.extractText('openai', { choices: [{ message: { content: 'B' } }] }), 'B');
   assert.equal(ai.extractText('anthropic', {}), '');
+});
+
+test('chaque offre est complète et bilingue', () => {
+  assert.ok(offers.list.length >= 3);
+  for (const o of offers.list) {
+    assert.ok(o.id && o.icon, `offre sans id/icône`);
+    for (const key of ['title', 'desc', 'cta', 'price']) {
+      assert.ok(o[key], `${o.id} → ${key} manquant`);
+      assert.ok(o[key].fr && o[key].en, `${o.id} → ${key} non bilingue`);
+    }
+    assert.equal(typeof o.url, 'string', `${o.id} → url doit être une chaîne`);
+  }
+});
+
+test('seule une URL https absolue rend une offre affichable', () => {
+  const ok = ['https://buy.stripe.com/abc123', 'https://ko-fi.com/nom', 'https://nom.gumroad.com/l/pack'];
+  const ko = ['', '   ', 'http://nom.fr', 'javascript:alert(1)', 'data:text/html,x',
+              '//nom.fr', 'nom.fr', 'https://exemple.com/x', 'https://example.com/x'];
+  for (const url of ok) assert.equal(offers.isLive({ url }), true, `${url} aurait dû passer`);
+  for (const url of ko) assert.equal(offers.isLive({ url }), false, `${url} aurait dû être refusé`);
+  assert.equal(offers.isLive(null), false);
+  assert.equal(offers.isLive({}), false);
+});
+
+test('live() ne retient que les offres réellement payables', () => {
+  const live = offers.live();
+  assert.equal(live.length, offers.list.filter((o) => offers.isLive(o)).length);
+  for (const o of live) assert.match(o.url, /^https:\/\//);
+  assert.equal(offers.hasLive(), live.length > 0);
+});
+
+test('le rappel de configuration ne cible que le local', () => {
+  assert.equal(offers.isLocal('localhost', 'http:'), true);
+  assert.equal(offers.isLocal('127.0.0.1', 'http:'), true);
+  assert.equal(offers.isLocal('', 'file:'), true);
+  assert.equal(offers.isLocal('p5wmt65pvz-wq.github.io', 'https:'), false);
+  assert.equal(offers.isLocal('promptforge.fr', 'https:'), false);
+});
+
+test('les séparateurs de milliers ne coupent plus les quantités', () => {
+  const q = (s) => engine.extractSignals(s).quantity;
+  assert.deepEqual(q('rédiger 1 200 mots'), ['1 200 mots']);
+  assert.deepEqual(q('un texte de 10 000 caracteres'), ['10 000 caracteres']);
+  assert.deepEqual(q('write 1,200 words'), ['1,200 words']);
+  assert.deepEqual(q('850 mots'), ['850 mots']);
+  assert.deepEqual(q('3 pages'), ['3 pages']);
+  const built = engine.build('Rédiger un article de blog de 1 200 mots', { lang: 'fr' });
+  assert.match(built.text, /1 200 mots/);
+  assert.doesNotMatch(built.text, /Longueur visée : 200 mots/);
+});
+
+test('un identifiant de modèle inconnu ne fuit pas dans le prompt', () => {
+  for (const model of ['generic', 'gpt-9', '', null, undefined, 'any']) {
+    const r = engine.build('Rédiger un court texte', { lang: 'fr', model });
+    assert.equal(r.options.model, 'any', `${model} aurait dû retomber sur any`);
+    assert.doesNotMatch(r.text, /Destiné à :/);
+  }
+  const claude = engine.build('Rédiger un court texte', { lang: 'fr', model: 'claude' });
+  assert.match(claude.text, /Destiné à :/);
 });

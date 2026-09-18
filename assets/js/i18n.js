@@ -205,6 +205,20 @@
     'method.c9.t': { fr: 'Une règle pour ce qui manque', en: 'A rule for what is missing' },
     'method.c9.b': { fr: 'Plutôt que d\'inventer ou de bloquer, le modèle pose l\'hypothèse la plus raisonnable et vous la signale. Vous gardez le contrôle.', en: 'Rather than inventing or stalling, the model takes the most reasonable assumption and flags it. You stay in control.' },
 
+    'nav.offers': { fr: 'Soutenir', en: 'Support' },
+
+    'offers.title': { fr: 'Soutenir l\'atelier', en: 'Support the workshop' },
+    'offers.lede': {
+      fr: 'PromptForge reste gratuit et sans compte. Ce qui suit est facultatif — et c\'est ce qui finance la suite.',
+      en: 'PromptForge stays free and account-free. What follows is optional — and it is what funds what comes next.'
+    },
+    'offers.setup.title': { fr: 'Aucune offre n\'est encore branchée', en: 'No offer is wired up yet' },
+    'offers.setup.body': {
+      fr: 'Ouvrez assets/js/offers.js et collez vos liens de paiement dans le champ « url » de chaque offre. Une offre sans lien valide n\'est jamais montrée aux visiteurs. Marche à suivre complète dans MONETISATION.md.',
+      en: 'Open assets/js/offers.js and paste your payment links into each offer\'s "url" field. An offer without a valid link is never shown to visitors. Full walkthrough in MONETISATION.md.'
+    },
+    'offers.setup.only': { fr: 'Ce rappel ne s\'affiche qu\'en local. Il est invisible pour vos visiteurs.', en: 'This reminder only shows locally. Your visitors never see it.' },
+
     'footer.privacy': { fr: 'Aucune donnée ne quitte votre navigateur : le moteur est entièrement local. Historique et réglages sont stockés dans ce navigateur uniquement.', en: 'No data leaves your browser: the engine is entirely local. History and settings are stored in this browser only.' },
     'footer.open': { fr: 'Code source ouvert', en: 'Open source' },
     'footer.built': { fr: 'Sans dépendance, sans traceur, sans compte.', en: 'No dependencies, no trackers, no account.' },

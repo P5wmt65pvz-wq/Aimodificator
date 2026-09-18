@@ -61,7 +61,7 @@ npx http-server -p 8099 .
 npm test          # ou : node --test tests/engine.test.mjs
 ```
 
-25 tests couvrent la détection de domaine et de langue, le nettoyage de la demande,
+29 tests couvrent la détection de domaine et de langue, le nettoyage de la demande,
 les cinq formats de sortie, la validité du JSON et des balises XML, la progression du
 score, les options, la bibliothèque complète (FR et EN), les entrées hostiles et la
 construction des requêtes API.
@@ -81,12 +81,26 @@ assets/js/templates.js  les 24 modèles de la bibliothèque
 assets/js/engine.js     analyse, score et construction des prompts
 assets/js/i18n.js       chaînes d'interface FR / EN
 assets/js/ai.js         affinage optionnel par API (clé de l'utilisateur)
+assets/js/offers.js     offres payantes — liens de paiement à renseigner
 assets/js/app.js        interface
 tests/engine.test.mjs   suite de tests (node --test)
 ```
 
 Chaque module fonctionne aussi bien dans le navigateur (variable globale `PF`) que
 sous Node (`require`), ce qui permet de tester le moteur sans navigateur.
+
+## Monétisation
+
+Le site peut afficher jusqu'à quatre offres — pourboire, pack payant, prestation
+sur-mesure, sponsor — dont les liens de paiement se renseignent uniquement dans
+`assets/js/offers.js`.
+
+Une offre dont l'URL est vide, non `https`, ou restée à l'état d'exemple **n'est
+jamais montrée aux visiteurs** ; sans aucune offre branchée, la section disparaît
+du site public. En local, elle affiche à la place un rappel de configuration.
+
+Marche à suivre complète, prestataires, frais relevés et délais de versement :
+[MONETISATION.md](MONETISATION.md).
 
 ## Vie privée
 
