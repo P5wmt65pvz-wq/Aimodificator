@@ -1,0 +1,3 @@
+# Le pack est un livrable reconstruit à la demande : npm run pack
+dist/
+node_modules/

@@ -256,3 +256,25 @@ test('le rappel de configuration ne cible que le local', () => {
   assert.equal(offers.isLocal('p5wmt65pvz-wq.github.io', 'https:'), false);
   assert.equal(offers.isLocal('promptforge.fr', 'https:'), false);
 });
+
+test('les séparateurs de milliers ne coupent plus les quantités', () => {
+  const q = (s) => engine.extractSignals(s).quantity;
+  assert.deepEqual(q('rédiger 1 200 mots'), ['1 200 mots']);
+  assert.deepEqual(q('un texte de 10 000 caracteres'), ['10 000 caracteres']);
+  assert.deepEqual(q('write 1,200 words'), ['1,200 words']);
+  assert.deepEqual(q('850 mots'), ['850 mots']);
+  assert.deepEqual(q('3 pages'), ['3 pages']);
+  const built = engine.build('Rédiger un article de blog de 1 200 mots', { lang: 'fr' });
+  assert.match(built.text, /1 200 mots/);
+  assert.doesNotMatch(built.text, /Longueur visée : 200 mots/);
+});
+
+test('un identifiant de modèle inconnu ne fuit pas dans le prompt', () => {
+  for (const model of ['generic', 'gpt-9', '', null, undefined, 'any']) {
+    const r = engine.build('Rédiger un court texte', { lang: 'fr', model });
+    assert.equal(r.options.model, 'any', `${model} aurait dû retomber sur any`);
+    assert.doesNotMatch(r.text, /Destiné à :/);
+  }
+  const claude = engine.build('Rédiger un court texte', { lang: 'fr', model: 'claude' });
+  assert.match(claude.text, /Destiné à :/);
+});
