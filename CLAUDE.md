@@ -17,7 +17,13 @@ pas de serveur.
 
 - `index.html` + `assets/` — PromptForge, le générateur de prompts
 - `outils/<nom>/` — la suite d'outils de confidentialité (voir `OUTILS.md`)
+- `exemples/` — vitrine des sorties du moteur, **générée** par
+  `npm run exemples` ; ne jamais l'écrire à la main, la régénérer après toute
+  modification du moteur
+- `tools/` — les générateurs : page d'exemples, Pack Pro
 - `MONETISATION.md` — comment encaisser, et ce qui bloque
+- `ACTIVER-PAIEMENT.md` — la marche à suivre pour le titulaire du compte de
+  paiement, le jour venu
 - `OUTILS.md` — feuille de route des outils, source de vérité
 
 ## Règles
