@@ -169,12 +169,14 @@
     'propose', 'fix', 'optimize', 'calculate', 'design', 'plan', 'build', 'improve', 'convert', 'find', 'draft', 'review'];
 
   var CONTEXT_MARKERS = ['je suis', 'nous sommes', 'mon entreprise', 'ma societe', 'dans le cadre', 'actuellement',
-    'le probleme', 'contexte', 'aujourd\'hui je', 'j\'ai deja', 'nous avons', 'mon equipe', 'notre', 'parce que',
+    'le probleme', 'aujourd\'hui je', 'j\'ai deja', 'nous avons', 'mon equipe', 'notre', 'parce que',
     'car ', 'suite a', 'i am', 'we are', 'my company', 'currently', 'the problem', 'context', 'we have', 'because',
-    'my team', 'our '];
+    /* espaces encadrantes indispensables : sans elles, 'our ' matchait à
+       l'intérieur de « pour » et de « your », et gonflait le score à tort */
+    'my team', ' our '];
 
   var CONSTRAINT_MARKERS = ['sans ', 'ne pas', 'maximum', 'minimum', 'au plus', 'au moins', 'moins de', 'doit ',
-    'obligatoire', 'interdit', 'eviter', 'il faut', 'imperatif', 'limite', 'ton ', 'style ', 'contrainte',
+    'obligatoire', 'interdit', 'eviter', 'il faut', 'imperatif', 'ton ', 'style ', 'contrainte',
     'without', 'do not', 'don\'t', 'no more than', 'at least', 'must ', 'required', 'avoid', 'limit', 'constraint',
     /* « tone » sans espace finale : « in a direct tone, » se termine par une virgule */
     'tone', 'words max', 'characters max', 'at most', 'no longer than', 'keep it', 'make sure', 'ensure ',
@@ -188,12 +190,15 @@
     'reussi si', 'ideal serait', 'j\'attends', 'livrable', 'goal', 'so that', 'in order to', 'the aim',
     'expected result', 'success', 'i want to get', 'i expect', 'objective', 'deliverable', 'outcome'];
 
-  var FORMAT_MARKERS = ['json', 'tableau', 'table', 'liste', 'list', 'markdown', 'csv', 'xml', 'yaml', 'bullet',
-    'puces', 'paragraphe', 'paragraph', 'sections', 'plan', 'outline', 'slides', 'email', 'code', 'schema'];
+  /* Les formes anglaises courtes couvrent déjà les françaises : « tableau »
+     contient « table », « liste » contient « list », « paragraphe » contient
+     « paragraph ». Les garder toutes comptait deux fois le même mot. */
+  var FORMAT_MARKERS = ['json', 'table', 'list', 'markdown', 'csv', 'xml', 'yaml', 'bullet',
+    'puces', 'paragraph', 'sections', 'plan', 'outline', 'slides', 'email', 'code', 'schema'];
 
-  var AUDIENCE_MARKERS = ['pour des', 'pour les', 'pour un', 'pour une', 'a destination de', 's\'adresse a',
+  var AUDIENCE_MARKERS = ['pour des', 'pour les', 'pour un', 'a destination de', 's\'adresse a',
     'debutant', 'expert', 'enfant', 'etudiant', 'client', 'investisseur', 'recruteur', 'developpeur', 'grand public',
-    'for beginners', 'for experts', 'for children', 'for students', 'for clients', 'audience', 'aimed at', 'targeted at',
+    'for children', 'audience', 'aimed at', 'targeted at',
     'beginner', 'student', 'the team', 'my team', 'non-technical', 'newcomer', 'for developers', 'for recruiters'];
 
   function anyMarker(t, markers) {

@@ -312,10 +312,17 @@ const PAIRES = [
    'Je suis enseignant. Crée un quiz de 10 questions sur la photosynthèse pour des étudiants, par exemple en QCM, en JSON']
 ];
 
-/* Scores français mesurés avant la correction. Ils servent de plancher :
-   la parité devait être obtenue en remontant l'anglais, jamais en abaissant
-   le français. */
-const PLANCHER_FR = [41, 36, 31, 46];
+/* Plancher français. Il empêche qu'une correction future rétablisse la parité
+   en rabotant le français plutôt qu'en remontant l'anglais.
+
+   Il a été rebasé une fois, volontairement et sur décision du propriétaire :
+   les valeurs d'origine (41, 36, 31, 46) reposaient sur onze marqueurs qui
+   comptaient deux fois le même mot — « tableau » comptait aussi comme
+   « table », « contexte » comme « context », et le marqueur anglais « our »
+   se déclenchait à l'intérieur de « pour ». Ces points n'étaient pas mérités.
+   Les retirer fait mécaniquement baisser les scores français, et c'est la
+   correction d'un défaut, pas une régression. */
+const PLANCHER_FR = [41, 33, 24, 42];
 
 test('à demande équivalente, le score ne dépend pas de la langue', () => {
   const ecarts = PAIRES.map(([en, fr]) => {
@@ -350,4 +357,52 @@ test('la correction de longueur ne dérègle pas les demandes très courtes ou t
     const enorme = engine.analyze('mot '.repeat(1200), { lang }).score.total;
     assert.ok(enorme >= 0 && enorme <= 100, `demande énorme hors bornes : ${enorme}`);
   }
+});
+
+/* Les listes comptées par countMarkers() additionnent un point par marqueur
+   trouvé. Si un marqueur en contient un autre, le même mot est compté deux
+   fois : « tableau » déclenchait 'tableau' ET 'table'. Ce défaut a existé sur
+   onze paires, dans les deux langues. Ce test le rend impossible à réintroduire. */
+test('aucun marqueur compté n\'en contient un autre', () => {
+  const { readFileSync } = require('node:fs');
+  const path = require('node:path');
+  const src = readFileSync(path.resolve(import.meta.dirname, '..', 'assets/js/engine.js'), 'utf8');
+
+  /* ACTION_VERBS est volontairement absent : il sert à anyMarker(), qui
+     répond oui ou non. Sa redondance n'additionne rien. */
+  const COMPTEES = ['CONTEXT_MARKERS', 'CONSTRAINT_MARKERS', 'EXAMPLE_MARKERS',
+                    'SUCCESS_MARKERS', 'FORMAT_MARKERS', 'AUDIENCE_MARKERS'];
+
+  /* on vérifie d'abord que chaque liste comptée est bien surveillée ici */
+  const utilisees = [...src.matchAll(/countMarkers\(t, ([A-Z_]+)\)/g)].map((m) => m[1]);
+  for (const nom of new Set(utilisees)) {
+    assert.ok(COMPTEES.includes(nom), `${nom} est comptée mais absente de ce test`);
+  }
+
+  for (const nom of COMPTEES) {
+    const m = src.match(new RegExp('var ' + nom + ' = (\\[[\\s\\S]*?\\]);'));
+    assert.ok(m, `${nom} introuvable`);
+    const liste = eval(m[1]);
+    assert.ok(liste.length >= 5, `${nom} suspicieusement courte`);
+    for (const a of liste) {
+      for (const b of liste) {
+        assert.ok(a === b || a.indexOf(b) === -1,
+          `${nom} : « ${a} » contient « ${b} », le même texte compterait deux fois`);
+      }
+    }
+    assert.equal(new Set(liste).size, liste.length, `${nom} contient un doublon exact`);
+  }
+});
+
+test('les marqueurs courts ne se déclenchent pas à l\'intérieur d\'un mot', () => {
+  /* « our » dans « pour », « ton » dans « bâton » : un marqueur court sans
+     espace encadrante attrape n'importe quel mot qui le contient. */
+  const ctx = (t) => engine.analyze(t, { lang: 'fr' }).score.dimensions.find((d) => d.id === 'context').value;
+  const sansContexte = 'rediger un texte pour des lecteurs pressés, avec pour objectif la clarté';
+  assert.equal(ctx(sansContexte), ctx('rediger un texte clair et court pour lecteurs presses'),
+    '« pour » ne doit pas être lu comme le marqueur anglais « our »');
+
+  const avecContexte = engine.analyze('our team needs a short text', { lang: 'en' })
+    .score.dimensions.find((d) => d.id === 'context').value;
+  assert.ok(avecContexte > 0, '« our team » doit bien compter comme du contexte');
 });
