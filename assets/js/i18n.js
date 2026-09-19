@@ -50,6 +50,7 @@
     'field.model': { fr: 'IA de destination', en: 'Target AI' },
     'field.format': { fr: 'Format du prompt', en: 'Prompt format' },
     'field.lang': { fr: 'Langue du prompt', en: 'Prompt language' },
+    'field.lang.auto': { fr: 'Auto — langue de la demande', en: 'Auto — language of the request' },
     'field.answerLang': { fr: 'Langue de la réponse attendue', en: 'Expected answer language' },
     'field.answerLang.same': { fr: 'Identique au prompt', en: 'Same as the prompt' },
     'field.depth': { fr: 'Profondeur', en: 'Depth' },

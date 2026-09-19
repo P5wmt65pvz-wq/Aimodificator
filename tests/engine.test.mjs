@@ -278,3 +278,20 @@ test('un identifiant de modèle inconnu ne fuit pas dans le prompt', () => {
   const claude = engine.build('Rédiger un court texte', { lang: 'fr', model: 'claude' });
   assert.match(claude.text, /Destiné à :/);
 });
+
+test('le sélecteur de langue propose « auto » en premier, et la chaîne existe', () => {
+  const { readFileSync } = require('node:fs');
+  const path = require('node:path');
+  const html = readFileSync(path.resolve(import.meta.dirname, '..', 'index.html'), 'utf8');
+  const select = html.match(/<select id="opt-lang">([\s\S]*?)<\/select>/);
+  assert.ok(select, 'sélecteur de langue introuvable');
+  const valeurs = [...select[1].matchAll(/value="([^"]+)"/g)].map((m) => m[1]);
+  assert.equal(valeurs[0], 'auto', 'auto doit être la première option, donc celle par défaut');
+  assert.deepEqual(valeurs, ['auto', 'fr', 'en']);
+  assert.ok(i18n.strings['field.lang.auto'], 'chaîne field.lang.auto absente');
+});
+
+test('detectLanguage sait trancher sur les demandes servant au mode auto', () => {
+  assert.equal(engine.detectLanguage('write a cold email to a SaaS founder about our analytics tool'), 'en');
+  assert.equal(engine.detectLanguage('rédige une description produit pour une montre connectée'), 'fr');
+});

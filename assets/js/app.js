@@ -162,6 +162,15 @@
     };
   }
 
+  /* « auto » n'existe pas pour le moteur : withDefaults() transforme toute
+     valeur inconnue en français, silencieusement. On résout donc ici, à partir
+     du texte réellement saisi, et on ne transmet que 'fr' ou 'en'. Le champ du
+     formulaire, lui, garde 'auto' : c'est ce qui est mémorisé et réaffiché. */
+  function resolveLang(choix, texte) {
+    if (choix !== 'auto') return choix;
+    return engine.detectLanguage(texte || '') || state.lang;
+  }
+
   function applyOptions(o) {
     if (!o) return;
     var set = function (sel, v) { if (v !== undefined && v !== null && v !== '') $(sel).value = v; };
@@ -309,11 +318,15 @@
     opts = opts || {};
     var raw = $('#request').value.trim();
     if (!raw) { toast(t('toast.empty')); $('#request').focus(); return; }
-    var result = engine.build(raw, currentOptions());
+    var choix = currentOptions();
+    var pourLeMoteur = {};
+    Object.keys(choix).forEach(function (k) { pourLeMoteur[k] = choix[k]; });
+    pourLeMoteur.lang = resolveLang(choix.lang, raw);
+    var result = engine.build(raw, pourLeMoteur);
     state.localResult = result.text;
     render(result);
     persistSettings();
-    if (!opts.noHistory) pushHistory(raw, currentOptions());
+    if (!opts.noHistory) pushHistory(raw, choix);
     if (!opts.silent) toast(t('toast.generated'));
   }
 
@@ -666,7 +679,8 @@
     $('#lang-toggle').addEventListener('click', function () {
       state.lang = state.lang === 'fr' ? 'en' : 'fr';
       write(KEYS.lang, state.lang);
-      $('#opt-lang').value = state.lang;
+      /* ne pas écraser « auto » : c'est un choix de l'utilisateur, pas un reste */
+      if ($('#opt-lang').value !== 'auto') $('#opt-lang').value = state.lang;
       applyI18n();
       if (state.result) generate({ silent: true, noHistory: true });
     });
@@ -690,7 +704,7 @@
 
     bind();
     applyOptions(read(KEYS.settings, null));
-    $('#opt-lang').value = state.lang;
+    if ($('#opt-lang').value !== 'auto') $('#opt-lang').value = state.lang;
 
     var fromHash = loadFromHash();
     applyI18n();
