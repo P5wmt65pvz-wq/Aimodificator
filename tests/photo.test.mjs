@@ -1,4 +1,4 @@
-/* Tests de Photo nue : parseur EXIF et nettoyage sans perte.
+/* Tests de Photo propre : parseur EXIF et nettoyage sans perte.
    Les JPEG sont fabriqués octet par octet ici, sans fichier externe. */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';

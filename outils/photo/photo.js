@@ -1,5 +1,5 @@
 /*!
- * Photo nue — lit les métadonnées cachées d'une photo, puis les retire.
+ * Photo propre — lit les métadonnées cachées d'une photo, puis les retire.
  *
  * Tout se passe dans le navigateur : la photo n'est jamais envoyée nulle part.
  * Le nettoyage est SANS PERTE — on retire les segments de métadonnées du
