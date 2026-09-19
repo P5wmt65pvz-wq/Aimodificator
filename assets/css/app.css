@@ -161,9 +161,18 @@ button, input, select, textarea { font: inherit; color: inherit; }
 }
 
 @media (max-width: 760px) {
-  .site-header { padding-left: 14px; padding-right: 14px; gap: 10px; }
-  .site-nav > a { display: none; }
-  .nav-tools { margin-left: 0; padding-left: 0; border-left: 0; }
+  /* Les liens passent sur une deuxième ligne au lieu d'être masqués : sans eux,
+     les outils n'étaient atteignables depuis aucun téléphone. L'en-tête cesse
+     d'être collant, sinon deux lignes mangeraient le haut de l'écran en
+     permanence — il défile avec la page, comme le reste. */
+  .site-header {
+    position: static;
+    flex-wrap: wrap;
+    padding-left: 14px; padding-right: 14px; gap: 10px 12px;
+  }
+  .site-nav { flex-wrap: wrap; gap: 2px; width: 100%; }
+  .site-nav > a { display: block; padding: 6px 10px; font-size: .85rem; }
+  .nav-tools { margin-left: auto; padding-left: 10px; }
   .brand-text small { display: none; }
 }
 
