@@ -112,7 +112,7 @@
     count: /(\d+)\s*(idees?|ideas?|exemples?|examples?|points?|conseils?|tips?|variantes?|variants?|options?|etapes?|steps?|questions?)/g,
     format: /\b(json|xml|yaml|csv|markdown|tableau|table|liste a puces|bullet points?|bullet|liste|list|code|schema|diagramme|diagram|slides?)\b/g,
     tone: /\b(formel|informel|professionnel|amical|humoristique|drole|serieux|percutant|chaleureux|neutre|direct|academique|familier|persuasif|inspirant|formal|casual|friendly|funny|serious|punchy|professional|persuasive)\b/g,
-    audience: /\b(pour (?:des |les |un |une |mon |ma |mes |le |la )?[a-zàâçéèêëîïôûùüœ\-]+(?: [a-zàâçéèêëîïôûùüœ\-]+)?|for (?:a |an |the |my )?[a-z\-]+(?: [a-z\-]+)?|debutants?|beginners?|experts?|enfants?|kids?|etudiants?|students?|clients?|investisseurs?|investors?|recruteurs?|developpeurs?|developers?)\b/g,
+    audience: /\b(pour (?:des |les |un |une |mon |ma |mes |le |la )?[a-zàâçéèêëîïôûùüœ\-]+(?: [a-zàâçéèêëîïôûùüœ\-]+)?|for (?:a |an |the |my )?[a-z\-]+(?: [a-z\-]+)?|so that (?:the |a |my |our )?[a-z\-]+|debutants?|beginners?|experts?|enfants?|kids?|etudiants?|students?|clients?|investisseurs?|investors?|recruteurs?|developpeurs?|developers?)\b/g,
     deadline: /\b(avant (?:le |la )?\S+|d'ici \S+|deadline|urgent|aujourd'hui|demain|cette semaine|by (?:monday|tomorrow|friday|next week))\b/g,
     language: /\b(anglais|english|francais|french|espagnol|spanish|allemand|german|italien|italian|portugais|portuguese|chinois|chinese|japonais|japanese|arabe|arabic|russe|russian|neerlandais|dutch)\b/g
   };
@@ -175,7 +175,10 @@
 
   var CONSTRAINT_MARKERS = ['sans ', 'ne pas', 'maximum', 'minimum', 'au plus', 'au moins', 'moins de', 'doit ',
     'obligatoire', 'interdit', 'eviter', 'il faut', 'imperatif', 'limite', 'ton ', 'style ', 'contrainte',
-    'without', 'do not', 'don\'t', 'no more than', 'at least', 'must ', 'required', 'avoid', 'limit', 'tone ', 'constraint'];
+    'without', 'do not', 'don\'t', 'no more than', 'at least', 'must ', 'required', 'avoid', 'limit', 'constraint',
+    /* « tone » sans espace finale : « in a direct tone, » se termine par une virgule */
+    'tone', 'words max', 'characters max', 'at most', 'no longer than', 'keep it', 'make sure', 'ensure ',
+    'strictly', 'never ', 'only use', 'stick to'];
 
   var EXAMPLE_MARKERS = ['par exemple', 'comme ceci', 'voici', 'ci-dessous', 'inspire de', 'dans le style de',
     'similaire a', 'exemple :', 'modele :', 'for example', 'e.g.', 'like this', 'such as', 'inspired by',
@@ -190,7 +193,8 @@
 
   var AUDIENCE_MARKERS = ['pour des', 'pour les', 'pour un', 'pour une', 'a destination de', 's\'adresse a',
     'debutant', 'expert', 'enfant', 'etudiant', 'client', 'investisseur', 'recruteur', 'developpeur', 'grand public',
-    'for beginners', 'for experts', 'for children', 'for students', 'for clients', 'audience', 'aimed at', 'targeted at'];
+    'for beginners', 'for experts', 'for children', 'for students', 'for clients', 'audience', 'aimed at', 'targeted at',
+    'beginner', 'student', 'the team', 'my team', 'non-technical', 'newcomer', 'for developers', 'for recruiters'];
 
   function anyMarker(t, markers) {
     for (var i = 0; i < markers.length; i++) if (t.indexOf(markers[i]) !== -1) return true;
@@ -213,11 +217,22 @@
     var signals = extractSignals(raw);
     var dims = {};
 
+    /* À contenu égal, l'anglais s'écrit en moins de mots que le français.
+       Comparer les deux aux mêmes seuils de longueur pénalise donc l'anglais
+       sur la clarté, la spécificité et le contexte, sans que la demande soit
+       moins bonne. On ramène le compte à une base commune avant de comparer.
+       Le facteur est un réglage, pas une constante mesurée : il est choisi
+       pour que deux demandes équivalentes obtiennent des notes comparables.
+       Les seuils de garde (moins de 4 mots, plus de 900) gardent le compte
+       réel : ils protègent contre les demandes vides, pas contre la langue. */
+    var LONGUEUR_EQ = { en: 1.15, fr: 1 };
+    var wordsEq = words * (LONGUEUR_EQ[lang === 'en' ? 'en' : 'fr']);
+
     // Clarté : longueur exploitable + verbe d'action + demande lisible
     var clarity = 0;
     if (words >= 4) clarity += 25;
-    if (words >= 10) clarity += 20;
-    if (words >= 20) clarity += 10;
+    if (wordsEq >= 10) clarity += 20;
+    if (wordsEq >= 20) clarity += 10;
     if (words > 900) clarity -= 15;
     if (anyMarker(t, ACTION_VERBS.map(function (v) { return ' ' + v; }))) clarity += 30;
     if (/[.?!]/.test(raw)) clarity += 10;
@@ -226,8 +241,8 @@
 
     // Contexte
     var ctx = clamp(countMarkers(t, CONTEXT_MARKERS) * 22, 0, 66);
-    if (words >= 40) ctx += 17;
-    if (words >= 90) ctx += 17;
+    if (wordsEq >= 40) ctx += 17;
+    if (wordsEq >= 90) ctx += 17;
     dims.context = clamp(ctx, 0, 100);
 
     // Spécificité
@@ -235,7 +250,7 @@
     spec += clamp(signals.numbers.length * 14, 0, 42);
     spec += clamp(signals.propernouns.length * 10, 0, 30);
     spec += clamp(signals.quantity.length * 14, 0, 28);
-    if (words >= 25) spec += 10;
+    if (wordsEq >= 25) spec += 10;
     dims.specificity = clamp(spec, 0, 100);
 
     // Public cible

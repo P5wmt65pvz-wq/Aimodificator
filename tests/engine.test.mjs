@@ -295,3 +295,59 @@ test('detectLanguage sait trancher sur les demandes servant au mode auto', () =>
   assert.equal(engine.detectLanguage('write a cold email to a SaaS founder about our analytics tool'), 'en');
   assert.equal(engine.detectLanguage('rédige une description produit pour une montre connectée'), 'fr');
 });
+
+/* Parité de notation entre les deux langues.
+   À demande équivalente, le score ne doit pas dépendre de la langue écrite.
+   L'écart mesuré était de 8,00 points en moyenne, au détriment de l'anglais :
+   les listes de marqueurs y étaient moins fournies, et surtout les seuils de
+   longueur pénalisaient mécaniquement une langue plus concise. */
+const PAIRES = [
+  ['write a cold email to a SaaS founder about our analytics tool, 120 words max, in a direct tone, output subject + body',
+   'écris un email de prospection à un fondateur de SaaS à propos de notre outil d\'analyse, 120 mots maximum, ton direct, rends l\'objet et le corps'],
+  ['explain how compound interest works for beginners, in 5 bullet points, without jargon',
+   'explique comment fonctionnent les intérêts composés pour des débutants, en 5 puces, sans jargon'],
+  ['summarize this meeting in a table with owner, deadline and status, so that the team knows what to do',
+   'résume cette réunion dans un tableau avec responsable, échéance et statut, pour que l équipe sache quoi faire'],
+  ['I am a teacher. Create a 10-question quiz on photosynthesis for students, for example multiple choice, in JSON',
+   'Je suis enseignant. Crée un quiz de 10 questions sur la photosynthèse pour des étudiants, par exemple en QCM, en JSON']
+];
+
+/* Scores français mesurés avant la correction. Ils servent de plancher :
+   la parité devait être obtenue en remontant l'anglais, jamais en abaissant
+   le français. */
+const PLANCHER_FR = [41, 36, 31, 46];
+
+test('à demande équivalente, le score ne dépend pas de la langue', () => {
+  const ecarts = PAIRES.map(([en, fr]) => {
+    const sEn = engine.analyze(en, { lang: 'en' }).score.total;
+    const sFr = engine.analyze(fr, { lang: 'fr' }).score.total;
+    return Math.abs(sEn - sFr);
+  });
+  const moyen = ecarts.reduce((a, b) => a + b, 0) / ecarts.length;
+  assert.ok(moyen < 3, `écart moyen de ${moyen.toFixed(2)} points, attendu sous 3 — détail : ${ecarts.join(', ')}`);
+});
+
+test('la parité n\'a pas été obtenue en abaissant le français', () => {
+  PAIRES.forEach(([, fr], i) => {
+    const s = engine.analyze(fr, { lang: 'fr' }).score.total;
+    assert.ok(s >= PLANCHER_FR[i],
+      `paire ${i + 1} : le français est tombé à ${s}, il valait ${PLANCHER_FR[i]}`);
+  });
+});
+
+test('une demande vide de sens reste mal notée dans les deux langues', () => {
+  for (const vide of ['help me', 'do it', 'hello', 'aide moi', 'fais-le', 'bonjour']) {
+    for (const lang of ['fr', 'en']) {
+      const s = engine.analyze(vide, { lang }).score.total;
+      assert.ok(s <= 5, `« ${vide} » (${lang}) vaut ${s}, attendu 5 au plus`);
+    }
+  }
+});
+
+test('la correction de longueur ne dérègle pas les demandes très courtes ou très longues', () => {
+  for (const lang of ['fr', 'en']) {
+    assert.equal(engine.analyze('', { lang }).score.total, 0);
+    const enorme = engine.analyze('mot '.repeat(1200), { lang }).score.total;
+    assert.ok(enorme >= 0 && enorme <= 100, `demande énorme hors bornes : ${enorme}`);
+  }
+});
