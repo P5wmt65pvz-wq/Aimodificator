@@ -1,7 +1,9 @@
 # Feuille de route — suite d'outils
 
-> **Construction en pause depuis le 19 septembre 2026, sur décision du
-> propriétaire — ne reprendre qu'avec son accord explicite.**
+> **Construction reprise le 19 septembre 2026, sur accord explicite du
+> propriétaire.** Elle avait été mise en pause le même jour ; la pause est
+> levée. Prochain outil à construire : voir l'ordre de construction en bas de
+> ce fichier.
 
 ## Le positionnement
 
