@@ -1,5 +1,8 @@
 # Feuille de route — suite d'outils
 
+> **Construction en pause depuis le 19 septembre 2026, sur décision du
+> propriétaire — ne reprendre qu'avec son accord explicite.**
+
 ## Le positionnement
 
 Pas dix outils au hasard : **une suite d'outils de confidentialité qui tournent
