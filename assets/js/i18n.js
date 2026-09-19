@@ -209,6 +209,24 @@
     'nav.examples': { fr: 'Exemples', en: 'Examples' },
     'nav.offers': { fr: 'Soutenir', en: 'Support' },
 
+    'liste.title': { fr: 'Être prévenu des prochains outils', en: 'Hear about the next tools' },
+    'liste.lede': {
+      fr: 'Un message quand un nouvel outil sort. Rien d\'autre : pas de lettre hebdomadaire, pas de publicité, pas plus d\'un message par mois.',
+      en: 'One message when a new tool ships. Nothing else: no weekly newsletter, no advertising, never more than one message a month.'
+    },
+    'liste.cta': { fr: 'Écrire pour s\'inscrire', en: 'Email to subscribe' },
+    'liste.or': { fr: 'Ou écrivez directement à :', en: 'Or write directly to:' },
+    'liste.copy': { fr: 'Copier l\'adresse', en: 'Copy the address' },
+    'liste.copied': { fr: 'Adresse copiée', en: 'Address copied' },
+    'liste.honest': {
+      fr: 'Votre adresse ne sert qu\'à cela et n\'est ni revendue, ni transmise, ni utilisée pour autre chose. Pour partir, répondez « stop » à n\'importe quel message : c\'est traité à la main, il n\'y a pas de formulaire à remplir.',
+      en: 'Your address is used for this and nothing else — never sold, never shared. To leave, reply “stop” to any message: it is handled by hand, there is no form to fill in.'
+    },
+    'liste.local': {
+      fr: 'Il n\'y a pas de formulaire ici, et ce n\'est pas un oubli : le site n\'a aucun serveur, donc rien ne pourrait recevoir ce que vous taperiez.',
+      en: 'There is no form here, and that is not an oversight: the site has no server, so nothing could receive what you typed.'
+    },
+
     'offers.title': { fr: 'Soutenir l\'atelier', en: 'Support the workshop' },
     'offers.lede': {
       fr: 'PromptForge reste gratuit et sans compte. Ce qui suit est facultatif — et c\'est ce qui finance la suite.',

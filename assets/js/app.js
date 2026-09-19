@@ -2,7 +2,7 @@
 (function () {
   'use strict';
 
-  var engine = PF.engine, i18n = PF.i18n, profiles = PF.profiles, templates = PF.templates, offers = PF.offers;
+  var engine = PF.engine, i18n = PF.i18n, profiles = PF.profiles, templates = PF.templates, offers = PF.offers, liste = PF.liste;
   var $ = function (sel, ctx) { return (ctx || document).querySelector(sel); };
   var $$ = function (sel, ctx) { return Array.prototype.slice.call((ctx || document).querySelectorAll(sel)); };
 
@@ -109,6 +109,7 @@
     renderLibrary();
     renderHistory();
     renderOffers();
+    renderListe();
     if (state.result) render(state.result);
   }
 
@@ -434,6 +435,34 @@
       card.addEventListener('click', function () { useTemplate(tpl); });
       box.appendChild(card);
     });
+  }
+
+  /* ------------------------------------------------- liste de diffusion */
+
+  /* Pas de formulaire : la règle 3 du dépôt interdit toute requête réseau
+     après chargement, et il n'y a de toute façon aucun serveur pour la
+     recevoir. L'inscription passe par un lien mailto:, doublé de l'adresse
+     en clair pour qui n'a pas de logiciel de messagerie configuré. */
+  function renderListe() {
+    if (!liste) return;
+    var lien = $('#liste-mailto');
+    var adresse = $('#liste-adresse');
+    if (!lien || !adresse) return;
+
+    lien.href = liste.mailto(state.lang);
+    adresse.textContent = liste.ADRESSE;
+
+    var bouton = $('#liste-copier');
+    if (bouton && !bouton.dataset.lie) {
+      bouton.dataset.lie = '1';
+      bouton.addEventListener('click', function () {
+        copyText(liste.ADRESSE).then(function () {
+          toast(t('liste.copied'));
+        }, function () {
+          toast(t('toast.copyfail'));
+        });
+      });
+    }
   }
 
   /* --------------------------------------------------------------- offres */

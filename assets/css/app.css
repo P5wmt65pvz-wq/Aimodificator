@@ -510,3 +510,23 @@ select {
   body { background: #fff; color: #000; }
   #output { border: 0; background: #fff; max-height: none; }
 }
+
+/* ------------------------------------------------------ liste de diffusion */
+.liste { margin-top: 72px; scroll-margin-top: 90px; }
+.liste-box {
+  padding: 22px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  display: grid; gap: 13px; justify-items: start; max-width: 62ch;
+}
+.liste-box .btn-primary { text-decoration: none; }
+.liste-direct {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 9px; font-size: .88rem;
+}
+.liste-direct code {
+  font-family: var(--mono); font-size: .86rem; color: var(--text);
+  padding: 5px 9px; background: var(--surface-2);
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  word-break: break-all;
+}
+.liste-honest, .liste-local { font-size: .84rem; line-height: 1.55; }
+.liste-local { color: var(--muted); }
