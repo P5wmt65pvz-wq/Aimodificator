@@ -5,6 +5,7 @@ import { createRequire } from 'node:module';
 
 const require = createRequire(import.meta.url);
 const E = require('../outils/empreinte/empreinte.js');
+const I18N = require('../outils/empreinte/empreinte.i18n.js');
 
 const f = (level, exposed) => ({ level, exposed });
 
@@ -53,10 +54,53 @@ test('le hachage est stable et sans collision sur des entrées proches', () => {
   assert.match(E.shortHash('x'), /^[0-9a-f]{8}$/);
 });
 
-test('chaque conseil a un titre et une explication', () => {
-  assert.ok(E.ADVICE.length >= 4);
-  for (const [titre, texte] of E.ADVICE) {
-    assert.ok(titre && titre.length > 5, 'titre trop court');
-    assert.ok(texte && texte.length > 40, `explication trop courte : ${titre}`);
+test('chaque conseil a un titre et une explication, dans les deux langues', () => {
+  for (const lang of ['fr', 'en']) {
+    const liste = E.conseils(lang);
+    assert.ok(liste.length >= 4, `${lang} : trop peu de conseils`);
+    for (const [titre, texte] of liste) {
+      assert.ok(titre && titre.length > 5, `${lang} : titre trop court`);
+      assert.ok(texte && texte.length > 40, `${lang} : explication trop courte — ${titre}`);
+      assert.ok(!titre.includes('advice.'), `${lang} : clé non traduite — ${titre}`);
+    }
+  }
+  assert.notDeepEqual(E.conseils('fr'), E.conseils('en'), 'les deux langues sont identiques');
+});
+
+/* Quelques fragments s'écrivent réellement de la même façon dans les deux
+   langues. Les lister explicitement vaut mieux qu'affaiblir la règle : toute
+   nouvelle coïncidence devra être justifiée ici. */
+const IDENTIQUES_LEGITIMES = new Set(['f.touch.points']);
+
+test('tout le texte visible existe dans les deux langues', () => {
+  const parcourir = (noeud, chemin = []) => {
+    if (noeud && typeof noeud === 'object' && 'fr' in noeud && 'en' in noeud) {
+      assert.ok(noeud.fr && noeud.fr.length > 1, `${chemin.join('.')} : français vide`);
+      assert.ok(noeud.en && noeud.en.length > 1, `${chemin.join('.')} : anglais vide`);
+      const cle = chemin.join('.');
+      if (!IDENTIQUES_LEGITIMES.has(cle)) {
+        assert.notEqual(noeud.fr, noeud.en, `${cle} : traduction absente, les deux textes sont identiques`);
+      }
+      return 1;
+    }
+    if (noeud && typeof noeud === 'object') {
+      return Object.keys(noeud).reduce((n, k) => n + parcourir(noeud[k], chemin.concat(k)), 0);
+    }
+    return 0;
+  };
+  const n = parcourir(I18N.T);
+  assert.ok(n >= 40, `seulement ${n} textes bilingues trouvés`);
+});
+
+test('les verdicts et les niveaux sont traduits', () => {
+  for (const score of [0, 30, 50, 90]) {
+    const fr = E.verdictFor(score, 'fr'), en = E.verdictFor(score, 'en');
+    assert.equal(fr.key, en.key, 'le verdict ne doit pas dépendre de la langue');
+    assert.notEqual(fr.label, en.label, `score ${score} : libellé non traduit`);
+    assert.ok(!fr.label.includes('verdict.'), 'clé non résolue en français');
+    assert.ok(!en.label.includes('verdict.'), 'clé non résolue en anglais');
+  }
+  for (const n of ['high', 'mid', 'low', 'safe']) {
+    assert.notEqual(E.niveau(n, 'fr'), E.niveau(n, 'en'), `niveau ${n} non traduit`);
   }
 });

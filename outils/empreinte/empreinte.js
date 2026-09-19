@@ -12,6 +12,13 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   'use strict';
 
+  /* Les textes visibles vivent dans empreinte.i18n.js, partagé par la version
+     française et la version anglaise de la page. Dans le navigateur, ce
+     fichier est chargé avant celui-ci ; sous Node, on le require. */
+  var I18N = (typeof EmpreinteI18n !== 'undefined') ? EmpreinteI18n
+           : (typeof require === 'function' ? require('./empreinte.i18n.js') : null);
+  function S(cle, lang) { return I18N ? I18N.t(cle, lang) : cle; }
+
   /* ------------------------------------------------------------- notation */
 
   /* Chaque signal porte un poids : combien il réduit le nombre de personnes
@@ -29,35 +36,13 @@
     return Math.max(0, Math.min(100, Math.round(total)));
   }
 
-  function verdictFor(score) {
-    if (score >= 70) return {
-      key: 'critical',
-      label: 'Vous êtes très probablement identifiable de façon unique.',
-      explain: 'La combinaison de ces éléments suffit à vous reconnaître d\'un site à l\'autre, ' +
-               'même sans cookie, même en navigation privée, même après avoir changé d\'adresse IP. ' +
-               'C\'est exactement ce que font les régies publicitaires et les traqueurs.',
-      color: 'var(--critical)'
-    };
-    if (score >= 45) return {
-      key: 'serious',
-      label: 'Vous êtes reconnaissable dans un groupe restreint.',
-      explain: 'Vous ne sortez pas complètement du lot, mais assez de signaux vous distinguent pour ' +
-               'qu\'un recoupement sur plusieurs visites permette de vous suivre.',
-      color: 'var(--serious)'
-    };
-    if (score >= 22) return {
-      key: 'warning',
-      label: 'Empreinte modérée — vous vous fondez partiellement dans la masse.',
-      explain: 'Une partie des signaux les plus révélateurs est bloquée ou indisponible. ' +
-               'Vous restez suivable, mais avec nettement moins de fiabilité.',
-      color: 'var(--warning)'
-    };
+  function verdictFor(score, lang) {
+    var cle = score >= 70 ? 'critical' : score >= 45 ? 'serious' : score >= 22 ? 'warning' : 'good';
     return {
-      key: 'good',
-      label: 'Empreinte faible — vous ressemblez à beaucoup de monde.',
-      explain: 'Les signaux les plus identifiants sont indisponibles ou neutralisés. ' +
-               'C\'est le comportement d\'un navigateur qui résiste au pistage.',
-      color: 'var(--good)'
+      key: cle,
+      label: S('verdict.' + cle + '.label', lang),
+      explain: S('verdict.' + cle + '.explain', lang),
+      color: 'var(--' + cle + ')'
     };
   }
 
@@ -133,8 +118,9 @@
     return found;
   }
 
-  function collect() {
+  function collect(lang) {
     var nav = navigator, scr = screen;
+    var f = function (cle) { return S('f.' + cle, lang); };
     var canvas = safe(canvasPrint, null);
     var gl = safe(webglInfo, null);
     var fonts = safe(detectFonts, []);
@@ -142,149 +128,114 @@
     var tz = safe(function () { return Intl.DateTimeFormat().resolvedOptions().timeZone; }, null);
     var conn = safe(function () { return nav.connection && nav.connection.effectiveType; }, null);
     var dnt = safe(function () {
-      if (nav.globalPrivacyControl) return 'Global Privacy Control activé';
+      if (nav.globalPrivacyControl) return f('dnt.gpc');
       var v = nav.doNotTrack || window.doNotTrack;
-      return (v === '1' || v === 'yes') ? 'Do Not Track activé' : null;
+      return (v === '1' || v === 'yes') ? f('dnt.dnt') : null;
     }, null);
 
     return [
       {
         id: 'canvas', level: 'high', exposed: !!canvas,
-        title: 'Empreinte de rendu graphique (canvas)',
-        value: canvas ? canvas + ' — identifiant dérivé du rendu' : 'Bloquée ou indisponible',
-        note: canvas
-          ? 'Votre machine dessine un texte de façon très légèrement différente des autres, à cause du ' +
-            'système, des pilotes et des polices. Le résultat sert d\'identifiant. C\'est l\'un des signaux ' +
-            'les plus utilisés par les traqueurs, et il survit à la navigation privée.'
-          : 'Votre navigateur bloque cette lecture ou renvoie un résultat brouillé. C\'est une bonne nouvelle : ' +
-            'c\'est le signal le plus identifiant.'
+        title: f('canvas.t'),
+        value: canvas ? canvas + f('canvas.suffix') : f('canvas.off'),
+        note: canvas ? f('canvas.nOn') : f('canvas.nOff')
       },
       {
         id: 'fonts', level: 'high', exposed: fonts.length > 6,
-        title: 'Polices installées',
-        value: fonts.length ? fonts.length + ' détectées : ' + fonts.slice(0, 12).join(', ') + (fonts.length > 12 ? '…' : '') : 'Aucune détectée',
-        note: fonts.length > 6
-          ? 'La liste exacte des polices de votre machine est presque une signature : elle dépend de votre ' +
-            'système, des logiciels installés, de votre langue. Peu de gens ont exactement la même.'
-          : 'Peu de polices détectables, ce qui rend ce signal peu utile pour vous distinguer.'
+        title: f('fonts.t'),
+        value: fonts.length
+          ? fonts.length + f('fonts.count') + fonts.slice(0, 12).join(', ') + (fonts.length > 12 ? '\u2026' : '')
+          : f('fonts.none'),
+        note: fonts.length > 6 ? f('fonts.nOn') : f('fonts.nOff')
       },
       {
         id: 'webgl', level: 'high', exposed: !!(gl && gl.renderer),
-        title: 'Carte graphique',
-        value: gl && gl.renderer ? String(gl.renderer) : 'Masquée ou indisponible',
-        note: gl && gl.renderer
-          ? 'Le modèle exact de votre carte graphique est lisible. Combiné au système et à la résolution, ' +
-            'cela restreint fortement le nombre de personnes correspondantes.'
-          : 'Le modèle de votre carte graphique n\'est pas exposé. Un point de moins pour vous identifier.'
+        title: f('webgl.t'),
+        value: gl && gl.renderer ? String(gl.renderer) : f('webgl.off'),
+        note: gl && gl.renderer ? f('webgl.nOn') : f('webgl.nOff')
       },
       {
         id: 'ua', level: 'mid', exposed: true,
-        title: 'Navigateur et système',
-        value: safe(function () { return nav.userAgent; }, 'inconnu'),
-        note: 'Envoyé à chaque requête, par construction. Version du navigateur, du système, parfois du modèle ' +
-              'd\'appareil. Impossible à supprimer complètement, mais certains navigateurs le simplifient.'
+        title: f('ua.t'),
+        value: safe(function () { return nav.userAgent; }, f('ua.unknown')),
+        note: f('ua.n')
       },
       {
         id: 'screen', level: 'mid', exposed: true,
-        title: 'Écran',
+        title: f('screen.t'),
         value: safe(function () {
-          return scr.width + '×' + scr.height + ' px · densité ' + (window.devicePixelRatio || 1) +
-                 ' · ' + scr.colorDepth + ' bits de couleur';
-        }, 'inconnu'),
-        note: 'La taille exacte de l\'écran et la densité de pixels forment une combinaison peu partagée, ' +
-              'surtout sur ordinateur où les résolutions varient beaucoup.'
+          return scr.width + '\u00d7' + scr.height + f('screen.density') + (window.devicePixelRatio || 1) +
+                 ' \u00b7 ' + scr.colorDepth + f('screen.bits');
+        }, f('screen.unknown')),
+        note: f('screen.n')
       },
       {
         id: 'hardware', level: 'mid', exposed: safe(function () { return !!nav.hardwareConcurrency; }, false),
-        title: 'Puissance de la machine',
+        title: f('hardware.t'),
         value: safe(function () {
           var parts = [];
-          if (nav.hardwareConcurrency) parts.push(nav.hardwareConcurrency + ' cœurs processeur');
-          if (nav.deviceMemory) parts.push(nav.deviceMemory + ' Go de mémoire (approximatif)');
-          return parts.length ? parts.join(' · ') : 'Non exposée';
-        }, 'Non exposée'),
-        note: 'Le nombre de cœurs et la mémoire disponible sont lisibles sans permission. ' +
-              'Pris isolément c\'est peu, combiné au reste c\'est un filtre de plus.'
+          if (nav.hardwareConcurrency) parts.push(nav.hardwareConcurrency + f('hardware.cores'));
+          if (nav.deviceMemory) parts.push(nav.deviceMemory + f('hardware.memory'));
+          return parts.length ? parts.join(' \u00b7 ') : f('hardware.off');
+        }, f('hardware.off')),
+        note: f('hardware.n')
       },
       {
         id: 'timezone', level: 'low', exposed: !!tz,
-        title: 'Fuseau horaire',
-        value: tz || 'inconnu',
-        note: 'Révèle votre zone géographique indépendamment de votre adresse IP. ' +
-              'Un VPN qui vous place à l\'étranger alors que votre fuseau reste français est d\'ailleurs ' +
-              'une incohérence facilement détectable.'
+        title: f('timezone.t'),
+        value: tz || f('timezone.unknown'),
+        note: f('timezone.n')
       },
       {
         id: 'lang', level: 'low', exposed: !!langs,
-        title: 'Langues préférées',
-        value: langs || 'inconnu',
-        note: 'L\'ordre exact de vos langues préférées est plus révélateur qu\'il n\'y paraît : ' +
-              'une liste inhabituelle réduit beaucoup le groupe auquel vous appartenez.'
+        title: f('lang.t'),
+        value: langs || f('lang.unknown'),
+        note: f('lang.n')
       },
       {
         id: 'touch', level: 'low', exposed: true,
-        title: 'Type d\'appareil',
+        title: f('touch.t'),
         value: safe(function () {
-          var t = nav.maxTouchPoints || 0;
-          return (t > 0 ? 'Tactile (' + t + ' points)' : 'Non tactile') +
-                 ' · plateforme annoncée : ' + (nav.platform || 'inconnue');
-        }, 'inconnu'),
-        note: 'Permet de séparer immédiatement téléphone, tablette et ordinateur.'
+          var n = nav.maxTouchPoints || 0;
+          return (n > 0 ? f('touch.touch') + n + f('touch.points') : f('touch.noTouch')) +
+                 f('touch.platform') + (nav.platform || f('touch.unknown'));
+        }, f('touch.unknown')),
+        note: f('touch.n')
       },
       {
         id: 'conn', level: 'low', exposed: !!conn,
-        title: 'Type de connexion',
-        value: conn ? 'Estimée : ' + conn : 'Non exposée',
-        note: conn
-          ? 'Votre navigateur communique une estimation de la qualité de votre connexion.'
-          : 'Votre navigateur ne communique pas ce renseignement.'
+        title: f('conn.t'),
+        value: conn ? f('conn.est') + conn : f('conn.off'),
+        note: conn ? f('conn.nOn') : f('conn.nOff')
       },
       {
         id: 'prefs', level: 'low', exposed: true,
-        title: 'Préférences d\'affichage',
+        title: f('prefs.t'),
         value: safe(function () {
           var m = function (q) { return window.matchMedia && window.matchMedia(q).matches; };
-          var out = [];
-          out.push(m('(prefers-color-scheme: dark)') ? 'thème sombre' : 'thème clair');
-          if (m('(prefers-reduced-motion: reduce)')) out.push('animations réduites');
-          if (m('(prefers-contrast: more)')) out.push('contraste renforcé');
-          return out.join(' · ');
-        }, 'inconnues'),
-        note: 'Vos réglages d\'accessibilité et d\'affichage sont lisibles. Les réglages peu courants — ' +
-              'contraste renforcé, animations coupées — sont paradoxalement très identifiants.'
+          var out = [m('(prefers-color-scheme: dark)') ? f('prefs.dark') : f('prefs.light')];
+          if (m('(prefers-reduced-motion: reduce)')) out.push(f('prefs.reduced'));
+          if (m('(prefers-contrast: more)')) out.push(f('prefs.contrast'));
+          return out.join(' \u00b7 ');
+        }, f('prefs.unknown')),
+        note: f('prefs.n')
       },
       {
         id: 'dnt', level: 'low', exposed: !dnt,
-        title: 'Signal de refus du pistage',
-        value: dnt || 'Aucun signal envoyé',
-        note: dnt
-          ? 'Vous envoyez un signal demandant de ne pas être pisté. En France, le Global Privacy Control ' +
-            'n\'oblige pas juridiquement les sites ; la plupart l\'ignorent.'
-          : 'Vous n\'envoyez aucun signal de refus. À noter : activer ce signal vous rend légèrement plus ' +
-            'identifiable, puisque peu de gens le font.'
+        title: f('dnt.t'),
+        value: dnt || f('dnt.none'),
+        note: dnt ? f('dnt.nOn') : f('dnt.nOff')
       }
     ];
   }
 
   /* --------------------------------------------------------------- rendu */
 
-  var ADVICE = [
-    ['Installer uBlock Origin',
-     'Un bloqueur de contenus sérieux coupe la majorité des traqueurs avant qu\'ils ne se chargent. ' +
-     'C\'est de loin l\'action avec le meilleur rapport effort/résultat. Gratuit et libre.'],
-    ['Utiliser un navigateur qui résiste au pistage',
-     'Firefox avec la protection renforcée, Brave, ou le Navigateur Tor pour les cas sensibles. ' +
-     'Ils brouillent l\'empreinte canvas et limitent les lectures matérielles — ce qu\'un VPN ne fait pas.'],
-    ['Ne pas multiplier les extensions',
-     'Chaque extension visible depuis la page ajoute un signal. Une combinaison rare d\'extensions ' +
-     'vous rend plus reconnaissable, pas moins. Moins, mais mieux choisies.'],
-    ['Comprendre ce que la navigation privée ne fait pas',
-     'Elle efface l\'historique et les cookies à la fermeture. Elle ne change strictement rien à votre ' +
-     'empreinte : tout ce qui est listé plus haut reste lisible à l\'identique.'],
-    ['Cloisonner plutôt que cacher',
-     'Des profils de navigateur séparés — un pour les comptes personnels, un pour le reste — empêchent ' +
-     'de relier vos activités entre elles. C\'est plus efficace que de chercher l\'invisibilité.']
-  ];
+  /* Les conseils viennent de la table partagée, dans la langue de la page. */
+  function conseils(lang) {
+    var l = lang === 'en' ? 'en' : 'fr';
+    return (I18N ? I18N.T.advice : []).map(function (a) { return [a.t[l], a.b[l]]; });
+  }
 
   function el(tag, cls, text) {
     var e = document.createElement(tag);
@@ -293,11 +244,11 @@
     return e;
   }
 
-  var LEVEL_LABEL = { high: 'très révélateur', mid: 'révélateur', low: 'peu révélateur' };
+  function niveau(cle, lang) { return S('level.' + cle, lang); }
 
-  function render(findings) {
+  function render(findings, lang) {
     var score = scoreFrom(findings);
-    var v = verdictFor(score);
+    var v = verdictFor(score, lang);
 
     document.getElementById('score').textContent = String(score);
     var fill = document.getElementById('gauge-fill');
@@ -315,7 +266,7 @@
       var top = el('div', 'card-top');
       top.appendChild(el('h3', null, f.title));
       top.appendChild(el('span', 'tag ' + (f.exposed ? f.level : 'low'),
-        f.exposed ? LEVEL_LABEL[f.level] : 'protégé'));
+        f.exposed ? niveau(f.level, lang) : niveau('safe', lang)));
       card.appendChild(top);
       card.appendChild(el('div', 'value', f.value));
       card.appendChild(el('p', null, f.note));
@@ -324,7 +275,7 @@
 
     var steps = document.getElementById('steps');
     steps.innerHTML = '';
-    ADVICE.forEach(function (a) {
+    conseils(lang).forEach(function (a) {
       var li = document.createElement('li');
       li.appendChild(el('b', null, a[0]));
       li.appendChild(el('span', null, a[1]));
@@ -367,7 +318,8 @@
   function boot() {
     var start = function () {
       bindTheme();
-      render(collect());
+      var lang = (document.documentElement.getAttribute('lang') || 'fr').indexOf('en') === 0 ? 'en' : 'fr';
+      render(collect(lang), lang);
       bindFilters();
     };
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
@@ -379,7 +331,8 @@
     verdictFor: verdictFor,
     shortHash: shortHash,
     WEIGHTS: WEIGHTS,
-    ADVICE: ADVICE,
+    conseils: conseils,
+    niveau: niveau,
     boot: boot
   };
 });

@@ -216,3 +216,12 @@ h2 { font-size: clamp(1.25rem, 2.6vw, 1.6rem); letter-spacing: -.015em; }
   .verdict { padding: 20px; }
   .gauge-num { font-size: 2.4rem; }
 }
+
+/* ------------------------------------------------- bascule de langue */
+.header-tools { display: flex; align-items: center; gap: 9px; }
+.lang-link {
+  padding: 8px 13px; border-radius: 10px; text-decoration: none;
+  font-size: .84rem; font-weight: 600; color: var(--text-2);
+  background: var(--surface); border: 1px solid var(--border);
+}
+.lang-link:hover { border-color: var(--border-strong); color: var(--text); }
