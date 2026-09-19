@@ -205,6 +205,7 @@
     'method.c9.t': { fr: 'Une règle pour ce qui manque', en: 'A rule for what is missing' },
     'method.c9.b': { fr: 'Plutôt que d\'inventer ou de bloquer, le modèle pose l\'hypothèse la plus raisonnable et vous la signale. Vous gardez le contrôle.', en: 'Rather than inventing or stalling, the model takes the most reasonable assumption and flags it. You stay in control.' },
 
+    'nav.examples': { fr: 'Exemples', en: 'Examples' },
     'nav.offers': { fr: 'Soutenir', en: 'Support' },
 
     'offers.title': { fr: 'Soutenir l\'atelier', en: 'Support the workshop' },
