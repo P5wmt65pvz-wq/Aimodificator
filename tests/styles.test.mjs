@@ -136,3 +136,14 @@ test('chaque page traduite se déclare et pointe vers son équivalent', () => {
       `${origine.id} : ne renvoie pas vers sa version ${p.lang}`);
   }
 });
+
+test('la vérification Google Search Console est en place sur l\'accueil', () => {
+  /* Sans cette balise, la propriété se dé-vérifie : Google cesse de remonter
+     les erreurs d'indexation et le sitemap n'est plus suivi. Elle doit rester
+     sur la page racine, qui est l'adresse déclarée comme propriété. */
+  const accueil = readFileSync(path.join(BASE, 'index.html'), 'utf8');
+  const m = accueil.match(/<meta name="google-site-verification" content="([^"]+)"/);
+  assert.ok(m, 'balise de vérification absente de index.html');
+  assert.ok(m[1].length >= 20, `jeton de vérification suspect : « ${m[1]} »`);
+  assert.doesNotMatch(m[1], /^(XXX|TODO|votre|your)/i, 'jeton d\'exemple laissé en place');
+});
