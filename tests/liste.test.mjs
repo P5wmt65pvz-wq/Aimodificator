@@ -72,3 +72,46 @@ test('la section ne contient aucun formulaire ni aucune adresse en dur', () => {
   assert.doesNotMatch(section[0], />[^<>{}\n]*[a-zà-ÿ]{4,}[^<>{}\n]*</i,
     'du texte est écrit en dur au lieu de passer par data-i18n');
 });
+
+/* Les pages d'outils portent le lien d'inscription en clair : elles n'ont pas
+   d'i18n et un lien posé par script serait mort sans JavaScript. L'adresse peut
+   donc y dériver — ce test l'interdit. La source de vérité reste liste.js. */
+test('tout lien d\'inscription écrit dans une page correspond à liste.js', () => {
+  const PAGES = [
+    ['outils/photo/index.html', 'fr'], ['outils/passe/index.html', 'fr'],
+    ['outils/clause/index.html', 'fr'], ['outils/abonnements/index.html', 'fr'],
+    ['outils/empreinte/index.html', 'fr'], ['en/fingerprint/index.html', 'en']
+  ];
+  let trouves = 0;
+  for (const [f, lang] of PAGES) {
+    const html = readFileSync(path.join(BASE, f), 'utf8');
+    const liens = html.match(/mailto:[^"']+/g) || [];
+    assert.ok(liens.length > 0, `${f} : aucun lien d'inscription`);
+    for (const lien of liens) {
+      assert.equal(lien, liste.mailto(lang),
+        `${f} : le lien a dérivé de liste.js → ${lien}`);
+      trouves++;
+    }
+  }
+  assert.ok(trouves >= PAGES.length, 'moins de liens trouvés que de pages');
+});
+
+/* Un lien d'inscription doit annoncer ce à quoi on s'inscrit, sinon il est
+   trompeur. Même exigence que pour la section de l'accueil. */
+test('chaque page annonce la fréquence, l\'usage et le moyen de partir', () => {
+  const PAGES = [
+    ['outils/photo/index.html', /mois/, /revendue|transmise/, /stop/],
+    ['outils/passe/index.html', /mois/, /revendue|transmise/, /stop/],
+    ['outils/clause/index.html', /mois/, /revendue|transmise/, /stop/],
+    ['outils/abonnements/index.html', /mois/, /revendue|transmise/, /stop/],
+    ['outils/empreinte/index.html', /mois/, /revendue|transmise/, /stop/],
+    ['en/fingerprint/index.html', /month/, /sold|shared/, /stop/]
+  ];
+  for (const [f, freq, usage, sortie] of PAGES) {
+    const bloc = readFileSync(path.join(BASE, f), 'utf8').match(/<h2>[^<]*<\/h2>\s*<p>[\s\S]*?mailto:[\s\S]*?<\/p>/);
+    assert.ok(bloc, `${f} : bloc d'inscription introuvable`);
+    assert.match(bloc[0], freq, `${f} : fréquence non annoncée`);
+    assert.match(bloc[0], usage, `${f} : usage de l'adresse non précisé`);
+    assert.match(bloc[0], sortie, `${f} : désinscription non expliquée`);
+  }
+});
