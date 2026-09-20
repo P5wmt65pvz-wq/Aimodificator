@@ -27,7 +27,11 @@ pas de serveur.
 - `MONETISATION.md` — comment encaisser, et ce qui bloque
 - `ACTIVER-PAIEMENT.md` — la marche à suivre pour le titulaire du compte de
   paiement, le jour venu
-- `OUTILS.md` — feuille de route des outils, source de vérité
+- `OUTILS.md` — feuille de route des outils, source de vérité sur ce qui
+  se construit
+- `DISTRIBUTION.md` — feuille de route de la distribution : comment le site
+  est trouvé et comment une vente devient possible. Ses priorités passent
+  avant l'ordre de construction d'`OUTILS.md`
 
 ## Règles
 

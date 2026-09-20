@@ -1,6 +1,10 @@
 # Feuille de route — suite d'outils
 
-> **Construction en cours.** Prochain outil à construire : voir l'ordre de
+> **La distribution passe avant la construction.** Lire `DISTRIBUTION.md` :
+> ses points 1 à 3 passent avant l'ordre de construction de ce fichier. Un
+> outil de plus ne remplace pas un lecteur de plus.
+>
+> Une fois ces points traités : prochain outil à construire, voir l'ordre de
 > construction en bas de ce fichier.
 
 ## Le positionnement
