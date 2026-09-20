@@ -57,6 +57,36 @@
   --critical-ink: #b82c2c;
 }
 
+
+/* Texte grossi : un lecteur qui double la taille des caractères ne rétrécit
+   pas sa fenêtre. Les seuils en pixels ne se déclenchent donc pas, et tout ce
+   qui ne sait ni couper un mot ni passer à la ligne sort de l'écran. */
+h1, h2, h3, h4, h5, h6, p, li, td, th, summary, label, dt, dd, figcaption,
+.lede, .tag, .etiq, .verdict, .brand-text, .card, .card-top {
+  overflow-wrap: break-word;
+}
+/* Césure. Là où le navigateur embarque un dictionnaire pour la langue
+   déclarée par l'attribut lang, il coupe aux syllabes avec un trait d'union
+   — « anonyme- / ment » au lieu de « anonymem / ent ». Là où il n'en a pas,
+   cette ligne ne fait rien : vérifié, le Chromium de nos contrôles n'a pas
+   de dictionnaire français et ne coupe rien de lui-même.
+
+   C'est donc un bonus, pas une garantie. Ce qui est garanti, et mesuré, c'est
+   la règle du dessus : overflow-wrap empêche le débordement dans tous les
+   cas, avec ou sans dictionnaire. */
+h1, h2, h3, .lede, p, li {
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
+/* Ni dans du code, ni dans un champ : une césure y changerait le sens. */
+code, pre, kbd, samp, input, textarea, .mono, [class*="mono"] {
+  -webkit-hyphens: none;
+  hyphens: none;
+}
+.card-top { flex-wrap: wrap; }
+.card-top > * { min-width: 0; }
+.tag { max-width: 100%; }
+
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]):not([data-theme="light"]) {
     color-scheme: light;
@@ -109,8 +139,11 @@ main, .site-header, .site-footer {
 .site-header {
   display: flex; align-items: center; justify-content: space-between;
   gap: 16px; padding-top: 18px; padding-bottom: 18px;
+  flex-wrap: wrap;
 }
-.brand { display: flex; align-items: center; gap: 11px; text-decoration: none; color: inherit; }
+.brand { display: flex; align-items: center; gap: 11px; text-decoration: none; color: inherit;
+  min-width: 0;
+}
 .brand-mark {
   display: grid; place-items: center; width: 38px; height: 38px; flex: none;
   border-radius: 10px; background: var(--accent-soft); color: var(--accent);
@@ -195,7 +228,12 @@ h2 { font-size: clamp(1.25rem, 2.6vw, 1.6rem); letter-spacing: -.015em; }
 .card p { color: var(--text-2); font-size: .85rem; }
 
 /* ------------------------------------------------------------------ advice */
-.steps { list-style: none; counter-reset: s; display: grid; gap: 12px; margin-top: 18px; }
+.steps { list-style: none; counter-reset: s; display: grid;
+  /* Une colonne « auto » se dimensionne sur son contenu : à texte doublé,
+     elle passait à 391 px dans un cadre de 358. minmax(0, 1fr) la borne
+     au conteneur. Le mot le plus long ne faisant que 130 px, ce n'était
+     pas un mot insécable : c'était la grille elle-même. */
+  grid-template-columns: minmax(0, 1fr); gap: 12px; margin-top: 18px; }
 .steps li {
   counter-increment: s; position: relative; padding: 16px 18px 16px 56px;
   background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
