@@ -78,6 +78,13 @@ test('chaque page déclare ses couleurs pour les deux thèmes', () => {
   }
 });
 
+/* Domaines vers lesquels une page peut poser un lien cliquable. Le dépôt
+   lui-même, et les sources officielles qu'une page de contenu doit pouvoir
+   citer. Rien d'autre : pas de blog, pas d'agrégateur, pas de source qui
+   pourrait disparaître ou changer d'avis. */
+const LIENS_SORTANTS_AUTORISES =
+  /^https:\/\/(?:github\.com\/|p5wmt65pvz-wq\.github\.io\/|www\.cnil\.fr\/|www\.service-public\.fr\/|entreprendre\.service-public\.fr\/|www\.legifrance\.gouv\.fr\/)/;
+
 test('chaque page a les balises indispensables et aucune ressource externe', () => {
   for (const p of PAGES) {
     assert.ok(existsSync(path.join(p.dir, 'index.html')), `${p.id} : index.html manquant`);
@@ -86,8 +93,24 @@ test('chaque page a les balises indispensables et aucune ressource externe', () 
     assert.match(h, /<meta name="description" content="[^"]{50,}"/, `${p.id} : description absente ou trop courte`);
     assert.match(h, /<link rel="canonical"/, `${p.id} : lien canonique absent`);
     assert.match(h, new RegExp(`<html lang="${p.lang}"`), `${p.id} : langue non déclarée ou incorrecte`);
-    for (const e of h.match(/(?:src|href)="https?:\/\/[^"]+"/g) || []) {
+    /* Une RESSOURCE externe est chargée par la page : elle déclenche une requête
+       réseau, ce que la règle 3 du dépôt interdit. Aucune exception. */
+    for (const e of h.match(/src="https?:\/\/[^"]+"/g) || []) {
       assert.ok(/github\.com|p5wmt65pvz-wq\.github\.io/.test(e), `${p.id} : ressource externe interdite → ${e}`);
+    }
+    /* Un LIEN sortant ne charge rien : il attend un clic, donc il ne viole pas la
+       règle 3. Il faut pouvoir en poser, sinon aucune source n'est citable et la
+       règle « aucune page de contenu sans source citable » (DISTRIBUTION.md)
+       devient intenable. La liste reste courte et volontairement composée de
+       sources officielles ou du dépôt lui-même : l'élargir est une décision, pas
+       une commodité. */
+    for (const e of h.match(/href="https?:\/\/[^"]+"/g) || []) {
+      const url = e.slice(6, -1);
+      assert.match(url, LIENS_SORTANTS_AUTORISES, `${p.id} : lien sortant non autorisé → ${url}`);
+      if (!/^https:\/\/p5wmt65pvz-wq\.github\.io\//.test(url)) {
+        const balise = h.match(new RegExp('<a[^>]*href="' + url.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '"[^>]*>'));
+        if (balise) assert.match(balise[0], /rel="noopener"/, `${p.id} : lien sortant sans rel="noopener" → ${url}`);
+      }
     }
     assert.doesNotMatch(h, /<(?:script|link rel="stylesheet")[^>]*="https?:/,
       `${p.id} : script ou style chargé depuis l'extérieur`);

@@ -81,6 +81,58 @@
   </section>
 
   <section class="explain">
+    <h2>Qu'y a-t-il vraiment dans une photo, à part l'image ?</h2>
+    <p>
+      Un fichier JPEG ne contient pas que des pixels. L'appareil y écrit aussi des blocs
+      d'information au moment du déclenchement, que les logiciels de retouche complètent
+      parfois ensuite. Ce sont les <b>métadonnées</b>, souvent appelées données EXIF.
+    </p>
+    <p>Cette page lit et affiche celles-ci, quand elles sont présentes :</p>
+    <ul>
+      <li><b>Position GPS exacte</b> — latitude, longitude, parfois altitude.</li>
+      <li><b>Date et heure de prise de vue</b>, à la seconde.</li>
+      <li><b>Appareil utilisé</b> et <b>objectif</b>.</li>
+      <li><b>Numéro de série ou propriétaire</b>, quand l'appareil l'inscrit.</li>
+      <li><b>Logiciel de retouche</b> passé sur le fichier.</li>
+      <li><b>Miniature intégrée</b> — une copie réduite de la photo, stockée à part.</li>
+      <li><b>Commentaires</b> et <b>bloc XMP</b>, deux emplacements de texte libre.</li>
+    </ul>
+    <p>
+      Lesquelles sont dans <em>vos</em> photos ? Ça dépend de votre appareil et de vos réglages,
+      et personne ne peut y répondre à votre place. Déposez-en une ci-dessus : vous verrez la
+      liste réelle, sur votre propre fichier.
+    </p>
+
+    <h2>Ce qu'une seule photo permet de déduire</h2>
+    <p>
+      Une photo prise chez vous porte les coordonnées de chez vous, à quelques mètres près.
+      Publiée, elle donne votre adresse à qui sait ouvrir un fichier — aucune compétence
+      particulière n'est nécessaire, l'information est écrite en clair dans le fichier.
+    </p>
+    <p>
+      L'heure exacte, répétée sur plusieurs photos, dessine des habitudes : quand vous partez,
+      quand vous rentrez, où vous allez le week-end. Et si votre appareil inscrit son numéro
+      de série, toutes les photos qui en proviennent peuvent être rattachées les unes aux
+      autres — y compris celles publiées sous des pseudonymes différents.
+    </p>
+    <p>
+      Rien de tout cela ne suppose un attaquant sophistiqué. Ce sont des champs de texte dans
+      un fichier, lisibles par n'importe quel logiciel — y compris cette page.
+    </p>
+
+    <h2>Les réseaux sociaux ne les effacent-ils pas déjà ?</h2>
+    <p>
+      Certains les retirent à la publication, d'autres non, et le comportement change selon
+      qu'on publie, qu'on envoie en message privé, qu'on joint le fichier à un courriel ou
+      qu'on le dépose dans un stockage partagé.
+    </p>
+    <p>
+      <b>Vous ne trouverez pas ici de tableau plateforme par plateforme.</b> Il serait faux
+      à la première mise à jour de l'une d'entre elles, et vous n'auriez aucun moyen de le
+      savoir. La seule règle qui ne dépend d'aucune plateforme : nettoyer le fichier avant
+      de l'envoyer, et vérifier plutôt que supposer.
+    </p>
+
     <h2>Pourquoi ce nettoyage ne dégrade pas votre photo</h2>
     <p>
       La plupart des outils « suppriment les données EXIF » en ré-encodant l'image : ils la
@@ -92,11 +144,19 @@
       exactement telles quelles. Votre photo nettoyée est <b>bit pour bit identique</b> à
       l'originale sur la partie image — seul le poids du fichier diminue.
     </p>
-    <h2>Ce que fait déjà votre téléphone</h2>
+    <h2>Pour aller plus loin</h2>
     <p>
-      Certains réseaux sociaux retirent les métadonnées à la publication, d'autres non, et
-      le comportement change selon qu'on envoie la photo par message, par courriel ou qu'on la
-      dépose dans un stockage partagé. Le seul moyen d'en être sûr est de nettoyer avant d'envoyer.
+      La CNIL, autorité française de protection des données, publie plusieurs pages sur les
+      photos et la géolocalisation :
+    </p>
+    <ul>
+      <li><a href="https://www.cnil.fr/fr/5-arguments-pour-rappeler-que-la-mise-en-ligne-dune-photo-de-votre-enfant-nest-pas-un-acte-anodin" rel="noopener">5 arguments pour rappeler que la mise en ligne d'une photo de votre enfant n'est pas un acte anodin</a></li>
+      <li><a href="https://www.cnil.fr/fr/geolocalisation-applications-mobiles-proteger-vos-donnees" rel="noopener">Géolocalisation et applications mobiles : comment protéger vos données ?</a></li>
+      <li><a href="https://www.cnil.fr/fr/applications-de-retouche-photo-les-conseils-de-la-cnil" rel="noopener">Applications de retouche photo : les conseils de la CNIL</a></li>
+    </ul>
+    <p class="muted">
+      Liens vers les pages officielles. Leur contenu peut évoluer : nous n'en recopions pas
+      d'extrait ici, pour ne pas faire vivre une version périmée.
     </p>
   </section>
 </main>
