@@ -21,6 +21,9 @@ pas de serveur.
   `npm run exemples` ; ne jamais l'écrire à la main, la régénérer après toute
   modification du moteur
 - `tools/` — les générateurs : page d'exemples, Pack Pro
+- `tools/verif/` — les contrôles dans Chromium (`npm run verif`), ce que
+  `npm test` ne peut pas voir : contraste, débordement, clavier, rendu.
+  Voir `tools/verif/LISEZ-MOI.md`
 - `MONETISATION.md` — comment encaisser, et ce qui bloque
 - `ACTIVER-PAIEMENT.md` — la marche à suivre pour le titulaire du compte de
   paiement, le jour venu

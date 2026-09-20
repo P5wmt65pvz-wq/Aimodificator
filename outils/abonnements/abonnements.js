@@ -120,17 +120,26 @@
   /* --------------------------------------------------------- présentation */
 
   function euros(n) {
-    if (!isFinite(n)) return '—';
+    /* isFinite() convertit son argument avant de tester : isFinite(null) rend
+       VRAI, parce que Number(null) vaut 0. Le garde-fou laissait donc passer
+       null, et la ligne suivante plantait. Number.isFinite() ne convertit
+       rien — c'est le seul qui tienne la promesse du nom. */
+    if (typeof n !== 'number' || !Number.isFinite(n)) return '—';
     return n.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €';
   }
 
   function dateCourte(d) {
-    if (!d) return '—';
+    /* Une date invalide est un objet, donc vraie : « !d » ne l'attrape pas,
+       et l'affichage montrerait « Invalid Date ». */
+    if (!d || !(d instanceof Date) || isNaN(d.getTime())) return '—';
     return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
   }
 
   function delai(jours) {
-    if (jours === null) return 'date inconnue';
+    if (jours === null || jours === undefined) return 'date inconnue';
+    /* NaN n'est égal à rien, pas même à lui-même : sans ce contrôle, il
+       traverserait toutes les comparaisons et donnerait « dans NaN jours ». */
+    if (typeof jours !== 'number' || Number.isNaN(jours)) return 'date inconnue';
     if (jours === 0) return "aujourd'hui";
     if (jours === 1) return 'demain';
     if (jours < 0) return 'date passée';

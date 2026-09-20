@@ -124,3 +124,41 @@ test('les montants sont affichés à la française', () => {
   assert.match(A.euros(1234.5), /1\s?234,50\s?€$/);
   assert.equal(A.euros(NaN), '—');
 });
+
+/* --------------------------------------------------------------------------
+   Garde-fous d'affichage. Les trois qui suivent étaient écrits, mais deux ne
+   gardaient rien : isFinite() et « !d » convertissent leur argument avant de
+   tester. Trouvés par fuzzing, pas à la lecture — le code avait l'air juste.
+   -------------------------------------------------------------------------- */
+
+test('euros() ne se laisse pas tromper par une valeur convertible en zéro', () => {
+  /* isFinite(null) rend VRAI, parce que Number(null) vaut 0. Le garde-fou
+     laissait donc passer null, et l'appel suivant plantait la page. */
+  for (const v of [null, undefined, NaN, Infinity, -Infinity, '', ' ', [], {}, '10']) {
+    assert.equal(A.euros(v), '—', `euros(${JSON.stringify(v)}) devrait refuser`);
+  }
+  assert.equal(A.euros(0), '0,00 €');
+  assert.equal(A.euros(9.99), '9,99 €');
+  assert.equal(A.euros(1234.5), '1 234,50 €'.replace(' ', ' '));
+});
+
+test('dateCourte() refuse une date invalide au lieu d’écrire « Invalid Date »', () => {
+  /* Une date invalide reste un objet, donc une valeur vraie : « !d » ne
+     l'attrape pas. */
+  for (const v of [null, undefined, new Date('n’importe quoi'), 'zzz', 0, {}]) {
+    assert.equal(A.dateCourte(v), '—', `dateCourte(${String(v)}) devrait refuser`);
+  }
+  assert.match(A.dateCourte(new Date('2026-03-15T00:00:00Z')), /15 mars 2026/);
+});
+
+test('delai() ne peut pas afficher « dans NaN jours »', () => {
+  /* NaN n'est égal à rien, pas même à lui-même : sans contrôle explicite il
+     traverse toutes les comparaisons et ressort dans le texte affiché. */
+  for (const v of [null, undefined, NaN, '7', {}, []]) {
+    assert.equal(A.delai(v), 'date inconnue', `delai(${String(v)}) devrait refuser`);
+  }
+  assert.equal(A.delai(0), "aujourd'hui");
+  assert.equal(A.delai(1), 'demain');
+  assert.equal(A.delai(5), 'dans 5 jours');
+  assert.equal(A.delai(-3), 'date passée');
+});
