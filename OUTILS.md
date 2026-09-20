@@ -57,7 +57,7 @@ traitable sans serveur.
 
 | # | Outil | Ce qu'il fait | État |
 |---|---|---|---|
-| 11 | **Abonnements** | Recensez vos abonnements : coût annuel réel, prochaine reconduction, alerte avant la date. Stocké dans votre navigateur uniquement. | à faire |
+| 11 | **Abonnements** | Recensez vos abonnements : coût annuel réel, prochaine reconduction, alerte avant la date. Stocké dans votre navigateur uniquement. | ✅ en ligne |
 | 12 | **Résiliation** | Génère la lettre de résiliation correcte selon le type de contrat. **Toute référence juridique doit être vérifiée et sourcée dans la page — ne rien citer de mémoire.** | à faire |
 | 13 | **Vrai prix** | Le coût réel d'un abonnement sur 1, 3 et 5 ans, comparé à l'achat unique équivalent. | à faire |
 | 14 | **Engagement** | Décryptage d'une offre : ce que « sans engagement », « offre découverte » et « préavis » veulent dire concrètement. Sourcé. | à faire |
@@ -92,7 +92,7 @@ source citable.**
 
 ## Ordre de construction
 
-11 → 4 → 16 → 7 → 12 → 6 → 9 → 5 → 13 → 21 → 8 → 17 → 24 → 10 → puis le reste du tableau.
+4 → 16 → 7 → 12 → 6 → 9 → 5 → 13 → 21 → 8 → 17 → 24 → 10 → puis le reste du tableau.
 
 L'outil 2 (**Photo propre**) est prioritaire : le plus démonstratif, le plus
 partageable, et il renforce le même thème que l'outil 1.
