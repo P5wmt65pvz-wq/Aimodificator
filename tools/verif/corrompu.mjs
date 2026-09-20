@@ -42,6 +42,7 @@ const CIBLES = [
   ['/outils/clause/', 'clause.theme'],
   ['/outils/photo/', 'photo.theme'],
   ['/outils/empreinte/', 'empreinte.theme'],
+  ['/outils/vrai-prix/', 'vraiprix.theme'],
 ];
 
 for (const [url, cle] of CIBLES) {

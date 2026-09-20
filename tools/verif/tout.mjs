@@ -12,11 +12,11 @@ import path from 'node:path';
 const ICI = import.meta.dirname;
 
 const SUITES = [
-  ['fuzz',      'entrées hostiles sur les six moteurs',              false],
-  ['audit',     'les 8 pages : titres, liens, sitemap, doublons',    true],
+  ['fuzz',      'entrées hostiles sur les sept moteurs',              false],
+  ['audit',     'les 9 pages : titres, liens, sitemap, doublons',    true],
   ['contraste', 'contraste de chaque texte, deux thèmes',            true],
   ['a11y',      'clavier, structure, 320 px, texte doublé',          true],
-  ['corrompu',  'stockage local abîmé sur six pages',                true],
+  ['corrompu',  'stockage local abîmé sur sept pages',                true],
   ['accueil',   'toutes les options, 250 combinaisons, injections',  true],
   ['passe',     'Passe de bout en bout, deux thèmes',                true]
 ];

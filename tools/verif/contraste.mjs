@@ -27,6 +27,14 @@ async function reveler(page, url) {
     await tape('#depart', d);
     await clic('#ajout button[type=submit]');
     await page.evaluate(() => { const f = document.getElementById('ajout'); if (f) f.requestSubmit ? f.requestSubmit() : f.dispatchEvent(new Event('submit', {bubbles:true, cancelable:true})); });
+  } else if (url.includes('vrai-prix')) {
+    /* Les deux couleurs de verdict n'existent qu'une fois le calcul fait, et
+       elles sont opposées : rouge quand l'abonnement dépasse l'achat, vert
+       quand il ne le rattrape pas. Les deux états sont parcourus. */
+    await tape('#prix', '9,99'); await tape('#achat', '249');
+    await page.waitForTimeout(60);
+    await tape('#achat', '999999');
+    await page.waitForTimeout(60);
   } else if (url.includes('clause')) {
     await tape('#texte', 'Nous pouvons vendre vos données à des partenaires commerciaux. Vos données sont conservées sans limitation de durée et transférées hors de l\u2019Union européenne. En poursuivant votre navigation, vous consentez à ce traitement. Nous nous réservons le droit de modifier cette politique à tout moment sans vous en informer.');
     await page.waitForTimeout(120);

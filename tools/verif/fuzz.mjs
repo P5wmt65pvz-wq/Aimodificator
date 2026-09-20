@@ -24,6 +24,7 @@ const PHO = require(path.join(RACINE, 'outils/photo/photo.js'));
 const CLA = require(path.join(RACINE, 'outils/clause/clause.js'));
 const ABO = require(path.join(RACINE, 'outils/abonnements/abonnements.js'));
 const PAS = require(path.join(RACINE, 'outils/passe/passe.js'));
+const VPX = require(path.join(RACINE, 'outils/vrai-prix/vrai-prix.js'));
 
 const defauts = [], infos = [];
 
@@ -104,7 +105,23 @@ function verifieNombres(nom, r, arg, chemin = '', prof = 0) {
   }
 }
 
-function eprouve(nom, fn, entrees) {
+/* `nanAdmis` ne dispense de rien : il déplace la règle d'une couche.
+
+   NaN est un défaut quand il peut atteindre l'écran — c'est le cas par défaut,
+   et ça reste vrai pour toute fonction qui rend du texte affichable.
+
+   Mais une fonction de CALCUL a besoin de pouvoir dire « je ne sais pas ».
+   Lui faire rendre 0 à la place est pire : 0 est une valeur légitime — un
+   abonnement gratuit coûte 0 € — donc 0 confond « gratuit » et « saisie
+   illisible », et affiche « 0,00 € sur cinq ans » sur un champ vide. Faux, et
+   rassurant.
+
+   Le drapeau n'est donc légitime que si DEUX conditions tiennent, et elles
+   sont vérifiées ailleurs, pas ici : la fonction documente NaN comme son
+   refus, et la couche d'affichage le convertit (euros() et duree() rendent
+   « — », et tests/vrai-prix.test.mjs l'exige sur chaque entrée hostile). */
+function eprouve(nom, fn, entrees, options) {
+  var nanAdmis = !!(options && options.nanAdmis);
   for (const arg of entrees) {
     const t0 = Date.now();
     let r;
@@ -115,6 +132,7 @@ function eprouve(nom, fn, entrees) {
     }
     const dt = Date.now() - t0;
     if (dt > 4000) defauts.push(`${nom} prend ${dt} ms sur ${apercu(arg)}`);
+    if (nanAdmis && typeof r === 'number' && Number.isNaN(r)) continue;
     verifieNombres(nom, r, arg);
   }
 }
@@ -159,6 +177,29 @@ eprouve('abo.trier', (x) => ABO.trier(x), [ABOS, [], [null], [{}]]);
 eprouve('abo.imminents', (x) => ABO.imminents(x), [ABOS, [], [null], [{}]]);
 eprouve('abo.euros', (x) => ABO.euros(x), NOMBRES);
 
+console.log('Vrai prix — champs de saisie');
+
+/* Un champ de formulaire rend toujours une chaîne ; les nombres passent par
+   les mêmes fonctions une fois la saisie convertie. Les deux domaines sont
+   éprouvés, plus les cycles inconnus. */
+for (const [n, f] of Object.entries({
+  coutMensuel: (x) => VPX.coutMensuel(x, 'mensuel'),
+  coutMensuelCycle: (x) => VPX.coutMensuel(10, x),
+  cumulPrix: (x) => VPX.cumul(x, 60, 0),
+  cumulMois: (x) => VPX.cumul(10, x, 0),
+  cumulHausse: (x) => VPX.cumul(10, 60, x),
+  basculePrix: (x) => VPX.bascule(x, 249, 0),
+  basculeAchat: (x) => VPX.bascule(10, x, 0),
+  basculeHausse: (x) => VPX.bascule(10, 249, x),
+})) eprouve('vraiprix.' + n, f, [TEXTES, NOMBRES], { nanAdmis: true });
+
+/* La frontière, elle, reste sous la règle stricte : ce qui part à l'écran ne
+   peut jamais être NaN. */
+for (const [n, f] of Object.entries({
+  euros: (x) => VPX.euros(x),
+  duree: (x) => VPX.duree(x)
+})) eprouve('vraiprix.' + n, f, [TEXTES, NOMBRES]);
+
 console.log('Passe — mot de passe tapé');
 eprouve('passe.analyser', (x) => PAS.analyser(x, 'lent'), TEXTES);
 eprouve('passe.tailleJeu', (x) => PAS.tailleJeu(String(x ?? '')), TEXTES);
@@ -185,5 +226,5 @@ console.log(`  ${infos.length} cas, tous hors du domaine réel`);
 
 console.log('\n' + (defauts.length
   ? `${defauts.length} DÉFAUT(S) :\n - ` + defauts.join('\n - ')
-  : 'AUCUN DÉFAUT — les six moteurs encaissent tout ce qu\'une page peut leur donner'));
+  : 'AUCUN DÉFAUT — les sept moteurs encaissent tout ce qu\'une page peut leur donner'));
 process.exit(defauts.length ? 1 : 0);

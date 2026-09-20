@@ -61,7 +61,7 @@ traitable sans serveur.
 |---|---|---|---|
 | 11 | **Abonnements** | Recensez vos abonnements : coût annuel réel, prochaine reconduction, alerte avant la date. Stocké dans votre navigateur uniquement. | ✅ en ligne |
 | 12 | **Résiliation** | Génère la lettre de résiliation correcte selon le type de contrat. **Toute référence juridique doit être vérifiée et sourcée dans la page — ne rien citer de mémoire.** | à faire |
-| 13 | **Vrai prix** | Le coût réel d'un abonnement sur 1, 3 et 5 ans, comparé à l'achat unique équivalent. | à faire |
+| 13 | **Vrai prix** | Le coût réel d'un abonnement sur 1, 3 et 5 ans, comparé à l'achat unique équivalent. | ✅ en ligne |
 | 14 | **Engagement** | Décryptage d'une offre : ce que « sans engagement », « offre découverte » et « préavis » veulent dire concrètement. Sourcé. | à faire |
 | 15 | **Partage d'abonnements** | Répartition du coût d'un abonnement familial entre plusieurs personnes, avec rappel des dates. | à faire |
 
@@ -94,7 +94,13 @@ source citable.**
 
 ## Ordre de construction
 
-16 → 7 → 12 → 6 → 9 → 5 → 13 → 21 → 8 → 17 → 24 → 10 → puis le reste du tableau.
+16 → 7 → 12 → 6 → 9 → 5 → 21 → 8 → 17 → 24 → 10 → puis le reste du tableau.
+
+L'outil 13 est sorti de cet ordre : il a été construit avant les autres parce
+qu'il tient entièrement en arithmétique, sans aucune référence juridique à
+vérifier. L'outil 12 (**Résiliation**) reste bloqué pour la raison inverse —
+ses références légales ne peuvent pas être vérifiées depuis l'environnement de
+travail actuel, et la règle du dépôt interdit de les citer de mémoire.
 
 L'outil 2 (**Photo propre**) est prioritaire : le plus démonstratif, le plus
 partageable, et il renforce le même thème que l'outil 1.
