@@ -22,8 +22,11 @@ pas de serveur.
   modification du moteur
 - `tools/` — les générateurs : page d'exemples, Pack Pro
 - `tools/verif/` — les contrôles dans Chromium (`npm run verif`), ce que
-  `npm test` ne peut pas voir : contraste, débordement, clavier, rendu.
-  Voir `tools/verif/LISEZ-MOI.md`
+  `npm test` ne peut pas voir : contraste, débordement, clavier, rendu, **et
+  que les outils fonctionnent réellement** (suite `outils`).
+  Voir `tools/verif/LISEZ-MOI.md`.
+  **Toute page ajoutée doit entrer dans `PAGES` de `tools/verif/serveur.mjs`**,
+  sinon elle échappe à toutes les suites sans que rien ne le signale.
 - `MONETISATION.md` — comment encaisser, et ce qui bloque
 - `ACTIVER-PAIEMENT.md` — la marche à suivre pour le titulaire du compte de
   paiement, le jour venu

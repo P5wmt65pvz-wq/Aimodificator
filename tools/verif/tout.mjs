@@ -5,6 +5,10 @@
  * vérifie la logique et les règles écrites, pas le rendu. Or la moitié des
  * défauts réellement trouvés jusqu'ici n'étaient visibles qu'à l'écran —
  * un contraste, un débordement à texte grossi, une pastille illisible.
+ *
+ * Et depuis `outils`, on vérifie aussi que les pages FONCTIONNENT. Une page
+ * peut être parfaitement lisible, navigable au clavier, sans erreur console,
+ * et rendre un résultat faux. Aucune des autres suites ne l'aurait vu.
  */
 import { spawn } from 'node:child_process';
 import path from 'node:path';
@@ -18,7 +22,8 @@ const SUITES = [
   ['a11y',      'clavier, structure, 320 px, texte doublé',          true],
   ['corrompu',  'stockage local abîmé sur sept pages',                true],
   ['accueil',   'toutes les options, 250 combinaisons, injections',  true],
-  ['passe',     'Passe de bout en bout, deux thèmes',                true]
+  ['passe',     'Passe de bout en bout, deux thèmes',                true],
+  ['outils',    'les cinq autres outils, de bout en bout',           true]
 ];
 
 function lance(nom, navigateur) {

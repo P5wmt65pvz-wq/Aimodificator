@@ -10,17 +10,18 @@ du rendu : il ne voit ni un contraste insuffisant, ni un débordement quand le
 lecteur grossit le texte, ni une pastille devenue illisible. La moitié des
 défauts réellement trouvés sur ce site n'étaient visibles qu'à l'écran.
 
-## Les sept suites
+## Les huit suites
 
 | Suite | Ce qu'elle cherche | Durée |
 |---|---|---|
-| `fuzz` | Entrées hostiles sur les six moteurs : plantage, `NaN`, infini, boucle | 2 s |
-| `audit` | Les 8 pages : titre, description, canonical, liens morts, doublons d'identifiant, sitemap | 11 s |
+| `fuzz` | Entrées hostiles sur les sept moteurs : plantage, `NaN`, infini, boucle | 2 s |
+| `audit` | Les 9 pages : titre, description, canonical, liens morts, doublons d'identifiant, sitemap | 11 s |
 | `contraste` | Contraste réel de **chaque texte affiché**, deux thèmes, fond effectif | 14 s |
 | `a11y` | Clavier, hiérarchie des titres, étiquettes, 320 px, texte doublé, zones tactiles | 36 s |
-| `corrompu` | 23 formes de stockage local abîmé sur 6 pages | 86 s |
+| `corrompu` | 23 formes de stockage local abîmé sur 7 pages | 100 s |
 | `accueil` | Chaque valeur de chaque menu, 250 combinaisons, champs hostiles, injections | 58 s |
 | `passe` | Passe de bout en bout, deux thèmes, deux largeurs | 6 s |
+| `outils` | Photo, Clause, Abonnements, Empreinte et Vrai prix **utilisés pour de vrai** : entrées réelles, résultats vérifiés au chiffre près | 7 s |
 
 Chacune se lance seule : `node tools/verif/contraste.mjs`.
 
