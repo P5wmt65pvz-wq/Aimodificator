@@ -1,9 +1,7 @@
 # Feuille de route — suite d'outils
 
-> **Construction reprise le 19 septembre 2026, sur accord explicite du
-> propriétaire.** Elle avait été mise en pause le même jour ; la pause est
-> levée. Prochain outil à construire : voir l'ordre de construction en bas de
-> ce fichier.
+> **Construction en cours.** Prochain outil à construire : voir l'ordre de
+> construction en bas de ce fichier.
 
 ## Le positionnement
 
@@ -39,7 +37,7 @@ Pourquoi ce créneau, après recherche :
 | 1 | **Empreinte** | Ce qu'un site lit sur vous sans rien demander : canvas, polices, carte graphique, matériel. Score d'identifiabilité. | ✅ en ligne |
 | 2 | **Photo propre** | Déposez une photo : l'outil affiche ce qu'elle révèle (GPS, appareil, date, logiciel) et vous la rend nettoyée. Rien ne quitte l'appareil. | ✅ en ligne |
 | 3 | **Clause** | Collez une politique de confidentialité : l'outil surligne ce qui compte vraiment — revente de données, durée de conservation, transferts hors UE, consentement présumé. | ✅ en ligne |
-| 4 | **Passe** | Test de résistance d'un mot de passe, calculé hors ligne, avec le raisonnement affiché. Générateur de phrases de passe en français. | à faire |
+| 4 | **Passe** | Test de résistance d'un mot de passe, calculé hors ligne, avec le raisonnement affiché. Générateur de phrases de passe en français. | ✅ en ligne |
 | 5 | **Traces** | Ce que votre historique et vos cookies révèlent : explication concrète du pistage inter-sites, et comment cloisonner. | à faire |
 | 6 | **Conformité** | Checklist RGPD interactive pour un petit site (artisan, association) : ce qui est obligatoire, ce qui ne l'est pas, et les sanctions réelles. | à faire |
 | 7 | **Lisible** | Analyse de lisibilité d'un texte français : phrases trop longues, jargon, voix passive, tics d'écriture d'IA. Pour rédacteurs. | à faire |
@@ -92,7 +90,7 @@ source citable.**
 
 ## Ordre de construction
 
-4 → 16 → 7 → 12 → 6 → 9 → 5 → 13 → 21 → 8 → 17 → 24 → 10 → puis le reste du tableau.
+16 → 7 → 12 → 6 → 9 → 5 → 13 → 21 → 8 → 17 → 24 → 10 → puis le reste du tableau.
 
 L'outil 2 (**Photo propre**) est prioritaire : le plus démonstratif, le plus
 partageable, et il renforce le même thème que l'outil 1.
