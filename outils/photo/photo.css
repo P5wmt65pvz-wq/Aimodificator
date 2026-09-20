@@ -11,7 +11,7 @@
   --border-strong: #3a3a4a;
   --text: #f3f3f7;
   --text-2: #a9a9b8;
-  --muted: #7d7d8e;
+  --muted: #838394;
   --accent: #8b7bff;
   --accent-ink: #0b0b10;
   --accent-soft: rgba(139,123,255,.15);
@@ -25,6 +25,14 @@
   --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
   --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --maxw: 1080px;
+  /* Encres : la même couleur ne peut pas servir à la fois de fond et de texte.
+     Ces variantes-ci sont calibrées pour être LUES sur le fond du thème, et
+     atteignent toutes 4,6:1 au pire cas mesuré (texte sur pastille teintée).
+     Les jetons sans suffixe restent réservés aux fonds et aux bordures. */
+  --good-ink: #3fb950;
+  --warning-ink: #d29922;
+  --serious-ink: #ec835a;
+  --critical-ink: #dc6f6f;
 }
 
 :root[data-theme="light"] {
@@ -37,12 +45,16 @@
   --border-strong: #cfcfc6;
   --text: #16161a;
   --text-2: #4a4a55;
-  --muted: #6e6e7a;
+  --muted: #6d6d79;
   --accent: #5b46e5;
   --accent-ink: #ffffff;
   --accent-soft: rgba(91,70,229,.10);
   --good: #0ca30c;
   --shadow: 0 1px 2px rgba(20,20,30,.06), 0 10px 26px rgba(20,20,30,.08);
+  --good-ink: #277231;
+  --warning-ink: #815e15;
+  --serious-ink: #ac3f14;
+  --critical-ink: #b82c2c;
 }
 
 @media (prefers-color-scheme: light) {
@@ -50,7 +62,7 @@
     color-scheme: light;
     --bg: #f7f7f4; --surface: #ffffff; --surface-2: #f4f4f1;
     --border: #e3e3dd; --border-strong: #cfcfc6;
-    --text: #16161a; --text-2: #4a4a55; --muted: #6e6e7a;
+    --text: #16161a; --text-2: #4a4a55; --muted: #6d6d79;
     --accent: #5b46e5; --accent-ink: #fff; --accent-soft: rgba(91,70,229,.10); --good: #0ca30c;
     --bg-glow: radial-gradient(1000px 480px at 15% -10%, rgba(91,70,229,.10), transparent 60%);
   }
@@ -171,9 +183,9 @@ h2 { font-size: clamp(1.25rem, 2.6vw, 1.6rem); letter-spacing: -.015em; }
   flex: none; font-size: .68rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
   padding: 3px 8px; border-radius: 99px; border: 1px solid;
 }
-.tag.high { color: var(--critical); border-color: color-mix(in srgb, var(--critical) 45%, transparent); background: color-mix(in srgb, var(--critical) 12%, transparent); }
-.tag.mid  { color: var(--warning);  border-color: color-mix(in srgb, var(--warning) 45%, transparent);  background: color-mix(in srgb, var(--warning) 12%, transparent); }
-.tag.low  { color: var(--good);     border-color: color-mix(in srgb, var(--good) 45%, transparent);     background: color-mix(in srgb, var(--good) 12%, transparent); }
+.tag.high { color: var(--critical-ink); border-color: color-mix(in srgb, var(--critical) 45%, transparent); background: color-mix(in srgb, var(--critical) 12%, transparent); }
+.tag.mid  { color: var(--warning-ink);  border-color: color-mix(in srgb, var(--warning) 45%, transparent);  background: color-mix(in srgb, var(--warning) 12%, transparent); }
+.tag.low  { color: var(--good-ink);     border-color: color-mix(in srgb, var(--good) 45%, transparent);     background: color-mix(in srgb, var(--good) 12%, transparent); }
 
 .value {
   font-family: var(--mono); font-size: .82rem; color: var(--text);
