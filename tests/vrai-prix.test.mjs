@@ -101,3 +101,18 @@ test('les montants et les durées s\'écrivent lisiblement', () => {
   assert.equal(vp.duree(0), '—');
   assert.equal(vp.duree(NaN), '—');
 });
+
+test('une bascule qui tombe pile n’arrive pas un mois trop tard', () => {
+  /* De l'argent se compare en centimes, pas en flottants. 9,99 additionné
+     douze fois donne 119.87999999999998 : un test « >= 119,88 » échouait, et
+     l'outil annonçait treize mois là où la réponse exacte est douze.
+
+     Trouvé en recalculant les cas limites à la main, pas en lisant le code —
+     l'expression avait l'air juste. */
+  assert.equal(vp.bascule(9.99, 119.88, 0), 12, 'douze mois à 9,99 font exactement 119,88');
+  assert.equal(vp.bascule(9.99, 119.89, 0), 13, 'un centime de plus demande un mois de plus');
+  assert.equal(vp.bascule(9.99, 119.87, 0), 12, 'un centime de moins reste à douze');
+  assert.equal(vp.bascule(10, 600, 0), 60, 'cinq ans à 10 € font exactement 600 €');
+  assert.equal(vp.bascule(9.99, 9.99, 0), 1, 'un achat au prix d’un mois bascule dès le premier');
+  assert.equal(vp.bascule(10, 120, 0.2), 12, 'la hausse ne frappe qu’après la première année');
+});

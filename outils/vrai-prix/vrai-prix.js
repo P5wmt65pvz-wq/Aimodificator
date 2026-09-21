@@ -90,7 +90,10 @@
     for (var i = 0; i < MOIS_MAX; i++) {
       if (i > 0 && i % 12 === 0) courant = courant * (1 + (Number.isFinite(nombre(hausse)) ? nombre(hausse) : 0));
       total += courant;
-      if (total >= a) return i + 1;
+      /* De l'argent se compare en centimes, pas en flottants. 9,99 additionné
+         douze fois donne 119.87999999999998, ce qui n'est jamais « >= 119,88 » :
+         la bascule tombait un mois trop tard sur les valeurs pile. */
+      if (Math.round(total * 100) >= Math.round(a * 100)) return i + 1;
     }
     return null;
   }

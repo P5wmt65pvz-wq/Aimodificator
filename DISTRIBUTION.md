@@ -18,18 +18,22 @@ Chiffres relevés dans le dépôt lui-même, pas estimés.
   sur l'audience ne peut être tirée à cette échéance : il ne s'est rien passé
   parce qu'il n'y a pas eu le temps qu'il se passe quelque chose.
 - **En ligne :** PromptForge, six outils, la page d'exemples. Le déploiement
-  GitHub Pages s'est exécuté 28 fois, la dernière avec succès.
+  GitHub Pages se déclenche à chaque push et la dernière exécution a réussi ;
+  l'onglet Actions du dépôt en donne le compte et l'état à jour.
 - **Rien n'est achetable.** Les quatre `url` d'`offers.js` sont vides : la règle
   de sûreté du fichier masque alors la section entière. Le code se comporte
   comme prévu — mais un visiteur convaincu n'a aucun bouton à cliquer.
 - **Le produit payant, lui, existe déjà.** `npm run pack` construit 48 fiches
-  bilingues, 612 Ko. Ce n'est pas le produit qui manque, c'est le lien de
+  bilingues — le générateur annonce le compte à chaque exécution, c'est de là
+  que vient ce chiffre. Ce n'est pas le produit qui manque, c'est le lien de
   paiement.
 - **Un seul point de contact :** le lien `mailto:` de `liste.js`.
 - **Une seule mesure possible :** la règle 3 interdit tout traceur, donc le site
   ne compte rien. Google Search Console est la seule source de chiffres, et sa
   balise de propriété est en place depuis le 20 septembre 2026.
-- **Huit adresses au sitemap**, déclarées dans `robots.txt`.
+- **Le sitemap couvre toutes les pages**, et `robots.txt` le déclare. Le
+  compte exact grandit à chaque outil : `grep -c '<loc>' sitemap.xml`. Un
+  garde-fou de `npm test` vérifie qu'aucune page n'en manque.
 
 ## Ce que ce dépôt ne peut pas faire
 
