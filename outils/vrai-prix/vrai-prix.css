@@ -392,3 +392,42 @@ h2 { font-size: clamp(1.25rem, 2.6vw, 1.6rem); letter-spacing: -.015em; }
 .bascule p:last-child { margin-bottom: 0; }
 .bascule .cle { color: var(--serious-ink); font-weight: 700; }
 .bascule.is-good .cle { color: var(--good-ink); }
+
+/* Le formulaire de calcul. La grille d'Abonnements est posée sur #ajout, donc
+   elle ne s'appliquait pas ici : les champs s'empilaient sur toute la largeur,
+   et un champ de 880 px pour taper « 9,99 » n'a aucun sens. Aucune suite ne
+   pouvait le voir — ni débordement, ni contraste, ni piège au clavier. Il a
+   fallu regarder la page. */
+#calcul {
+  display: grid; gap: 12px; margin-top: 16px;
+  grid-template-columns: 1fr 1.1fr 1.2fr 1.7fr auto; align-items: end;
+}
+
+/* Le rappel du coût mensuel sépare la saisie des trois totaux : il lui faut
+   de l'air, sinon il colle au bouton. */
+#resultat > .muted { margin-top: 22px; margin-bottom: 14px; }
+#resultat > .muted b { color: var(--text); font-family: var(--mono); }
+
+@media (max-width: 860px) {
+  #calcul { grid-template-columns: 1fr 1fr; }
+  .champ-achat, .champ-envoi { grid-column: 1 / -1; }
+}
+
+/* Les sections de contenu ajoutées après coup — « À lire ensuite », les
+   sources, l'inscription — rendaient des puces et des liens par défaut du
+   navigateur : soulignés, bleus, hors palette. Le haut de page était soigné,
+   le bas ressemblait à un fichier texte. */
+.explain ul { padding-left: 0; list-style: none; display: grid; gap: 9px; margin-top: 12px; }
+.explain li {
+  color: var(--text-2); font-size: .94rem; line-height: 1.65; max-width: 68ch;
+  padding-left: 18px; position: relative;
+}
+.explain li::before {
+  content: ""; position: absolute; left: 3px; top: .62em;
+  width: 5px; height: 5px; border-radius: 50%; background: var(--accent);
+}
+.explain a {
+  color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 3px;
+}
+.explain a:hover { text-decoration-thickness: 2px; }
+.explain a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
