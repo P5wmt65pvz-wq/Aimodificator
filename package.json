@@ -9,6 +9,7 @@
     "start": "npx http-server -p 8099 .",
     "pack": "node tools/build-pack.mjs",
     "exemples": "node tools/build-exemples.mjs",
-    "verif": "node tools/verif/tout.mjs"
+    "verif": "node tools/verif/tout.mjs",
+    "verif:visuel-maj": "node tools/verif/visuel.mjs --maj"
   }
 }

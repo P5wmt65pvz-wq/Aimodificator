@@ -251,6 +251,12 @@ h2 { font-size: clamp(1.25rem, 2.6vw, 1.6rem); letter-spacing: -.015em; }
 .truth { padding-bottom: 8px; }
 .truth p { color: var(--text-2); margin-top: 13px; max-width: 68ch; font-size: .94rem; }
 .truth b { color: var(--text); }
+/* Les sections d'origine ne portaient qu'un titre chacune, en première
+   position : aucun espacement n'était nécessaire. Celle de la navigation
+   privée en porte trois, et les deux derniers se collaient au paragraphe
+   précédent. Même règle que .explain sur les autres feuilles. */
+.truth h2 { margin-top: 26px; }
+.truth h2:first-child { margin-top: 0; }
 
 /* ------------------------------------------------------------------ footer */
 .site-footer {

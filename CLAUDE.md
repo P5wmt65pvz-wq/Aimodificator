@@ -41,6 +41,9 @@ pas de serveur.
 - `npm test` doit être vert avant tout push. Ne jamais pousser du rouge.
 - Vérifier le rendu dans Chromium : thème clair et sombre, 390 px sans
   débordement, zéro erreur console.
+- Après un changement visuel voulu : `npm run verif:visuel-maj`, puis
+  **regarder chaque référence réécrite avant de commiter**. Régénérer sans
+  regarder grave le défaut comme étant la norme.
 - Aucune requête réseau après chargement, sur aucune page.
 - N'inventer aucun chiffre, aucune loi, aucune date. Vérifier et citer la
   source, ou écrire la règle sans le chiffre.

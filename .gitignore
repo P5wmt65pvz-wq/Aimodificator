@@ -1,3 +1,6 @@
 # Le pack est un livrable reconstruit à la demande : npm run pack
 dist/
 node_modules/
+
+# Captures produites par un contrôle visuel en échec : à regarder, pas à commiter
+tools/verif/ecarts/

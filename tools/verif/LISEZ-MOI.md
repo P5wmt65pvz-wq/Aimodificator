@@ -10,7 +10,7 @@ du rendu : il ne voit ni un contraste insuffisant, ni un débordement quand le
 lecteur grossit le texte, ni une pastille devenue illisible. La moitié des
 défauts réellement trouvés sur ce site n'étaient visibles qu'à l'écran.
 
-## Les huit suites
+## Les neuf suites
 
 | Suite | Ce qu'elle cherche | Durée |
 |---|---|---|
@@ -22,6 +22,7 @@ défauts réellement trouvés sur ce site n'étaient visibles qu'à l'écran.
 | `accueil` | Chaque valeur de chaque menu, 250 combinaisons, champs hostiles, injections | 58 s |
 | `passe` | Passe de bout en bout, deux thèmes, deux largeurs | 6 s |
 | `outils` | Photo, Clause, Abonnements, Empreinte et Vrai prix **utilisés pour de vrai** : entrées réelles, résultats vérifiés au chiffre près | 7 s |
+| `visuel` | Les 9 pages, outils en action, comparées **pixel par pixel** à une référence regardée à l'œil. Attrape ce qu'aucune autre suite ne voit : un bloc déplacé, une grille perdue, une couleur hors palette | 60 s |
 
 Chacune se lance seule : `node tools/verif/contraste.mjs`.
 
@@ -57,3 +58,23 @@ Pas une suite : une fabrique de vrais fichiers JPEG avec métadonnées EXIF
 réelles (GPS, appareil, date, logiciel, commentaire, dans les deux ordres
 d'octets), pour éprouver l'outil Photo sur autre chose que des octets au
 hasard.
+
+## Après un changement visuel voulu
+
+`visuel` échoue dès qu'une page change, **y compris quand le changement est
+voulu** — c'est le prix de n'en laisser passer aucun involontaire.
+
+1. `npm run verif:visuel-maj` — ne réécrit que les pages qui ont réellement
+   changé, pour ne pas alourdir l'historique Git.
+2. **Regarder chaque référence réécrite** dans `tools/verif/references/visuel/`.
+   Une référence n'est juste que si quelqu'un l'a vue : régénérer sans
+   regarder, c'est graver le défaut comme étant la norme.
+3. Commiter les références avec le changement qui les a causées.
+
+En cas d'échec, `tools/verif/ecarts/` contient la capture actuelle et une
+image où les pixels différents sont en magenta.
+
+Les VALEURS d'Empreinte sont masquées — elles dépendent de la machine, c'est
+le principe de l'outil — mais sa mise en page est comparée comme les autres.
+Si l'environnement de contrôle change (navigateur, polices), régénérer toutes
+les références et les regarder.

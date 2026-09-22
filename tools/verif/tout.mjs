@@ -9,6 +9,10 @@
  * Et depuis `outils`, on vérifie aussi que les pages FONCTIONNENT. Une page
  * peut être parfaitement lisible, navigable au clavier, sans erreur console,
  * et rendre un résultat faux. Aucune des autres suites ne l'aurait vu.
+ *
+ * Et depuis `visuel`, on vérifie qu'elles n'ont pas BOUGÉ. Un formulaire qui
+ * s'étale sur toute la largeur ne déborde pas, garde son contraste et reste
+ * navigable au clavier : les huit autres suites le laissaient passer.
  */
 import { spawn } from 'node:child_process';
 import path from 'node:path';
@@ -23,7 +27,8 @@ const SUITES = [
   ['corrompu',  'stockage local abîmé sur sept pages',                true],
   ['accueil',   'toutes les options, 250 combinaisons, injections',  true],
   ['passe',     'Passe de bout en bout, deux thèmes',                true],
-  ['outils',    'les cinq autres outils, de bout en bout',           true]
+  ['outils',    'les cinq autres outils, de bout en bout',           true],
+  ['visuel',    'les 9 pages comparées pixel à pixel à leur référence', true]
 ];
 
 function lance(nom, navigateur) {
