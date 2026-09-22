@@ -165,8 +165,30 @@ test('la vérification Google Search Console est en place sur l\'accueil', () =>
      les erreurs d'indexation et le sitemap n'est plus suivi. Elle doit rester
      sur la page racine, qui est l'adresse déclarée comme propriété. */
   const accueil = readFileSync(path.join(BASE, 'index.html'), 'utf8');
-  const m = accueil.match(/<meta name="google-site-verification" content="([^"]+)"/);
-  assert.ok(m, 'balise de vérification absente de index.html');
-  assert.ok(m[1].length >= 20, `jeton de vérification suspect : « ${m[1]} »`);
-  assert.doesNotMatch(m[1], /^(XXX|TODO|votre|your)/i, 'jeton d\'exemple laissé en place');
+  /* Un jeton de vérification ne se déduit pas et ne s'invente pas : il vient
+     du compte Search Console de son propriétaire, et de nulle part ailleurs.
+     Le garde-fou précédent ne vérifiait que la forme — il a laissé passer un
+     remplacement silencieux du jeton. Les valeurs connues sont donc épinglées
+     ici. Ajouter ou retirer un jeton doit faire échouer ce test, pour que le
+     changement soit forcément délibéré et expliqué. */
+  const CONNUS = [
+    /* Fourni par le propriétaire le 20 septembre 2026, dans la conversation. */
+    '0h7HRPpQHBOrq5hc-7Z3xVPrnk5ekj_ARIOi3Of5MEE',
+    /* Apparu dans le commit 5046387 le 21 septembre 2026. Provenance non
+       confirmée par le propriétaire : conservé pour ne rien casser, jamais
+       supprimé sans son accord. */
+    'wmj_OMVsFzco-OYBZmh7O6oKtlr13qskSpej0NZPLKk'
+  ];
+  const trouves = [...accueil.matchAll(/<meta name="google-site-verification" content="([^"]+)"/g)].map((x) => x[1]);
+  assert.ok(trouves.length > 0, 'balise de vérification absente de index.html');
+  for (const t of trouves) {
+    assert.ok(t.length >= 20, `jeton de vérification suspect : « ${t} »`);
+    assert.doesNotMatch(t, /^(XXX|TODO|votre|your)/i, 'jeton d\'exemple laissé en place');
+    assert.ok(CONNUS.includes(t),
+      `jeton inconnu « ${t} » : un jeton de vérification vient du compte Search Console ` +
+      'de son propriétaire. S\'il est légitime, l\'ajouter à CONNUS en disant d\'où il vient.');
+  }
+  for (const c of CONNUS) {
+    assert.ok(trouves.includes(c), `le jeton connu « ${c} » a disparu d\'index.html`);
+  }
 });
