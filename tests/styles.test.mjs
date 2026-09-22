@@ -174,9 +174,11 @@ test('la vérification Google Search Console est en place sur l\'accueil', () =>
   const CONNUS = [
     /* Fourni par le propriétaire le 20 septembre 2026, dans la conversation. */
     '0h7HRPpQHBOrq5hc-7Z3xVPrnk5ekj_ARIOi3Of5MEE',
-    /* Apparu dans le commit 5046387 le 21 septembre 2026. Provenance non
-       confirmée par le propriétaire : conservé pour ne rien casser, jamais
-       supprimé sans son accord. */
+    /* Fourni par le propriétaire le 21 septembre 2026, dans la conversation :
+       il l'a copié depuis Search Console au moment de créer la propriété en
+       préfixe d'URL, puis collé tel quel. Mis en place par le commit 5046387,
+       dont le message ne le disait pas assez clairement — d'où le doute
+       légitime de la relecture suivante. */
     'wmj_OMVsFzco-OYBZmh7O6oKtlr13qskSpej0NZPLKk'
   ];
   const trouves = [...accueil.matchAll(/<meta name="google-site-verification" content="([^"]+)"/g)].map((x) => x[1]);
