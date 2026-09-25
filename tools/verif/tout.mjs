@@ -20,15 +20,15 @@ import path from 'node:path';
 const ICI = import.meta.dirname;
 
 const SUITES = [
-  ['fuzz',      'entrées hostiles sur les sept moteurs',              false],
-  ['audit',     'les 9 pages : titres, liens, sitemap, doublons',    true],
+  ['fuzz',      'entrées hostiles sur chaque moteur',                 false],
+  ['audit',     'chaque page : titres, liens, sitemap, doublons',    true],
   ['contraste', 'contraste de chaque texte, deux thèmes',            true],
   ['a11y',      'clavier, structure, 320 px, texte doublé',          true],
-  ['corrompu',  'stockage local abîmé sur sept pages',                true],
+  ['corrompu',  'stockage local abîmé, page par page',               true],
   ['accueil',   'toutes les options, 250 combinaisons, injections',  true],
   ['passe',     'Passe de bout en bout, deux thèmes',                true],
-  ['outils',    'les cinq autres outils, de bout en bout',           true],
-  ['visuel',    'les 9 pages comparées pixel à pixel à leur référence', true]
+  ['outils',    'chaque outil, de bout en bout',                     true],
+  ['visuel',    'chaque page comparée pixel à pixel à sa référence',  true]
 ];
 
 function lance(nom, navigateur) {

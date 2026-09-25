@@ -47,7 +47,7 @@ Pourquoi ce créneau, après recherche :
 | 7 | **Lisible** | Analyse de lisibilité d'un texte français : phrases trop longues, jargon, voix passive, tics d'écriture d'IA. Pour rédacteurs. | à faire |
 | 8 | **Minutage** | Convertit un script en durée de vidéo réelle selon le débit de parole, et découpe en séquences. Pour créateurs. | à faire |
 | 9 | **TJM** | Calculateur de tarif journalier freelance : revenu net visé, jours réellement facturables, charges. Public qui paie. | à faire |
-| 10 | **Partage** | Répartiteur de dépenses de groupe, partageable par simple lien, sans compte ni application. | à faire |
+| 10 | **Partage** | Répartiteur de dépenses de groupe, partageable par simple lien, sans compte ni application. | ✅ en ligne |
 
 ## Vague 2 — l'argent du quotidien
 

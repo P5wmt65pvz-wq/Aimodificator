@@ -36,6 +36,11 @@
      aberrante bloquerait la page. */
   var MOIS_MAX = 600;
 
+  /* Au-delà de +1 000 % par an, une « hausse » n'est plus une donnée, c'est une
+     faute de frappe : elle ferait déborder le calcul vers l'infini en quelques
+     années. Refusée plutôt que calculée. */
+  var HAUSSE_MAX = 10;
+
   /* Number() convertit avant de tester : Number('') et Number(null) valent
      tous les deux 0, et un champ vide ressortirait en « 0,00 € sur cinq ans »
      — faux, et rassurant, la pire combinaison. Seuls un nombre fini et une
@@ -68,14 +73,18 @@
     var m = Math.floor(nombre(mois));
     var h = Number.isFinite(nombre(hausse)) ? nombre(hausse) : 0;
     if (!Number.isFinite(prixMensuel) || !Number.isFinite(m) || m <= 0) return NaN;
-    if (h < -1) return NaN;
+    /* Même borne que bascule() : sans elle, cumul(10, 1e308) bouclait sans
+       fin. Le fuzzer ne l'a vu qu'une fois branché correctement. */
+    if (m > MOIS_MAX) return NaN;
+    if (h < -1 || h > HAUSSE_MAX) return NaN;
     var total = 0;
     var courant = prixMensuel;
     for (var i = 0; i < m; i++) {
       if (i > 0 && i % 12 === 0) courant = courant * (1 + h);
       total += courant;
     }
-    return total;
+    /* Un total qui déborde n'est pas un total : refusé plutôt que rendu infini. */
+    return Number.isFinite(total) ? total : NaN;
   }
 
   /* Premier mois où le cumulé de l'abonnement atteint le prix de l'achat
@@ -85,6 +94,8 @@
     var a = nombre(achat);
     if (!Number.isFinite(prixMensuel) || prixMensuel <= 0) return null;
     if (!Number.isFinite(a) || a <= 0) return null;
+    var hb = Number.isFinite(nombre(hausse)) ? nombre(hausse) : 0;
+    if (hb < -1 || hb > HAUSSE_MAX) return null;
     var total = 0;
     var courant = prixMensuel;
     for (var i = 0; i < MOIS_MAX; i++) {
@@ -186,7 +197,7 @@
   }
 
   return {
-    CYCLES: CYCLES, JOURS_PAR_MOIS: JOURS_PAR_MOIS, MOIS_MAX: MOIS_MAX,
+    CYCLES: CYCLES, JOURS_PAR_MOIS: JOURS_PAR_MOIS, MOIS_MAX: MOIS_MAX, HAUSSE_MAX: HAUSSE_MAX,
     coutMensuel: coutMensuel, cumul: cumul, bascule: bascule,
     euros: euros, duree: duree, boot: boot
   };

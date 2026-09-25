@@ -183,6 +183,65 @@ console.log('\n=== Vrai prix — le calcul affiché est le bon ===');
   await fermer('Vrai prix', c);
 }
 
+/* ---------------------------------------------------------------- Partage */
+console.log('\n=== Partage — un groupe, trois dépenses, et le lien envoyé ===');
+{
+  const c = await ouvrir('/outils/partage/');
+  dire(await c.page.locator('#bloc-depense').isHidden(), 'Partage : pas de dépense possible sans au moins deux personnes');
+  for (const n of ['Adrien', 'Léa', 'Tom']) {
+    await c.page.fill('#nom', n); await c.page.click('#f-personne button[type=submit]');
+  }
+  await c.page.fill('#nom', 'léa'); await c.page.click('#f-personne button[type=submit]');
+  dire(await c.page.locator('#erreur').isVisible(), 'Partage : un doublon de prénom est refusé, casse comprise');
+  dire((await c.page.locator('#personnes li').count()) === 3, 'Partage : trois personnes dans le groupe');
+
+  const depense = async (quoi, montant, payeur, pour) => {
+    await c.page.fill('#quoi', quoi); await c.page.fill('#montant', montant);
+    await c.page.selectOption('#payeur', String(payeur));
+    for (const cb of await c.page.locator('#pour input').all()) {
+      const v = Number(await cb.getAttribute('value'));
+      if (pour.includes(v) !== await cb.isChecked()) await cb.click();
+    }
+    await c.page.click('#f-depense button[type=submit]');
+  };
+  await depense('Courses', '90', 0, [0, 1, 2]);
+  await depense('Essence', '45', 1, [0, 1]);
+  await depense('Cinéma', '10', 2, [0, 1, 2]);
+
+  /* Les montants attendus sont ceux calculés à la main dans tests/partage.test.mjs. */
+  const vir = (await c.page.locator('#virements li').allInnerTexts()).map((t) => t.replace(/\s+/g, ' '));
+  dire(vir.length === 2, `Partage : deux virements pour trois personnes (${vir.length})`);
+  dire(/Tom rembourse Adrien 23,33/.test(vir[0] || ''), `Partage : ${vir[0]}`);
+  dire(/Léa rembourse Adrien 10,83/.test(vir[1] || ''), `Partage : ${vir[1]}`);
+  dire(/145,00/.test(await c.page.locator('#total').innerText()), 'Partage : total 145,00 €');
+
+  /* La fonction qui justifie l'outil : le lien, ouvert AILLEURS, redonne le
+     même calcul. Un contexte neuf n'a ni stockage ni historique en commun. */
+  const lien = await c.page.locator('#lien').inputValue();
+  dire(lien.includes('#') && !lien.includes('undefined'), 'Partage : un lien de partage est produit');
+  await fermer('Partage (saisie)', c);
+
+  const autre = await ouvrir('/outils/partage/' + lien.slice(lien.indexOf('#')));
+  const vir2 = (await autre.page.locator('#virements li').allInnerTexts()).map((t) => t.replace(/\s+/g, ' '));
+  dire(JSON.stringify(vir2) === JSON.stringify(vir), 'Partage : le lien ouvert ailleurs redonne exactement le même calcul');
+  dire((await autre.page.locator('#depenses li').count()) === 3, 'Partage : les trois dépenses voyagent avec le lien');
+  await fermer('Partage (lien reçu)', autre);
+
+  /* Un lien piégé : des balises dans les prénoms et les libellés. Tout est
+     affiché comme du texte, rien ne s'exécute. */
+  const piege = await ouvrir('/outils/partage/#WzEsWyI8aW1nIHNyYz14IG9uZXJyb3I9d2luZG93Ll9fUFdOPTE-IiwiVG9tIl0sW1siPHNjcmlwdD53aW5kb3cuX19QV049Mjwvc2NyaXB0PiIsMCwxMDAwLFswLDFdXV1d');
+  const pwn = await piege.page.evaluate(() => window.__PWN);
+  dire(pwn === undefined, 'Partage : un lien piégé n\'exécute aucun code');
+  dire((await piege.page.locator('#personnes').innerText()).includes('<img src=x'), 'Partage : les balises s\'affichent comme du texte');
+  await fermer('Partage (lien piégé)', piege);
+
+  /* Un lien abîmé : refusé en entier, et on le dit. */
+  const abime = await ouvrir('/outils/partage/#' + '%%%abime');
+  dire(await abime.page.locator('#lien-abime').isVisible(), 'Partage : un lien abîmé est signalé');
+  dire((await abime.page.locator('#personnes li').count()) === 0, 'Partage : un lien abîmé ne charge rien à moitié');
+  await fermer('Partage (lien abîmé)', abime);
+}
+
 await nav.close();
 srv.close();
-rapport(pb, 'TOUT EST VERT — les cinq outils font ce qu’ils annoncent');
+rapport(pb, 'TOUT EST VERT — chaque outil fait ce qu’il annonce');

@@ -116,3 +116,23 @@ test('une bascule qui tombe pile n’arrive pas un mois trop tard', () => {
   assert.equal(vp.bascule(9.99, 9.99, 0), 1, 'un achat au prix d’un mois bascule dès le premier');
   assert.equal(vp.bascule(10, 120, 0.2), 12, 'la hausse ne frappe qu’après la première année');
 });
+
+test('le cumulé est borné, comme le point de bascule', () => {
+  /* Sans borne, cumul(10, 1e308) bouclait sans fin. Le défaut est resté caché
+     trois jours : le fuzzer appelait la fonction avec la LISTE des valeurs
+     hostiles au lieu de chacune d'elles. */
+  const t0 = Date.now();
+  assert.ok(Number.isNaN(vp.cumul(10, 1e308, 0)));
+  assert.ok(Number.isNaN(vp.cumul(10, vp.MOIS_MAX + 1, 0)));
+  assert.ok(Date.now() - t0 < 50, 'le refus doit être immédiat, pas après une boucle');
+  proche(vp.cumul(10, vp.MOIS_MAX, 0), 10 * vp.MOIS_MAX);
+});
+
+test('une hausse invraisemblable est refusée, pas propagée vers l\'infini', () => {
+  assert.ok(Number.isNaN(vp.cumul(10, 60, 1e308)));
+  assert.ok(Number.isNaN(vp.cumul(10, 60, vp.HAUSSE_MAX + 0.01)));
+  assert.equal(vp.bascule(10, 249, 1e308), null);
+  assert.ok(Number.isFinite(vp.cumul(10, 60, vp.HAUSSE_MAX)));
+  /* Un prix absurde fait déborder la somme : refusée, pas rendue infinie. */
+  assert.ok(Number.isNaN(vp.cumul(1e308, 60, 0)));
+});

@@ -27,6 +27,13 @@ async function reveler(page, url) {
     await tape('#depart', d);
     await clic('#ajout button[type=submit]');
     await page.evaluate(() => { const f = document.getElementById('ajout'); if (f) f.requestSubmit ? f.requestSubmit() : f.dispatchEvent(new Event('submit', {bubbles:true, cancelable:true})); });
+  } else if (url.includes('partage')) {
+    /* Les soldes n'ont leurs couleurs qu'une fois des dépenses saisies : vert
+       pour qui a avancé de l'argent, orange pour qui en doit. */
+    for (const n of ['Adrien', 'Léa', 'Tom']) { await tape('#nom', n); await clic('#f-personne button[type=submit]'); }
+    await tape('#quoi', 'Courses'); await tape('#montant', '90');
+    await clic('#f-depense button[type=submit]');
+    await page.waitForTimeout(80);
   } else if (url.includes('vrai-prix')) {
     /* Les deux couleurs de verdict n'existent qu'une fois le calcul fait, et
        elles sont opposées : rouge quand l'abonnement dépasse l'achat, vert

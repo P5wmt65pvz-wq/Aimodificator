@@ -40,12 +40,12 @@ export async function chromium() {
   return pw.chromium.launch();
 }
 
-/* Les neuf pages du site. Une page ajoutée ici est contrôlée par toutes les
+/* Les pages du site. Une page ajoutée ici est contrôlée par toutes les
    suites d'un coup — et une page OUBLIÉE ici vit sans filet : elle passe au
    travers du contraste, du clavier et du redimensionnement. */
 export const PAGES = [
   '/', '/outils/empreinte/', '/outils/photo/', '/outils/clause/',
-  '/outils/abonnements/', '/outils/passe/', '/outils/vrai-prix/',
+  '/outils/abonnements/', '/outils/passe/', '/outils/vrai-prix/', '/outils/partage/',
   '/en/fingerprint/', '/exemples/'
 ];
 

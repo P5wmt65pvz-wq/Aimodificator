@@ -1,0 +1,482 @@
+/*! Partage — feuille de style unique, sans dépendance. Palette commune au site. */
+
+:root {
+  color-scheme: dark;
+  --bg: #0b0b10;
+  --bg-glow: radial-gradient(1100px 520px at 18% -8%, rgba(139,123,255,.16), transparent 62%),
+             radial-gradient(900px 480px at 92% 4%, rgba(55,214,214,.10), transparent 60%);
+  --surface: #131319;
+  --surface-2: #1a1a22;
+  --border: #272733;
+  --border-strong: #3a3a4a;
+  --text: #f3f3f7;
+  --text-2: #a9a9b8;
+  --muted: #838394;
+  --accent: #8b7bff;
+  --accent-ink: #0b0b10;
+  --accent-soft: rgba(139,123,255,.15);
+  --good: #3fb950;
+  --warning: #d29922;
+  --serious: #ec835a;
+  --critical: #d03b3b;
+  --radius: 14px;
+  --radius-sm: 9px;
+  --shadow: 0 1px 2px rgba(0,0,0,.34), 0 12px 32px rgba(0,0,0,.28);
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --maxw: 1080px;
+  /* Encres : la même couleur ne peut pas servir à la fois de fond et de texte.
+     Ces variantes-ci sont calibrées pour être LUES sur le fond du thème, et
+     atteignent toutes 4,6:1 au pire cas mesuré (texte sur pastille teintée).
+     Les jetons sans suffixe restent réservés aux fonds et aux bordures. */
+  --good-ink: #3fb950;
+  --warning-ink: #d29922;
+  --serious-ink: #ec835a;
+  --critical-ink: #dc6f6f;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f7f7f4;
+  --bg-glow: radial-gradient(1000px 480px at 15% -10%, rgba(91,70,229,.10), transparent 60%);
+  --surface: #ffffff;
+  --surface-2: #f4f4f1;
+  --border: #e3e3dd;
+  --border-strong: #cfcfc6;
+  --text: #16161a;
+  --text-2: #4a4a55;
+  --muted: #6d6d79;
+  --accent: #5b46e5;
+  --accent-ink: #ffffff;
+  --accent-soft: rgba(91,70,229,.10);
+  --good: #0ca30c;
+  --shadow: 0 1px 2px rgba(20,20,30,.06), 0 10px 26px rgba(20,20,30,.08);
+  --good-ink: #277231;
+  --warning-ink: #815e15;
+  --serious-ink: #ac3f14;
+  --critical-ink: #b82c2c;
+}
+
+
+/* Texte grossi : un lecteur qui double la taille des caractères ne rétrécit
+   pas sa fenêtre. Les seuils en pixels ne se déclenchent donc pas, et tout ce
+   qui ne sait ni couper un mot ni passer à la ligne sort de l'écran. */
+h1, h2, h3, h4, h5, h6, p, li, td, th, summary, label, dt, dd, figcaption,
+.lede, .tag, .etiq, .verdict, .brand-text, .card, .card-top {
+  overflow-wrap: break-word;
+}
+/* Césure. Là où le navigateur embarque un dictionnaire pour la langue
+   déclarée par l'attribut lang, il coupe aux syllabes avec un trait d'union
+   — « anonyme- / ment » au lieu de « anonymem / ent ». Là où il n'en a pas,
+   cette ligne ne fait rien : vérifié, le Chromium de nos contrôles n'a pas
+   de dictionnaire français et ne coupe rien de lui-même.
+
+   C'est donc un bonus, pas une garantie. Ce qui est garanti, et mesuré, c'est
+   la règle du dessus : overflow-wrap empêche le débordement dans tous les
+   cas, avec ou sans dictionnaire. */
+h1, h2, h3, .lede, p, li {
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
+/* Ni dans du code, ni dans un champ : une césure y changerait le sens. */
+code, pre, kbd, samp, input, textarea, .mono, [class*="mono"] {
+  -webkit-hyphens: none;
+  hyphens: none;
+}
+.card-top { flex-wrap: wrap; }
+.card-top > * { min-width: 0; }
+.tag { max-width: 100%; }
+
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]):not([data-theme="light"]) {
+    color-scheme: light;
+    --bg: #f7f7f4; --surface: #ffffff; --surface-2: #f4f4f1;
+    --border: #e3e3dd; --border-strong: #cfcfc6;
+    --text: #16161a; --text-2: #4a4a55; --muted: #6d6d79;
+    --accent: #5b46e5; --accent-ink: #fff; --accent-soft: rgba(91,70,229,.10); --good: #0ca30c;
+    --bg-glow: radial-gradient(1000px 480px at 15% -10%, rgba(91,70,229,.10), transparent 60%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* L'attribut hidden doit toujours l'emporter sur un display: posé par une
+   classe. Sans cette règle, une section marquée hidden reste visible dès
+   qu'une classe lui donne display: grid ou flex. */
+[hidden] { display: none !important; }
+
+body {
+  background: var(--bg-glow), var(--bg);
+  background-repeat: no-repeat;
+  color: var(--text);
+  font-family: var(--sans);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+main, .site-header, .site-footer {
+  max-width: var(--maxw);
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left));
+  padding-right: max(16px, env(safe-area-inset-right));
+}
+
+.skip-link {
+  position: absolute; left: -9999px; top: 8px; z-index: 10;
+  background: var(--accent); color: var(--accent-ink); padding: 9px 14px; border-radius: 8px;
+}
+.skip-link:focus { left: 16px; }
+
+:where(a, button):focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px;
+}
+
+/* ------------------------------------------------------------------ header */
+.site-header {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; padding-top: 18px; padding-bottom: 18px;
+  flex-wrap: wrap;
+}
+.brand { display: flex; align-items: center; gap: 11px; text-decoration: none; color: inherit;
+  min-width: 0;
+}
+.brand-mark {
+  display: grid; place-items: center; width: 38px; height: 38px; flex: none;
+  border-radius: 10px; background: var(--accent-soft); color: var(--accent);
+}
+.brand-text strong { display: block; font-size: 1.02rem; letter-spacing: -.01em; }
+.brand-text small { display: block; color: var(--muted); font-size: .78rem; }
+
+.icon-btn {
+  display: grid; place-items: center; width: 38px; height: 38px; flex: none; cursor: pointer;
+  border: 1px solid var(--border); border-radius: 10px;
+  background: var(--surface); color: var(--text);
+}
+.icon-btn:hover { border-color: var(--border-strong); }
+.icon-moon { display: none; }
+:root[data-theme="light"] .icon-sun { display: none; }
+:root[data-theme="light"] .icon-moon { display: block; }
+
+/* -------------------------------------------------------------------- hero */
+.hero { padding: 40px 0 34px; max-width: 46rem; }
+.hero h1 { font-size: clamp(1.75rem, 4.6vw, 2.7rem); line-height: 1.14; letter-spacing: -.022em; }
+.hero h1 em { font-style: normal; color: var(--accent); }
+.lede { color: var(--text-2); margin-top: 16px; font-size: 1.02rem; max-width: 60ch; }
+.pledge {
+  margin-top: 20px; padding: 13px 16px; font-size: .9rem; color: var(--text-2);
+  background: var(--surface); border: 1px solid var(--border);
+  border-left: 3px solid var(--good); border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+.pledge b { color: var(--text); }
+
+/* ----------------------------------------------------------------- verdict */
+.verdict {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 26px; scroll-margin-top: 20px;
+}
+.gauge { display: grid; gap: 12px; }
+.gauge-num { font-size: 3rem; font-weight: 700; line-height: 1; letter-spacing: -.03em; }
+.gauge-num small { font-size: 1.1rem; color: var(--muted); font-weight: 500; }
+.gauge-track { height: 9px; border-radius: 99px; background: var(--surface-2); overflow: hidden; }
+.gauge-fill {
+  height: 100%; width: 0; border-radius: 99px; background: var(--accent);
+  transition: width .7s cubic-bezier(.2,.8,.2,1), background-color .4s ease;
+}
+.gauge-label { font-size: 1.02rem; font-weight: 600; }
+.gauge-explain { color: var(--text-2); margin-top: 14px; font-size: .93rem; max-width: 62ch; }
+
+/* ---------------------------------------------------------------- findings */
+.findings, .advice, .truth { margin-top: 52px; }
+.findings-head {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: 14px; margin-bottom: 18px;
+}
+h2 { font-size: clamp(1.25rem, 2.6vw, 1.6rem); letter-spacing: -.015em; }
+.filters { display: flex; gap: 8px; }
+.filter {
+  cursor: pointer; padding: 7px 13px; font-size: .84rem; font-family: inherit;
+  border: 1px solid var(--border); border-radius: 99px;
+  background: var(--surface); color: var(--text-2);
+}
+.filter:hover { border-color: var(--border-strong); }
+.filter.is-on { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600; }
+
+.cards { display: grid; gap: 13px; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); }
+.card {
+  display: flex; flex-direction: column; gap: 8px; padding: 17px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+}
+.card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.card h3 { font-size: .93rem; letter-spacing: -.005em; }
+.tag {
+  flex: none; font-size: .68rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 99px; border: 1px solid;
+}
+.tag.high { color: var(--critical-ink); border-color: color-mix(in srgb, var(--critical) 45%, transparent); background: color-mix(in srgb, var(--critical) 12%, transparent); }
+.tag.mid  { color: var(--warning-ink);  border-color: color-mix(in srgb, var(--warning) 45%, transparent);  background: color-mix(in srgb, var(--warning) 12%, transparent); }
+.tag.low  { color: var(--good-ink);     border-color: color-mix(in srgb, var(--good) 45%, transparent);     background: color-mix(in srgb, var(--good) 12%, transparent); }
+
+.value {
+  font-family: var(--mono); font-size: .82rem; color: var(--text);
+  background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm);
+  padding: 9px 11px; word-break: break-word; max-height: 7.2em; overflow: auto;
+}
+.card p { color: var(--text-2); font-size: .85rem; }
+
+/* ------------------------------------------------------------------ advice */
+.steps { list-style: none; counter-reset: s; display: grid;
+  /* Une colonne « auto » se dimensionne sur son contenu : à texte doublé,
+     elle passait à 391 px dans un cadre de 358. minmax(0, 1fr) la borne
+     au conteneur. Le mot le plus long ne faisant que 130 px, ce n'était
+     pas un mot insécable : c'était la grille elle-même. */
+  grid-template-columns: minmax(0, 1fr); gap: 12px; margin-top: 18px; }
+.steps li {
+  counter-increment: s; position: relative; padding: 16px 18px 16px 56px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+}
+.steps li::before {
+  content: counter(s); position: absolute; left: 17px; top: 16px;
+  display: grid; place-items: center; width: 26px; height: 26px;
+  border-radius: 50%; background: var(--accent); color: var(--accent-ink);
+  font-size: .82rem; font-weight: 700;
+}
+.steps b { display: block; font-size: .95rem; margin-bottom: 3px; }
+.steps span { color: var(--text-2); font-size: .87rem; }
+
+/* ------------------------------------------------------------------- truth */
+.truth { padding-bottom: 8px; }
+.truth p { color: var(--text-2); margin-top: 13px; max-width: 68ch; font-size: .94rem; }
+.truth b { color: var(--text); }
+
+/* ------------------------------------------------------------------ footer */
+.site-footer {
+  border-top: 1px solid var(--border); margin-top: 64px;
+  padding-top: 24px; padding-bottom: 32px;
+  display: grid; gap: 6px; color: var(--text-2); font-size: .86rem;
+}
+.site-footer a { color: var(--accent); }
+.muted { color: var(--muted); }
+
+@media (max-width: 560px) {
+  .hero { padding: 28px 0 24px; }
+  .verdict { padding: 20px; }
+  .gauge-num { font-size: 2.4rem; }
+}
+
+/* ------------------------------------------------- bascule de langue */
+.header-tools { display: flex; align-items: center; gap: 9px;
+  flex-wrap: wrap;
+}
+.lang-link {
+  padding: 8px 13px; border-radius: 10px; text-decoration: none;
+  font-size: .84rem; font-weight: 600; color: var(--text-2);
+  background: var(--surface); border: 1px solid var(--border);
+}
+.lang-link:hover { border-color: var(--border-strong); color: var(--text); }
+
+/* --------------------------------------------------------------- totaux */
+.totaux {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 26px;
+  padding: 20px 22px; margin-top: 8px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+}
+.total { display: grid; gap: 2px; }
+.total-valeur { font-size: 1.9rem; font-weight: 700; letter-spacing: -.02em; line-height: 1; }
+.total-label { font-size: .82rem; color: var(--muted); }
+
+.alerte {
+  margin-top: 14px; padding: 13px 16px; font-size: .92rem;
+  background: color-mix(in srgb, var(--warning) 10%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--warning) 40%, var(--border));
+  border-left: 3px solid var(--warning); border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+/* --------------------------------------------------------------- saisie */
+.saisie, .resultats, .explain { margin-top: 44px; }
+.saisie h2, .resultats h2 { font-size: clamp(1.2rem, 2.4vw, 1.5rem); }
+#ajout {
+  display: grid; gap: 12px; margin-top: 16px;
+  grid-template-columns: 2fr 1fr 1fr 1.2fr auto; align-items: end;
+}
+.champ { display: grid; gap: 5px;
+  min-width: 0;
+}
+.champ label { font-size: .8rem; color: var(--text-2); font-weight: 600; }
+.champ input, .champ select {
+  width: 100%; font-family: inherit; font-size: .92rem; color: var(--text);
+  padding: 9px 11px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+}
+.champ input:focus-visible, .champ select:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 1px; border-color: var(--accent);
+}
+.champ input::placeholder { color: var(--muted); }
+.btn {
+  cursor: pointer; font-family: inherit; font-size: .9rem; font-weight: 600; white-space: nowrap;
+  padding: 10px 20px; border-radius: var(--radius-sm);
+  background: var(--accent); border: 1px solid var(--accent); color: var(--accent-ink);
+}
+.btn:hover { filter: brightness(1.08); }
+.btn-ghost {
+  cursor: pointer; font-family: inherit; font-size: .83rem; padding: 6px 13px;
+  background: transparent; color: var(--text-2);
+  border: 1px solid var(--border); border-radius: 99px;
+}
+.btn-ghost:hover { border-color: var(--border-strong); color: var(--text); }
+.erreur { margin-top: 10px; font-size: .87rem; color: var(--critical-ink); }
+.aide { margin-top: 10px; font-size: .82rem; max-width: 62ch; }
+
+/* ------------------------------------------------------------ résultats */
+.resultats-head {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: 12px; margin-bottom: 14px;
+}
+.vide { font-size: .9rem; }
+#liste { display: grid; gap: 10px; }
+.abo {
+  display: grid; gap: 7px; padding: 15px 17px; position: relative;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+}
+.abo.is-proche { border-left: 3px solid var(--warning); }
+.abo-haut {
+  display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between;
+  gap: 10px; padding-right: 76px;
+}
+.abo-haut h3 { font-size: .98rem; word-break: break-word; }
+.abo-prix { font-size: .88rem; color: var(--text-2); white-space: nowrap; }
+.abo-bas { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: .85rem; color: var(--text-2); }
+.abo-echeance b { color: var(--text); }
+.abo-supprimer {
+  position: absolute; top: 13px; right: 15px; cursor: pointer;
+  font-family: inherit; font-size: .78rem; padding: 5px 11px;
+  background: transparent; color: var(--muted);
+  border: 1px solid var(--border); border-radius: 99px;
+}
+.abo-supprimer:hover { color: var(--critical-ink); border-color: color-mix(in srgb, var(--critical) 50%, var(--border)); }
+
+/* ---------------------------------------------------------- explications */
+.explain h2 { margin-top: 26px; }
+.explain h2:first-child { margin-top: 0; }
+.explain p { color: var(--text-2); margin-top: 12px; max-width: 68ch; font-size: .94rem; }
+.explain b { color: var(--text); }
+
+@media (max-width: 760px) {
+  #ajout { grid-template-columns: 1fr 1fr; }
+  .champ-nom, .champ-envoi { grid-column: 1 / -1; }
+  .totaux { gap: 20px; padding: 16px 18px; }
+  .total-valeur { font-size: 1.6rem; }
+}
+
+/* Les sections de contenu ajoutées après coup — « À lire ensuite », les
+   sources, l'inscription — rendaient des puces et des liens par défaut du
+   navigateur : soulignés, bleus, hors palette. Le haut de page était soigné,
+   le bas ressemblait à un fichier texte. */
+.explain ul { padding-left: 0; list-style: none; display: grid; gap: 9px; margin-top: 12px; }
+.explain li {
+  color: var(--text-2); font-size: .94rem; line-height: 1.65; max-width: 68ch;
+  padding-left: 18px; position: relative;
+}
+.explain li::before {
+  content: ""; position: absolute; left: 3px; top: .62em;
+  width: 5px; height: 5px; border-radius: 50%; background: var(--accent);
+}
+.explain a {
+  color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 3px;
+}
+.explain a:hover { text-decoration-thickness: 2px; }
+.explain a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+
+/* ------------------------------------------------------ propre à Partage */
+
+#f-personne { display: grid; gap: 12px; margin-top: 16px; grid-template-columns: minmax(0, 1fr) auto; align-items: end; max-width: 560px; }
+#f-depense { display: grid; gap: 12px; margin-top: 16px; grid-template-columns: 2fr 1fr 1.2fr auto; align-items: end; }
+#f-depense fieldset { grid-column: 1 / -1; border: 0; padding: 0; margin: 0; min-width: 0; }
+#f-depense legend { font-size: .8rem; color: var(--text-2); font-weight: 600; margin-bottom: 6px; }
+
+.personnes { list-style: none; padding: 0; margin: 14px 0 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.personne {
+  display: inline-flex; align-items: center; gap: 4px; max-width: 100%;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 999px;
+  padding: 3px 4px 3px 14px; font-size: .92rem;
+}
+.personne span { overflow-wrap: anywhere; }
+
+.retirer {
+  cursor: pointer; flex: none; width: 28px; height: 28px; border-radius: 50%;
+  border: 1px solid transparent; background: transparent; color: var(--text-2);
+  font: inherit; font-size: 1.05rem; line-height: 1;
+}
+.retirer:hover { background: var(--surface-2); color: var(--text); }
+.retirer:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+.cases { display: flex; flex-wrap: wrap; gap: 8px; }
+.case {
+  display: inline-flex; align-items: center; gap: 8px; cursor: pointer; min-height: 36px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm);
+  padding: 6px 12px; font-size: .9rem; max-width: 100%;
+}
+.case span { overflow-wrap: anywhere; }
+.case input { width: 16px; height: 16px; accent-color: var(--accent); margin: 0; }
+.case:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+.note-attente { margin-top: 14px; color: var(--text-2); font-size: .94rem; }
+
+#resultat { margin-top: 44px; }
+#resultat h2 { font-size: clamp(1.2rem, 2.4vw, 1.5rem); margin-top: 30px; }
+.bilan {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 18px 20px;
+}
+.bilan b { font-family: var(--mono); font-size: 1.8rem; color: var(--text); overflow-wrap: anywhere; }
+.bilan span { color: var(--text-2); }
+
+.virements, .soldes, .depenses { list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 8px; }
+.virement, .solde, .depense, .equilibre {
+  display: flex; align-items: center; gap: 8px 12px; flex-wrap: wrap;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm);
+  padding: 12px 14px; font-size: .95rem;
+}
+.virement b, .solde > span:first-child { overflow-wrap: anywhere; }
+.virement .fleche { color: var(--text-2); }
+.montant { margin-left: auto; font-family: var(--mono); font-weight: 700; color: var(--text); white-space: nowrap; }
+.solde.is-credit .montant { color: var(--good-ink); }
+.solde.is-debit .montant { color: var(--serious-ink); }
+.solde.is-zero .montant { color: var(--text-2); }
+.equilibre { color: var(--text-2); }
+
+.depense { flex-wrap: nowrap; }
+.dep-texte { display: grid; gap: 2px; min-width: 0; }
+.dep-texte b, .dep-texte span { overflow-wrap: anywhere; }
+.dep-texte .muted { font-size: .85rem; }
+
+.partager {
+  margin-top: 30px; background: var(--surface-2); border: 1px solid var(--border-strong);
+  border-radius: var(--radius); padding: 18px 20px;
+}
+.partager h2 { margin-top: 0 !important; }
+.partager p { color: var(--text-2); font-size: .92rem; margin-top: 8px; max-width: 68ch; }
+.ligne-lien { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; margin-top: 14px; }
+.ligne-lien input {
+  width: 100%; min-width: 0; font-family: var(--mono); font-size: .82rem; color: var(--text);
+  padding: 9px 11px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm);
+}
+.ligne-lien input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.copie { color: var(--good-ink); font-size: .88rem; margin-top: 8px; }
+.actions-fin { margin-top: 18px; }
+
+.avertissement {
+  margin-top: 18px; padding: 12px 16px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong); background: var(--surface); color: var(--text);
+}
+
+@media (max-width: 760px) {
+  #f-depense { grid-template-columns: 1fr 1fr; }
+  #f-depense .champ-quoi, #f-depense .champ-envoi { grid-column: 1 / -1; }
+  .ligne-lien { grid-template-columns: 1fr; }
+  .depense { flex-wrap: wrap; }
+}

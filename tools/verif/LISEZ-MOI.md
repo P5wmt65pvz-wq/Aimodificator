@@ -10,19 +10,19 @@ du rendu : il ne voit ni un contraste insuffisant, ni un débordement quand le
 lecteur grossit le texte, ni une pastille devenue illisible. La moitié des
 défauts réellement trouvés sur ce site n'étaient visibles qu'à l'écran.
 
-## Les neuf suites
+## Les suites
 
 | Suite | Ce qu'elle cherche | Durée |
 |---|---|---|
-| `fuzz` | Entrées hostiles sur les sept moteurs : plantage, `NaN`, infini, boucle | 2 s |
-| `audit` | Les 9 pages : titre, description, canonical, liens morts, doublons d'identifiant, sitemap | 11 s |
+| `fuzz` | Entrées hostiles sur chaque moteur : plantage, `NaN`, infini, boucle | 2 s |
+| `audit` | Chaque page : titre, description, canonical, liens morts, doublons d'identifiant, sitemap | 11 s |
 | `contraste` | Contraste réel de **chaque texte affiché**, deux thèmes, fond effectif | 14 s |
 | `a11y` | Clavier, hiérarchie des titres, étiquettes, 320 px, texte doublé, zones tactiles | 36 s |
-| `corrompu` | 23 formes de stockage local abîmé sur 7 pages | 100 s |
+| `corrompu` | 23 formes de stockage local abîmé, page par page | 100 s |
 | `accueil` | Chaque valeur de chaque menu, 250 combinaisons, champs hostiles, injections | 58 s |
 | `passe` | Passe de bout en bout, deux thèmes, deux largeurs | 6 s |
-| `outils` | Photo, Clause, Abonnements, Empreinte et Vrai prix **utilisés pour de vrai** : entrées réelles, résultats vérifiés au chiffre près | 7 s |
-| `visuel` | Les 9 pages, outils en action, comparées **pixel par pixel** à une référence regardée à l'œil. Attrape ce qu'aucune autre suite ne voit : un bloc déplacé, une grille perdue, une couleur hors palette | 60 s |
+| `outils` | Photo, Clause, Abonnements, Empreinte, Vrai prix et Partage **utilisés pour de vrai** : entrées réelles, résultats vérifiés au chiffre près | 7 s |
+| `visuel` | Chaque page, outil en action, comparées **pixel par pixel** à une référence regardée à l'œil. Attrape ce qu'aucune autre suite ne voit : un bloc déplacé, une grille perdue, une couleur hors palette | 60 s |
 
 Chacune se lance seule : `node tools/verif/contraste.mjs`.
 
@@ -78,3 +78,10 @@ Les VALEURS d'Empreinte sont masquées — elles dépendent de la machine, c'est
 le principe de l'outil — mais sa mise en page est comparée comme les autres.
 Si l'environnement de contrôle change (navigateur, polices), régénérer toutes
 les références et les regarder.
+
+## Pas de compte écrit en dur
+
+Les étiquettes et ce fichier ne disent plus « neuf pages » ni « sept moteurs ».
+Un compte écrit à la main vieillit au premier outil ajouté, et une étiquette
+fausse fait croire à une couverture qu'on n'a pas. Le compte réel est celui que
+chaque suite affiche en s'exécutant.

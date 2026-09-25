@@ -25,6 +25,7 @@ const CLA = require(path.join(RACINE, 'outils/clause/clause.js'));
 const ABO = require(path.join(RACINE, 'outils/abonnements/abonnements.js'));
 const PAS = require(path.join(RACINE, 'outils/passe/passe.js'));
 const VPX = require(path.join(RACINE, 'outils/vrai-prix/vrai-prix.js'));
+const PAR = require(path.join(RACINE, 'outils/partage/partage.js'));
 
 const defauts = [], infos = [];
 
@@ -191,14 +192,28 @@ for (const [n, f] of Object.entries({
   basculePrix: (x) => VPX.bascule(x, 249, 0),
   basculeAchat: (x) => VPX.bascule(10, x, 0),
   basculeHausse: (x) => VPX.bascule(10, 249, x),
-})) eprouve('vraiprix.' + n, f, [TEXTES, NOMBRES], { nanAdmis: true });
+})) eprouve('vraiprix.' + n, f, [...TEXTES, ...NOMBRES], { nanAdmis: true });
 
 /* La frontière, elle, reste sous la règle stricte : ce qui part à l'écran ne
    peut jamais être NaN. */
 for (const [n, f] of Object.entries({
   euros: (x) => VPX.euros(x),
   duree: (x) => VPX.duree(x)
-})) eprouve('vraiprix.' + n, f, [TEXTES, NOMBRES]);
+})) eprouve('vraiprix.' + n, f, [...TEXTES, ...NOMBRES]);
+
+console.log('Partage — champs de saisie et lien reçu');
+
+/* Le lien est la seule entrée de ce site que QUELQU'UN D'AUTRE fabrique : il
+   arrive par une messagerie, et n'importe qui peut le forger. Il est éprouvé
+   plus durement que les champs. decoder() doit rendre un état valide ou null,
+   jamais lever, jamais boucler. */
+eprouve('partage.centimes', (x) => PAR.centimes(x), [...TEXTES, ...NOMBRES], { nanAdmis: true });
+eprouve('partage.euros', (x) => PAR.euros(x), [...TEXTES, ...NOMBRES]);
+eprouve('partage.decoder', (x) => PAR.decoder(x), [...TEXTES, ...NOMBRES,
+  ...['#', '====', 'W10', 'WzEsW10sW11d', 'WzEsWyJhIl0sW1siIiwwLDEsWzBdXV1d',
+   'eyJfX3Byb3RvX18iOnsicG9sbHVlIjoxfX0', 'A'.repeat(PAR.MAX_LIEN + 1),
+   'WzEsWyJhIiwiQSJdLFtdXQ', 'WzEsWyJhIl0sW1siIiwwLDEsWzAsMF1dXV0',
+   'WzEsWyJhIl0sW1siIiw1LDEsWzBdXV1d', 'WzEsWyJhIl0sW1siIiwwLC0xLFswXV1dXQ']]);
 
 console.log('Passe — mot de passe tapé');
 eprouve('passe.analyser', (x) => PAS.analyser(x, 'lent'), TEXTES);
@@ -226,5 +241,5 @@ console.log(`  ${infos.length} cas, tous hors du domaine réel`);
 
 console.log('\n' + (defauts.length
   ? `${defauts.length} DÉFAUT(S) :\n - ` + defauts.join('\n - ')
-  : 'AUCUN DÉFAUT — les sept moteurs encaissent tout ce qu\'une page peut leur donner'));
+  : 'AUCUN DÉFAUT — tous les moteurs encaissent tout ce qu\'une page peut leur donner'));
 process.exit(defauts.length ? 1 : 0);

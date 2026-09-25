@@ -81,6 +81,7 @@ test('tout lien d\'inscription écrit dans une page correspond à liste.js', () 
     ['outils/photo/index.html', 'fr'], ['outils/passe/index.html', 'fr'],
     ['outils/clause/index.html', 'fr'], ['outils/abonnements/index.html', 'fr'],
     ['outils/empreinte/index.html', 'fr'], ['outils/vrai-prix/index.html', 'fr'],
+    ['outils/partage/index.html', 'fr'],
     ['en/fingerprint/index.html', 'en']
   ];
   let trouves = 0;
@@ -107,6 +108,7 @@ test('chaque page annonce la fréquence, l\'usage et le moyen de partir', () => 
     ['outils/abonnements/index.html', /mois/, /revendue|transmise/, /stop/],
     ['outils/empreinte/index.html', /mois/, /revendue|transmise/, /stop/],
     ['outils/vrai-prix/index.html', /mois/, /revendue|transmise/, /stop/],
+    ['outils/partage/index.html', /mois/, /revendue|transmise/, /stop/],
     ['en/fingerprint/index.html', /month/, /sold|shared/, /stop/]
   ];
   for (const [f, freq, usage, sortie] of PAGES) {

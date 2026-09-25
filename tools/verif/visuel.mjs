@@ -37,10 +37,18 @@ const FIXE = new Date('2026-09-22T10:00:00+02:00');
 /* Écart toléré par canal de couleur, pour absorber l'anticrénelage. Au-delà,
    le pixel compte comme différent. */
 const SEUIL_PIXEL = 24;
-/* Part de pixels différents au-delà de laquelle la page est en défaut.
-   0,1 % d'une page de 1180 × 3000 px, c'est environ 3 500 pixels : moins
-   qu'un seul mot déplacé. */
-const SEUIL_PAGE = 0.001;
+/* Nombre de pixels différents au-delà duquel la page est en défaut.
+
+   Le premier réglage était une PROPORTION, 0,1 % de la page, présentée comme
+   « moins qu'un mot déplacé ». C'était faux : sur l'accueil, haut de 4 700 px,
+   0,1 % fait 5 600 pixels, et l'ajout d'un mot entier dans la navigation n'en
+   change que 1 146. Il est passé en silence, étiqueté « anticrénelage ».
+
+   Le seuil est donc calé sur ce qui a été MESURÉ : deux passes successives sur
+   les mêmes pages donnent exactement 0 pixel de différence. 50 pixels laissent
+   une marge pour un rendu légèrement instable, et restent vingt fois sous le
+   plus petit changement réel observé. */
+const SEUIL_PIXELS = 50;
 
 const POLITIQUE = "Nous pouvons vendre vos données à des partenaires commerciaux. "
   + "Vos données sont conservées sans limitation de durée et transférées hors de "
@@ -76,6 +84,9 @@ const SCENARIOS = [
     await p.fill('#prix', '9.99'); await p.fill('#hausse', '5'); await p.fill('#achat', '249');
   }],
   ['exemples', '/exemples/', [], async () => {}],
+  /* Chargé par le lien, comme le reçoit un membre du groupe : l'état est
+     entièrement déterminé par l'adresse. */
+  ['partage', '/outils/partage/#WzEsWyJBZHJpZW4iLCJMw6lhIiwiVG9tIl0sW1siQ291cnNlcyIsMCw5MDAwLFswLDEsMl1dLFsiRXNzZW5jZSIsMSw0NTAwLFswLDFdXSxbIkNpbsOpbWEiLDIsMTAwMCxbMCwxLDJdXV1d', [], async () => {}],
   ['fingerprint-en', '/en/fingerprint/', MASQUES_EMPREINTE, async () => {}]
 ];
 
@@ -146,7 +157,7 @@ for (const [nom, url, masques, action] of SCENARIOS) {
        déplacé. */
     if (fs.existsSync(fRef)) {
       const r = await compare(fs.readFileSync(fRef), img);
-      if (!r.taille && r.n / r.total <= SEUIL_PAGE) { console.log(`  inchangée  ${nom}`); continue; }
+      if (!r.taille && r.n <= SEUIL_PIXELS) { console.log(`  inchangée  ${nom}`); continue; }
     }
     fs.writeFileSync(fRef, img);
     console.log(`  RÉÉCRITE   ${nom}`);
@@ -163,13 +174,15 @@ for (const [nom, url, masques, action] of SCENARIOS) {
     continue;
   }
   const part = r.n / r.total;
-  if (part > SEUIL_PAGE) {
+  if (r.n > SEUIL_PIXELS) {
     fs.writeFileSync(path.join(ECARTS, nom + '-actuel.png'), img);
     fs.writeFileSync(path.join(ECARTS, nom + '-ecart.png'), Buffer.from(r.ecart, 'base64'));
-    pb.push(`${nom} : ${r.n} pixels différents (${(part * 100).toFixed(2)} %) — voir tools/verif/ecarts/${nom}-ecart.png`);
-    console.log(`  ECHEC  ${nom} — ${(part * 100).toFixed(2)} % de pixels différents`);
+    pb.push(`${nom} : ${r.n} pixels différents (${(part * 100).toFixed(3)} %) — voir tools/verif/ecarts/${nom}-ecart.png`);
+    console.log(`  ECHEC  ${nom} — ${r.n} pixels différents`);
   } else {
-    console.log(`  ok     ${nom}${r.n ? ` (${r.n} px d'anticrénelage, sous le seuil)` : ''}`);
+    /* Pas de mot comme « anticrénelage » ici : on ne sait pas ce que sont ces
+       pixels, on sait seulement qu'ils sont sous le seuil mesuré. */
+    console.log(`  ok     ${nom}${r.n ? ` (${r.n} px différents, sous le seuil de ${SEUIL_PIXELS})` : ''}`);
   }
 }
 
@@ -177,4 +190,4 @@ await cmpCtx.close();
 await nav.close();
 srv.close();
 if (MAJ) { console.log('\nRéférences régénérées. Les REGARDER avant de commiter.'); process.exit(0); }
-rapport(pb, 'AUCUN DÉFAUT — les neuf pages sont identiques à leur référence');
+rapport(pb, 'AUCUN DÉFAUT — chaque page est identique à sa référence');
