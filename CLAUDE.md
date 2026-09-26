@@ -20,7 +20,9 @@ pas de serveur.
 - `exemples/` — vitrine des sorties du moteur, **générée** par
   `npm run exemples` ; ne jamais l'écrire à la main, la régénérer après toute
   modification du moteur
-- `tools/` — les générateurs : page d'exemples, Pack Pro
+- `tools/` — les générateurs : page d'exemples, Pack Pro, images d'aperçu des
+  liens (`npm run og`, à relancer quand le titre d'un outil change — `npm test`
+  le signale)
 - `tools/verif/` — les contrôles dans Chromium (`npm run verif`), ce que
   `npm test` ne peut pas voir : contraste, débordement, clavier, rendu, **et
   que les outils fonctionnent réellement** (suite `outils`).

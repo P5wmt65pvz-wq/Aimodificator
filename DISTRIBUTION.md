@@ -68,12 +68,22 @@ part dans ce dépôt. Sources officielles listées en fin de `MONETISATION.md`.
 
 ### 2. Faire indexer ce qui existe déjà
 
-Le sitemap existe et `robots.txt` le déclare. Il reste à **le soumettre dans
-Search Console**. Tant que ce n'est pas fait, l'indexation ne dépend que de la
-découverte spontanée, qui est lente pour un domaine sans historique.
+Le sitemap existe et `robots.txt` le déclare. **Il a été soumis dans Search
+Console le 24 septembre 2026.** Au moment de l'envoi, Search Console affichait
+« Impossible de récupérer le sitemap ». Le fichier, lui, est en ordre : XML
+bien formé (vérifié le 26 septembre 2026), et chacune de ses adresses
+correspond à une page du dépôt — `npm test` le contrôle désormais dans les deux
+sens. L'état est à relire au premier relevé hebdomadaire, sans rien modifier
+d'ici là.
 
-C'est une action de quelques minutes, à faire dans l'interface de Search
-Console. Aucune ligne de code n'est concernée.
+### 2 bis. Un lien partagé doit ressembler à quelque chose
+
+Un lien collé dans une messagerie s'affiche avec l'image d'aperçu de la page.
+Les pages d'outils annonçaient une grande image sans en fournir aucune : le lien
+arrivait nu. Chaque outil a désormais la sienne, dessinée à partir de son propre
+titre (`npm run og`), et `npm test` signale une image qui ne correspond plus au
+titre. C'est d'abord pour Partage, dont le lien est fait pour être envoyé à un
+groupe entier.
 
 ### 3. Une page doit répondre à une question réellement tapée
 

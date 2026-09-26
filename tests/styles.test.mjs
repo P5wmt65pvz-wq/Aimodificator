@@ -6,6 +6,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import path from 'node:path';
+import { pagesOutils, texteAlt } from '../tools/build-og.mjs';
 
 const BASE = path.resolve(import.meta.dirname, '..');
 
@@ -117,6 +118,51 @@ test('chaque page a les balises indispensables et aucune ressource externe', () 
   }
 });
 
+/* L'aperçu d'un lien collé dans une messagerie. Toutes les pages annonçaient
+   « summary_large_image » sans fournir d'image : le lien s'affichait sans
+   rien, ce qui est pire qu'une petite carte. Pour Partage, dont le lien est
+   fait pour être envoyé à tout un groupe, c'est la première chose vue. */
+const SITE = 'https://p5wmt65pvz-wq.github.io/Aimodificator/';
+const meta = (h, attr, nom) => (h.match(new RegExp(`<meta ${attr}="${nom}" content="([^"]*)"`)) || [])[1];
+
+test('chaque page annoncée en grande image fournit son image, au bon format', () => {
+  const toutes = [...PAGES.map((p) => ({ id: p.id, h: html(p) })),
+                  { id: 'accueil', h: readFileSync(path.join(BASE, 'index.html'), 'utf8') }];
+  for (const { id, h } of toutes) {
+    if (meta(h, 'name', 'twitter:card') !== 'summary_large_image') continue;
+    const img = meta(h, 'property', 'og:image');
+    assert.ok(img, `${id} : grande image annoncée, mais aucune og:image`);
+    assert.ok(img.startsWith(SITE), `${id} : og:image hors du site → ${img}`);
+    assert.equal(meta(h, 'name', 'twitter:image'), img, `${id} : twitter:image différente d'og:image`);
+    assert.ok((meta(h, 'property', 'og:image:alt') || '').length >= 10, `${id} : image sans texte alternatif`);
+    const f = path.join(BASE, img.slice(SITE.length));
+    assert.ok(existsSync(f), `${id} : image introuvable dans le dépôt → ${f}`);
+    /* Les dimensions sont lues dans l'en-tête PNG lui-même, pas crues sur
+       parole : une image déclarée 1200 × 630 qui ne l'est pas est recadrée
+       au hasard par chaque messagerie. */
+    const b = readFileSync(f);
+    assert.equal(b.subarray(1, 4).toString(), 'PNG', `${id} : ${img} n'est pas un PNG`);
+    assert.deepEqual([b.readUInt32BE(16), b.readUInt32BE(20)], [1200, 630], `${id} : ${img} ne fait pas 1200 × 630`);
+    assert.equal(meta(h, 'property', 'og:image:width'), '1200', `${id} : og:image:width`);
+    assert.equal(meta(h, 'property', 'og:image:height'), '630', `${id} : og:image:height`);
+  }
+});
+
+test('chaque outil a sa propre image d\'aperçu, et elle affiche son titre actuel', () => {
+  const vues = new Map();
+  for (const o of pagesOutils()) {
+    const h = readFileSync(o.fichier, 'utf8');
+    const img = meta(h, 'property', 'og:image');
+    assert.equal(img, SITE + 'assets/og/' + o.image, `${o.id} : image d'aperçu attendue assets/og/${o.image}`);
+    assert.ok(!vues.has(img), `${o.id} partage son image avec ${vues.get(img)}`);
+    vues.set(img, o.id);
+    /* L'image est dessinée à partir du titre de la page. Si le titre change,
+       le texte alternatif ne correspond plus, et l'image non plus. */
+    assert.equal(meta(h, 'property', 'og:image:alt'), texteAlt(o.fichier),
+      `${o.id} : le titre a changé depuis l'image — relancer npm run og et mettre à jour og:image:alt`);
+  }
+});
+
 test('chaque page a un titre et une description qui lui sont propres', () => {
   const vus = new Map();
   for (const p of PAGES) {
@@ -136,11 +182,44 @@ test('chaque page est listée dans le sitemap', () => {
   for (const p of PAGES) assert.ok(sm.includes(p.url), `${p.id} : absent du sitemap.xml`);
 });
 
+/* L'autre sens : une adresse du sitemap qui ne mène à aucune page est une
+   erreur que Search Console rapporte, et qui entame la confiance dans le
+   reste du fichier. */
+test('chaque adresse du sitemap mène à une page du dépôt', () => {
+  const sm = readFileSync(path.join(BASE, 'sitemap.xml'), 'utf8');
+  const locs = [...sm.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
+  assert.ok(locs.length >= PAGES.length, `sitemap : ${locs.length} adresses seulement`);
+  for (const u of locs) {
+    assert.ok(u.startsWith(SITE), `sitemap : adresse hors du site → ${u}`);
+    const rel = u.slice(SITE.length);
+    const f = path.join(BASE, rel === '' || rel.endsWith('/') ? path.join(rel, 'index.html') : rel);
+    assert.ok(existsSync(f), `sitemap : ${u} ne correspond à aucun fichier`);
+  }
+});
+
 test('chaque page française est atteignable depuis l\'accueil', () => {
   const accueil = readFileSync(path.join(BASE, 'index.html'), 'utf8');
   for (const p of PAGES.filter((x) => x.depuisAccueil)) {
     const rel = p.url.replace(/^\//, '');
     assert.ok(accueil.includes(`href="${rel}"`), `${p.id} : aucun lien depuis l'accueil`);
+  }
+});
+
+/* Le pied de page de chaque outil mène à tous les autres. Chaque outil ajouté
+   l'avait été sans retoucher les pieds de page existants : Partage n'était lié
+   depuis aucun, Vrai prix depuis un seul, et la page d'exemples en ignorait
+   quatre. Un moteur de recherche suit ces liens ; un lecteur aussi. */
+test('le pied de page de chaque outil et des exemples mène à tous les outils', () => {
+  const outils = PAGES.filter((p) => p.id.startsWith('outils/'));
+  const pied = (h) => (h.match(/<footer[\s\S]*?<\/footer>/) || [''])[0];
+  for (const p of [...outils, ...PAGES.filter((x) => x.id === 'exemples')]) {
+    const f = pied(html(p));
+    assert.ok(f, `${p.id} : pas de pied de page`);
+    for (const o of outils) {
+      if (o === p) continue;
+      const rel = path.relative(p.dir, o.dir).split(path.sep).join('/') + '/';
+      assert.ok(f.includes(`href="${rel}"`), `${p.id} : le pied de page ne mène pas à ${o.id}`);
+    }
   }
 });
 
