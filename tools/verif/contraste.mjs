@@ -42,6 +42,12 @@ async function reveler(page, url) {
     await page.waitForTimeout(60);
     await tape('#achat', '999999');
     await page.waitForTimeout(60);
+  } else if (url.includes('application')) {
+    /* Le compteur hors connexion n'apparaît qu'une fois le service worker
+       prêt, et passe au vert quand la copie est complète. */
+    await page.waitForSelector('#hors-ligne:not([hidden])', { timeout: 15000 }).catch(() => {});
+    await clic('#garder-tout');
+    await page.waitForSelector('.hors-ligne.is-complet', { timeout: 20000 }).catch(() => {});
   } else if (url.includes('clause')) {
     await tape('#texte', 'Nous pouvons vendre vos données à des partenaires commerciaux. Vos données sont conservées sans limitation de durée et transférées hors de l\u2019Union européenne. En poursuivant votre navigation, vous consentez à ce traitement. Nous nous réservons le droit de modifier cette politique à tout moment sans vous en informer.');
     await page.waitForTimeout(120);

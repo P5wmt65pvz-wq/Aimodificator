@@ -42,6 +42,10 @@ export function pagesOutils() {
       if (d.isDirectory() && existsSync(f)) out.push({ id: `${racine}/${d.name}`, fichier: f, image: `${prefixe}${d.name}.png` });
     }
   }
+  /* La page de l'application suit la même structure qu'un outil : elle a
+     donc son image, tirée de son titre, comme les autres. */
+  const app = path.join(ROOT, 'application', 'index.html');
+  if (existsSync(app)) out.push({ id: 'application', fichier: app, image: 'application.png' });
   return out;
 }
 

@@ -44,6 +44,7 @@ const CIBLES = [
   ['/outils/empreinte/', 'empreinte.theme'],
   ['/outils/vrai-prix/', 'vraiprix.theme'],
   ['/outils/partage/', 'partage.theme'],
+  ['/application/', 'application.theme'],
 ];
 
 for (const [url, cle] of CIBLES) {

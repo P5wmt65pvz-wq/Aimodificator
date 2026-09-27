@@ -110,6 +110,17 @@ trafic de passage ne fait pas. Le lien de `liste.js` est en place ; ce qui
 manque, c'est **une raison de s'inscrire, énoncée sur chaque page d'outil** et
 pas seulement sur l'accueil.
 
+### 6. L'application : faire revenir, pas faire venir
+
+Le site s'installe comme une application (`application/`), hors connexion
+compris, sans magasin d'applications. Aucun store n'est utilisé, volontairement :
+un compte développeur y est payant et nominatif, et ce projet ne publie pas le
+nom de son titulaire.
+
+Ce que l'application change : une icône sur l'écran d'accueil ramène le
+visiteur sans moteur de recherche. Ce qu'elle ne change pas : elle ne fait
+venir personne. Elle ne remplace aucun des points 1 à 5.
+
 ---
 
 ## L'adresse du site

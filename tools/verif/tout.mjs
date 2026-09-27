@@ -28,6 +28,7 @@ const SUITES = [
   ['accueil',   'toutes les options, 250 combinaisons, injections',  true],
   ['passe',     'Passe de bout en bout, deux thèmes',                true],
   ['outils',    'chaque outil, de bout en bout',                     true],
+  ['hors-ligne', 'l\'application, serveur réellement coupé',         true],
   ['visuel',    'chaque page comparée pixel à pixel à sa référence',  true]
 ];
 

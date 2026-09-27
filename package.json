@@ -10,6 +10,7 @@
     "pack": "node tools/build-pack.mjs",
     "exemples": "node tools/build-exemples.mjs",
     "og": "node tools/build-og.mjs",
+    "app": "node tools/build-app.mjs",
     "verif": "node tools/verif/tout.mjs",
     "verif:visuel-maj": "node tools/verif/visuel.mjs --maj"
   }

@@ -16,6 +16,7 @@ const BASE = path.resolve(import.meta.dirname, '..');
 const SECTIONS = [
   { nom: 'outils', dossiers: true, lang: 'fr', depuisAccueil: true },
   { nom: 'exemples', dossiers: false, lang: 'fr', depuisAccueil: true },
+  { nom: 'application', dossiers: false, lang: 'fr', depuisAccueil: true },
   /* Les pages anglaises ne sont pas listées dans la navigation de l'accueil :
      elles sont atteintes depuis leur équivalent français, et déclarées à
      Google par les balises hreflang. */
@@ -65,6 +66,25 @@ test('chaque page neutralise display: face à l\'attribut hidden', () => {
       assert.match(s, /\[hidden\]\s*\{[^}]*display:\s*none\s*!important/,
         `${p.id}/${f} : sans cette règle, une section « hidden » reste visible`);
     }
+  }
+});
+
+/* Une accolade orpheline ne casse pas la page : le navigateur saute
+   silencieusement la règle suivante. C'est arrivé sur la page Application —
+   les puces de « À lire ensuite » ont été doublées sans qu'aucune suite ne
+   bronche. Seul un œil sur la capture l'a vu. */
+test('chaque feuille de style a ses accolades équilibrées', () => {
+  const toutes = new Set([path.join(BASE, 'assets/css/app.css')]);
+  for (const p of PAGES) for (const f of feuilles(p)) toutes.add(f);
+  for (const f of toutes) {
+    const css = readFileSync(f, 'utf8').replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(/[^\n]/g, '')).replace(/"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'/g, '""');
+    let prof = 0, ligne = 1;
+    for (const c of css) {
+      if (c === '\n') ligne++;
+      if (c === '{') prof++;
+      if (c === '}' && --prof < 0) assert.fail(`${path.relative(BASE, f)} : accolade fermante orpheline ligne ${ligne}`);
+    }
+    assert.equal(prof, 0, `${path.relative(BASE, f)} : ${prof} accolade(s) jamais fermée(s)`);
   }
 });
 

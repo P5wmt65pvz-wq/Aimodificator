@@ -87,7 +87,14 @@ const SCENARIOS = [
   /* Chargé par le lien, comme le reçoit un membre du groupe : l'état est
      entièrement déterminé par l'adresse. */
   ['partage', '/outils/partage/#WzEsWyJBZHJpZW4iLCJMw6lhIiwiVG9tIl0sW1siQ291cnNlcyIsMCw5MDAwLFswLDEsMl1dLFsiRXNzZW5jZSIsMSw0NTAwLFswLDFdXSxbIkNpbsOpbWEiLDIsMTAwMCxbMCwxLDJdXV1d', [], async () => {}],
-  ['fingerprint-en', '/en/fingerprint/', MASQUES_EMPREINTE, async () => {}]
+  ['fingerprint-en', '/en/fingerprint/', MASQUES_EMPREINTE, async () => {}],
+  /* Photographiée une fois la copie hors connexion terminée : c'est l'état
+     que voit quelqu'un qui a installé l'application, et le seul qui ne
+     dépende pas de la vitesse du service worker. */
+  ['application', '/application/', [], async (p) => {
+    await p.click('#garder-tout');
+    await p.waitForSelector('.hors-ligne.is-complet', { timeout: 20000 });
+  }]
 ];
 
 const { srv, base } = await servir(8184);

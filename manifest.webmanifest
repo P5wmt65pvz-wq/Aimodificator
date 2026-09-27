@@ -1,0 +1,25 @@
+{
+  "id": "./",
+  "name": "PromptForge — prompts et outils",
+  "short_name": "PromptForge",
+  "description": "Le générateur de prompts et les outils du site, sur l'écran d'accueil. Tout se calcule dans l'appareil ; une fois installée, l'application fonctionne aussi sans connexion.",
+  "lang": "fr",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0b0b10",
+  "theme_color": "#0b0b10",
+  "categories": ["utilities", "productivity"],
+  "icons": [
+    { "src": "assets/app/icone-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/app/icone-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/app/icone-masquable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Partage — qui doit combien à qui", "short_name": "Partage", "url": "outils/partage/" },
+    { "name": "Abonnements — le coût réel et la date", "short_name": "Abonnements", "url": "outils/abonnements/" },
+    { "name": "Passe — la résistance d'un mot de passe", "short_name": "Passe", "url": "outils/passe/" },
+    { "name": "Photo propre — effacer la position d'une photo", "short_name": "Photo propre", "url": "outils/photo/" }
+  ]
+}

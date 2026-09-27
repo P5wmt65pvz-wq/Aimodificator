@@ -16,6 +16,10 @@ navigateur. C'est une contrainte technique, pas un argument marketing : il n'y a
 pas de serveur.
 
 - `index.html` + `assets/` — PromptForge, le générateur de prompts
+- `application/`, `manifest.webmanifest`, `sw.js` — le site installable comme
+  application, hors connexion compris. La liste des fichiers de `sw.js` et les
+  icônes sont **générées** par `npm run app` : à relancer après l'ajout d'une
+  page ou d'un fichier chargé par une page (`npm test` le signale)
 - `outils/<nom>/` — la suite d'outils de confidentialité (voir `OUTILS.md`)
 - `exemples/` — vitrine des sorties du moteur, **générée** par
   `npm run exemples` ; ne jamais l'écrire à la main, la régénérer après toute
@@ -46,7 +50,11 @@ pas de serveur.
 - Après un changement visuel voulu : `npm run verif:visuel-maj`, puis
   **regarder chaque référence réécrite avant de commiter**. Régénérer sans
   regarder grave le défaut comme étant la norme.
-- Aucune requête réseau après chargement, sur aucune page.
+- Aucune requête réseau après chargement, sur aucune page. Une seule
+  exception, et elle est bornée : le service worker de l'application. Il ne
+  lit que des fichiers de ce site, n'envoie rien, et ne télécharge le site
+  entier que si l'application est installée ou sur un clic explicite. La suite
+  `hors-ligne` le mesure côté serveur ; ne pas élargir cette exception.
 - N'inventer aucun chiffre, aucune loi, aucune date. Vérifier et citer la
   source, ou écrire la règle sans le chiffre.
 - Ne jamais inscrire d'identifiant de modèle dans un message de commit.

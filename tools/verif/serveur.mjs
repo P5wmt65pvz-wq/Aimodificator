@@ -46,7 +46,7 @@ export async function chromium() {
 export const PAGES = [
   '/', '/outils/empreinte/', '/outils/photo/', '/outils/clause/',
   '/outils/abonnements/', '/outils/passe/', '/outils/vrai-prix/', '/outils/partage/',
-  '/en/fingerprint/', '/exemples/'
+  '/en/fingerprint/', '/exemples/', '/application/'
 ];
 
 export function rapport(pb, quandCestVert) {
