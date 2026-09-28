@@ -61,6 +61,9 @@
   var bloc = $('hors-ligne'), compte = $('compte'), jauge = $('jauge'), garder = $('garder-tout');
   if (!app || !('serviceWorker' in navigator) || !bloc) return;
 
+  /* En français, 0 et 1 prennent le singulier : « 0 fichier », « 1 fichier ». */
+  var nb = function (n, un, plusieurs) { return n + ' ' + (n < 2 ? un : plusieurs); };
+
   var enCours = false;
   navigator.serviceWorker.addEventListener('message', function (e) {
     var d = e.data;
@@ -69,10 +72,15 @@
     bloc.hidden = false;
     bloc.classList.toggle('is-complet', complet);
     jauge.style.width = (d.total > 0 ? Math.min(100, Math.round(100 * d.presents / d.total)) : 0) + '%';
-    compte.textContent = complet
-      ? 'tout le site est gardé sur cet appareil (' + d.total + ' fichiers).'
-      : d.presents + ' fichiers gardés sur ' + d.total + '.' +
-        (d.echecs > 0 ? ' ' + d.echecs + ' n\'ont pas pu être téléchargés : réessayez avec une meilleure connexion.' : '');
+    compte.textContent = (complet
+      ? 'tout le site est gardé sur cet appareil (' + nb(d.total, 'fichier', 'fichiers') + ').'
+      : d.presents === 0
+        ? 'rien n\'est encore gardé sur cet appareil (' + nb(d.total, 'fichier', 'fichiers') + ' à garder).'
+        : nb(d.presents, 'fichier gardé', 'fichiers gardés') + ' sur ' + d.total + '.') +
+      (d.echecs > 0
+        ? ' ' + (d.echecs === 1 ? '1 n\'a pas pu être téléchargé' : d.echecs + ' n\'ont pas pu être téléchargés') +
+          ' : réessayez avec une meilleure connexion.'
+        : '');
     enCours = false;
     garder.disabled = false;
     garder.hidden = complet;

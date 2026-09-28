@@ -126,6 +126,8 @@ console.log('\n=== Sans installer : la copie complète, sur demande ===');
   await page.goto(base + '/application/', { waitUntil: 'networkidle' });
   await page.waitForSelector('#hors-ligne:not([hidden])', { timeout: 10000 }).catch(() => {});
   dire(await page.locator('#garder-tout').isVisible(), 'le bouton de copie apparaît');
+  const avant = (await page.locator('#compte').innerText()).trim();
+  dire(/^rien n'est encore gardé/.test(avant), `avant la copie, le compteur le dit en français correct (« ${avant} »)`);
   await page.click('#garder-tout');
   const ok = await page.waitForSelector('.hors-ligne.is-complet', { timeout: 15000 }).then(() => true, () => false);
   dire(ok, 'un clic garde tout le site');

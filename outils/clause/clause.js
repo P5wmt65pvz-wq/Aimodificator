@@ -301,7 +301,7 @@
     var out = document.getElementById('resultat');
     out.hidden = !r.words;
     document.getElementById('compteur').textContent =
-      r.words ? r.words.toLocaleString('fr-FR') + ' mots analysés' : '';
+      r.words ? r.words.toLocaleString('fr-FR') + (r.words > 1 ? ' mots analysés' : ' mot analysé') : '';
     if (!r.words) return;
 
     var v = document.getElementById('verdict');

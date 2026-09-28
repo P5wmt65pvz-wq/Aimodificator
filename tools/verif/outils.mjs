@@ -86,6 +86,12 @@ console.log('\n=== Clause — une politique qui coche toutes les cases ===');
   await c.page.waitForTimeout(300);
   const apres = await c.page.locator('#liste .card').count();
   dire(apres < trouves, `Clause : un texte anodin relève moins de signaux (${apres} contre ${trouves})`);
+
+  /* L'accord du compteur : « 1 mot », pas « 1 mots ». */
+  await c.page.fill('#texte', 'Bonjour');
+  await c.page.waitForTimeout(300);
+  const compteur = (await c.page.locator('#compteur').innerText()).trim();
+  dire(compteur === '1 mot analysé', `Clause : un seul mot est accordé au singulier (« ${compteur} »)`);
   await fermer('Clause', c);
 }
 
