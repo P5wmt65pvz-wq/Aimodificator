@@ -150,11 +150,33 @@ for (const [nom, url, masques, action] of SCENARIOS) {
   /* Le focus laissé par la saisie dessinerait un anneau selon l'ordre des
      actions : on le retire pour que seule la mise en page soit comparée. */
   await page.evaluate(() => document.activeElement && document.activeElement.blur());
+  /* Le flou d'arrière-plan des surfaces de verre est calculé par la carte
+     graphique sur des calques séparés : selon l'ordre de traitement, le
+     texte posé dessus sort lissé d'un pixel différemment. Mesuré : deux
+     rendus possibles, au hasard, à page identique. Avec le flou coupé, dix
+     captures sur dix sont identiques. Cette suite compare la mise en page et
+     les couleurs ; le flou n'y change rien, on le coupe pour la capture. */
+  await page.addStyleTag({ content: '*, *::before, *::after { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }' });
   await page.waitForTimeout(100);
 
-  const img = await page.screenshot({ fullPage: true, animations: 'disabled', caret: 'hide',
+  /* Depuis les surfaces de verre (flou d'arrière-plan, calque fixe), une
+     capture sur quatre environ sortait décalée d'un pixel, à page identique.
+     On fait donc comme les outils de comparaison visuelle établis : on
+     capture jusqu'à obtenir deux images IDENTIQUES d'affilée, et c'est
+     celle-là qu'on compare. Une page réellement instable ne se stabilise
+     jamais, et elle est signalée comme telle. */
+  const capture = () => page.screenshot({ fullPage: true, animations: 'disabled', caret: 'hide',
     mask: masques.map((s) => page.locator(s)), maskColor: '#ff00ff' });
+  let img = await capture(), stable = false;
+  for (let essai = 0; essai < 5 && !stable; essai++) {
+    await page.waitForTimeout(150);
+    const suivante = await capture();
+    const r = await compare(img, suivante);
+    stable = !r.taille && r.n === 0;
+    img = suivante;
+  }
   await ctx.close();
+  if (!stable) { pb.push(`${nom} : rendu instable — six captures successives sans deux identiques`); continue; }
 
   const fRef = path.join(REF, nom + '.png');
   if (MAJ) {

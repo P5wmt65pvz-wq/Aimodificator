@@ -90,6 +90,7 @@ const html = `<!DOCTYPE html>
 <link rel="apple-touch-icon" href="../assets/app/icone-180.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='26' font-size='26'%3E%E2%9A%92%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="exemples.css">
+<link rel="stylesheet" href="../assets/css/verre.css">
 </head>
 <body>
 <a class="skip-link" href="#liste">Aller aux exemples</a>
@@ -103,6 +104,12 @@ const html = `<!DOCTYPE html>
     </span>
     <span class="brand-text"><strong>Exemples</strong><small>Sorties brutes du moteur</small></span>
   </a>
+  <nav class="barre barre-haut" aria-label="Navigation du site">
+    <a href="../#workshop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20 14.5 9.5"/><path d="m13 8 3 3"/><path d="M17 3v3M15.5 4.5h3"/><path d="M20 9v2M19 10h2"/><path d="M9 4v2M8 5h2"/></svg><span>Atelier</span></a>
+    <a href="../#outils"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/></svg><span>Outils</span></a>
+    <a href="../exemples/" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3.5h7l4 4v13H7z"/><path d="M14 3.5v4h4"/><path d="M10 12h5M10 15.5h5"/></svg><span>Exemples</span></a>
+    <a href="../application/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10.5 18.5h3"/><path d="M12 7v6"/><path d="M9.5 10.5 12 13l2.5-2.5"/></svg><span>Application</span></a>
+  </nav>
   <button type="button" id="theme-toggle" class="icon-btn" aria-label="Changer de thème">
     <svg class="icon-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
     <svg class="icon-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
@@ -149,6 +156,13 @@ ${blocs}
   <p class="muted"><a href="../">PromptForge</a> · <a href="../outils/empreinte/">Empreinte</a> · <a href="../outils/photo/">Photo propre</a> · <a href="../outils/clause/">Clause</a> · <a href="../outils/passe/">Passe</a> · <a href="../outils/abonnements/">Abonnements</a> · <a href="../outils/vrai-prix/">Vrai prix</a> · <a href="../outils/partage/">Partage</a> · <a href="../application/">Application</a> · <a href="https://github.com/P5wmt65pvz-wq/Aimodificator" rel="noopener">Code source ouvert</a></p>
 </footer>
 
+
+<nav class="barre barre-bas" aria-label="Navigation du site">
+  <a href="../#workshop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20 14.5 9.5"/><path d="m13 8 3 3"/><path d="M17 3v3M15.5 4.5h3"/><path d="M20 9v2M19 10h2"/><path d="M9 4v2M8 5h2"/></svg><span>Atelier</span></a>
+  <a href="../#outils"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/></svg><span>Outils</span></a>
+  <a href="../exemples/" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3.5h7l4 4v13H7z"/><path d="M14 3.5v4h4"/><path d="M10 12h5M10 15.5h5"/></svg><span>Exemples</span></a>
+  <a href="../application/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10.5 18.5h3"/><path d="M12 7v6"/><path d="M9.5 10.5 12 13l2.5-2.5"/></svg><span>Application</span></a>
+</nav>
 <script src="../assets/js/installation.js"></script>
 <script src="exemples.js"></script>
 </body>

@@ -26,6 +26,7 @@
 <link rel="apple-touch-icon" href="../../assets/app/icone-180.png">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='26' font-size='26'%3E%F0%9F%94%8D%3C/text%3E%3C/svg%3E">
 <link rel="stylesheet" href="empreinte.css">
+<link rel="stylesheet" href="../../assets/css/verre.css">
 </head>
 <body>
 <a class="skip-link" href="#resultats">Aller aux résultats</a>
@@ -41,6 +42,12 @@
     </span>
     <span class="brand-text"><strong>Empreinte</strong><small>Ce que votre navigateur dit de vous</small></span>
   </a>
+  <nav class="barre barre-haut" aria-label="Navigation du site">
+    <a href="../../#workshop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20 14.5 9.5"/><path d="m13 8 3 3"/><path d="M17 3v3M15.5 4.5h3"/><path d="M20 9v2M19 10h2"/><path d="M9 4v2M8 5h2"/></svg><span>Atelier</span></a>
+    <a href="../../#outils" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/></svg><span>Outils</span></a>
+    <a href="../../exemples/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3.5h7l4 4v13H7z"/><path d="M14 3.5v4h4"/><path d="M10 12h5M10 15.5h5"/></svg><span>Exemples</span></a>
+    <a href="../../application/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10.5 18.5h3"/><path d="M12 7v6"/><path d="M9.5 10.5 12 13l2.5-2.5"/></svg><span>Application</span></a>
+  </nav>
   <div class="header-tools">
     <a class="lang-link" href="../../en/fingerprint/" hreflang="en" lang="en">English</a>
     <button type="button" id="theme-toggle" class="icon-btn" aria-label="Changer de thème">
@@ -90,32 +97,41 @@
   </section>
 
   <section class="truth">
-    <h2>Ce qu'un VPN ne fait pas</h2>
-    <p>
-      Un VPN cache votre adresse IP à votre fournisseur d'accès et aux sites que vous visitez.
-      Il ne change <b>rien</b> à tout ce qui est listé plus haut : votre empreinte de navigateur
-      reste identique, et c'est elle qui permet de vous reconnaître d'un site à l'autre.
-      Deux personnes derrière le même VPN restent parfaitement distinguables.
-    </p>
-    <p>
-      C'est utile, mais ça ne remplace ni un navigateur qui résiste au pistage,
-      ni un bloqueur de contenus. Les publicités des VPN entretiennent souvent l'inverse.
-    </p>
+    <details class="volet">
+      <summary><h2>Ce qu'un VPN ne fait pas</h2></summary>
+      <div class="volet-corps">
+      <p>
+        Un VPN cache votre adresse IP à votre fournisseur d'accès et aux sites que vous visitez.
+        Il ne change <b>rien</b> à tout ce qui est listé plus haut : votre empreinte de navigateur
+        reste identique, et c'est elle qui permet de vous reconnaître d'un site à l'autre.
+        Deux personnes derrière le même VPN restent parfaitement distinguables.
+      </p>
+      <p>
+        C'est utile, mais ça ne remplace ni un navigateur qui résiste au pistage,
+        ni un bloqueur de contenus. Les publicités des VPN entretiennent souvent l'inverse.
+      </p>
+      </div>
+    </details>
   </section>
 
   <section class="truth">
-    <h2>La navigation privée suffit-elle ?</h2>
-    <p>
-      Non, et vous pouvez le vérifier vous-même en une minute : ouvrez cette page dans une
-      fenêtre de navigation privée et comparez les résultats. Ils seront les mêmes.
-    </p>
-    <p>
-      La navigation privée efface ce qui est <em>enregistré chez vous</em> — historique,
-      cookies, formulaires — à la fermeture de la fenêtre. Elle ne change rien à ce que votre
-      navigateur <em>répond</em> quand on l'interroge : polices installées, carte graphique,
-      résolution, fuseau horaire. C'est cette réponse qui constitue votre empreinte, et elle
-      est identique dans les deux modes.
-    </p>
+    <details class="volet">
+      <summary><h2>La navigation privée suffit-elle ?</h2></summary>
+      <div class="volet-corps">
+      <p>
+        Non, et vous pouvez le vérifier vous-même en une minute : ouvrez cette page dans une
+        fenêtre de navigation privée et comparez les résultats. Ils seront les mêmes.
+      </p>
+      <p>
+        La navigation privée efface ce qui est <em>enregistré chez vous</em> — historique,
+        cookies, formulaires — à la fermeture de la fenêtre. Elle ne change rien à ce que votre
+        navigateur <em>répond</em> quand on l'interroge : polices installées, carte graphique,
+        résolution, fuseau horaire. C'est cette réponse qui constitue votre empreinte, et elle
+        est identique dans les deux modes.
+      </p>
+      </div>
+    </details>
+
     <h2>À lire ensuite</h2>
     <ul>
       <li><a href="../photo/">Photo propre</a> — ce que vos photos révèlent, cette fois dans le fichier lui-même</li>
@@ -136,6 +152,13 @@
   <p class="muted"><a href="../../en/fingerprint/" hreflang="en" lang="en">English version</a> · <a href="../photo/">Photo propre</a> · <a href="../clause/">Clause</a> · <a href="../passe/">Passe</a> · <a href="../abonnements/">Abonnements</a> · <a href="../vrai-prix/">Vrai prix</a> · <a href="../partage/">Partage</a> · <a href="../../">PromptForge</a> · <a href="../../application/">Application</a> · <a href="https://github.com/P5wmt65pvz-wq/Aimodificator" rel="noopener">Code source ouvert</a></p>
 </footer>
 
+
+<nav class="barre barre-bas" aria-label="Navigation du site">
+  <a href="../../#workshop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20 14.5 9.5"/><path d="m13 8 3 3"/><path d="M17 3v3M15.5 4.5h3"/><path d="M20 9v2M19 10h2"/><path d="M9 4v2M8 5h2"/></svg><span>Atelier</span></a>
+  <a href="../../#outils" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/></svg><span>Outils</span></a>
+  <a href="../../exemples/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3.5h7l4 4v13H7z"/><path d="M14 3.5v4h4"/><path d="M10 12h5M10 15.5h5"/></svg><span>Exemples</span></a>
+  <a href="../../application/"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10.5 18.5h3"/><path d="M12 7v6"/><path d="M9.5 10.5 12 13l2.5-2.5"/></svg><span>Application</span></a>
+</nav>
 <script src="../../assets/js/installation.js"></script>
 <script src="empreinte.i18n.js"></script>
 <script src="empreinte.js"></script>

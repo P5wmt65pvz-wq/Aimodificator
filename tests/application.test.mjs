@@ -111,3 +111,24 @@ test('les scripts de l\'application n\'envoient rien', () => {
     }
   }
 });
+
+/* La refonte « verre » tient à deux choses par page : la feuille commune,
+   chargée EN DERNIER pour qu'elle l'emporte, et la même barre de navigation
+   en haut (grand écran) et en bas (téléphone). Une page qui en oublie une
+   redevient l'ancien site, sans que rien ne le signale. */
+test('chaque page charge la feuille commune en dernier et porte les deux barres', () => {
+  for (const url of PAGES) {
+    const dossier = path.join(BASE, url);
+    const h = readFileSync(path.join(dossier, 'index.html'), 'utf8');
+    const feuilles = [...h.matchAll(/<link rel="stylesheet" href="([^"]+)">/g)].map((m) => path.resolve(dossier, m[1]));
+    assert.equal(feuilles.at(-1), path.join(BASE, 'assets/css/verre.css'), `${url} : verre.css absente ou pas en dernier`);
+    for (const barre of ['barre-haut', 'barre-bas']) {
+      const m = h.match(new RegExp(`<nav class="[^"]*\\b${barre}\\b[^"]*"[^>]*>([\\s\\S]*?)</nav>`));
+      assert.ok(m, `${url} : barre ${barre} absente`);
+      const cibles = [...m[1].matchAll(/href="([^"]+)"/g)].map((x) => x[1].replace(/^(\.\.\/)+/, ''));
+      for (const attendu of ['#workshop', '#outils', 'exemples/', 'application/']) {
+        assert.ok(cibles.includes(attendu), `${url} ${barre} : lien vers ${attendu} absent`);
+      }
+    }
+  }
+});

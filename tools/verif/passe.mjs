@@ -85,6 +85,9 @@ for (const theme of ['dark', 'light']) {
     await page.click('#copier'); await page.waitForTimeout(80);
     dire((await page.locator('#copier').innerText()) === 'Copié', 'la copie fonctionne');
 
+    /* Les tailles sont dans le volet « Les listes utilisées », replié par
+       défaut : on l'ouvre comme le ferait un lecteur, puis on lit. */
+    await page.locator('details.volet:has(#taille-liste) > summary').click();
     const taille = await page.locator('#taille-liste').innerText();
     const courants = await page.locator('#taille-courants').innerText();
     dire(Number(taille) > 1000 && Number(courants) > 50, `tailles de listes affichées : ${taille} / ${courants}`);

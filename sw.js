@@ -32,6 +32,7 @@ const FICHIERS = [
   'assets/app/icone-512.png',
   'assets/app/icone-masquable-512.png',
   'assets/css/app.css',
+  'assets/css/verre.css',
   'assets/js/ai.js',
   'assets/js/app.js',
   'assets/js/engine.js',

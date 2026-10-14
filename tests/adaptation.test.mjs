@@ -25,7 +25,7 @@ function feuilles() {
       }
     }
   }
-  for (const rel of ['assets/css/app.css', 'exemples/exemples.css']) {
+  for (const rel of ['assets/css/app.css', 'assets/css/verre.css', 'exemples/exemples.css']) {
     if (existsSync(path.join(BASE, rel))) out.push(rel);
   }
   return out.filter((f) => readFileSync(path.join(BASE, f), 'utf8').includes('--muted:'));

@@ -16,14 +16,14 @@ défauts réellement trouvés sur ce site n'étaient visibles qu'à l'écran.
 |---|---|---|
 | `fuzz` | Entrées hostiles sur chaque moteur : plantage, `NaN`, infini, boucle | 2 s |
 | `audit` | Chaque page : titre, description, canonical, liens morts, doublons d'identifiant, sitemap | 11 s |
-| `contraste` | Contraste réel de **chaque texte affiché**, deux thèmes, fond effectif | 14 s |
+| `contraste` | Contraste réel de **chaque texte affiché**, deux thèmes. Le fond est reconstitué couche par couche : chaque surface de verre translucide est empilée, et le texte est mesuré sur le fond nu **et sur chaque halo coloré à son maximum** — le pire compte | 20 s |
 | `a11y` | Clavier, hiérarchie des titres, étiquettes, 320 px, texte doublé, zones tactiles | 36 s |
 | `corrompu` | 23 formes de stockage local abîmé, page par page | 100 s |
 | `accueil` | Chaque valeur de chaque menu, 250 combinaisons, champs hostiles, injections | 58 s |
 | `passe` | Passe de bout en bout, deux thèmes, deux largeurs | 6 s |
 | `outils` | Photo, Clause, Abonnements, Empreinte, Vrai prix et Partage **utilisés pour de vrai** : entrées réelles, résultats vérifiés au chiffre près | 7 s |
 | `hors-ligne` | L'application installable : un simple visiteur ne télécharge que ce qu'il ouvre (compté **côté serveur**) ; installée, elle garde tout le site sans un clic ; puis le serveur est **arrêté** et chaque page doit s'ouvrir, sans erreur, et les outils calculer | 10 s |
-| `visuel` | Chaque page, outil en action, comparées **pixel par pixel** à une référence regardée à l'œil. Attrape ce qu'aucune autre suite ne voit : un bloc déplacé, une grille perdue, une couleur hors palette | 60 s |
+| `visuel` | Chaque page, outil en action, comparées **pixel par pixel** à une référence regardée à l'œil. Attrape ce qu'aucune autre suite ne voit : un bloc déplacé, une grille perdue, une couleur hors palette. Le flou des surfaces de verre est coupé pendant la capture : la carte graphique ne le reproduit pas au pixel près | 60 s |
 
 Chacune se lance seule : `node tools/verif/contraste.mjs`.
 

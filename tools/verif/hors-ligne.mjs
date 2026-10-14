@@ -79,7 +79,7 @@ const visiteur = await contexte();
   dire(await pret(page), 'le service worker est actif');
   await page.waitForTimeout(1500);
   const permis = new Set(['/outils/passe/', '/outils/passe/passe.css', '/outils/passe/mots.js', '/outils/passe/passe.js',
-    '/assets/js/installation.js', '/sw.js', '/manifest.webmanifest', '/assets/app/icone-180.png',
+    '/assets/js/installation.js', '/assets/css/verre.css', '/sw.js', '/manifest.webmanifest', '/assets/app/icone-180.png',
     '/assets/app/icone-192.png', '/assets/app/icone-512.png', '/assets/app/icone-masquable-512.png']);
   const autres = [...new Set(recus)].filter((u) => !permis.has(u));
   dire(autres.length === 0, `aucun autre fichier du site demandé au serveur${autres.length ? ' → ' + autres.slice(0, 4).join(', ') : ''}`);

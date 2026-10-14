@@ -475,7 +475,7 @@
     if (!section || !offers) return;
     var box = $('#offers-cards');
     var setup = $('#offers-setup');
-    var navLink = $('#nav-offers');
+    var navLinks = $$('[data-nav-offers]');
     var items = offers.live();
     var local = offers.isLocal(location.hostname, location.protocol);
 
@@ -499,7 +499,7 @@
 
     box.hidden = items.length === 0;
     setup.hidden = items.length > 0 || !local;
-    navLink.hidden = items.length === 0;
+    navLinks.forEach(function (a) { a.hidden = items.length === 0; });
     section.hidden = items.length === 0 && !local;
   }
 

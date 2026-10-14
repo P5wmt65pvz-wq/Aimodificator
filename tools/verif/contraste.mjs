@@ -72,6 +72,10 @@ for (const url of PAGES) {
        pires contrastes se cachaient. */
     await reveler(page, url);
     await page.waitForTimeout(150);
+    /* Les couleurs changent en fondu quand le thème bascule : mesurer pendant
+       le fondu donne la couleur d'un état qui n'existe pas. On attend la fin
+       de toutes les transitions en cours. */
+    await page.evaluate(() => Promise.all(document.getAnimations().map((a) => a.finished.catch(() => {}))));
 
     const mauvais = await page.evaluate(() => {
       const lum = (c) => {
@@ -83,16 +87,34 @@ for (const url of PAGES) {
         const p = m[1].split(',').map(x => parseFloat(x));
         return { c: [p[0], p[1], p[2]], a: p.length > 3 ? p[3] : 1 };
       };
-      /* Fond effectif : on remonte les ancêtres jusqu'à un fond opaque. */
-      const fondDe = (el) => {
-        let n = el;
-        while (n && n !== document.documentElement) {
+      /* Fond effectif. Avec des surfaces de verre, il n'y a plus UN fond :
+         une plaque translucide laisse passer ce qui est dessous, et dessous
+         il y a des halos colorés. On remonte donc les ancêtres en EMPILANT
+         chaque fond translucide, jusqu'au premier fond opaque. Si ce fond
+         opaque est celui de la page, les halos déclarés par la feuille
+         commune (--halo-1 à 3) s'y ajoutent : le texte est mesuré sur le
+         fond nu, sur chaque halo à son maximum, et sur les trois cumulés.
+         C'est le pire de ces fonds qui compte. */
+      const sur = (dessus, dessous) => dessus.c.map((v, i) => v * dessus.a + dessous[i] * (1 - dessus.a));
+      const racine = getComputedStyle(document.documentElement);
+      const halos = ['--halo-1', '--halo-2', '--halo-3']
+        .map((v) => rgb(racine.getPropertyValue(v).trim())).filter(Boolean);
+      const fondsDe = (el) => {
+        const couches = [];
+        let n = el, opaque = null, page = false;
+        while (n) {
           const b = rgb(getComputedStyle(n).backgroundColor);
-          if (b && b.a > 0.85) return b.c;
+          if (b && b.a >= 0.99) { opaque = b.c; page = n === document.body || n === document.documentElement; break; }
+          if (b && b.a > 0) couches.push(b);
           n = n.parentElement;
         }
-        const b = rgb(getComputedStyle(document.body).backgroundColor);
-        return b ? b.c : [255, 255, 255];
+        if (!opaque) { opaque = [255, 255, 255]; page = true; }
+        const bases = [opaque];
+        if (page && halos.length) {
+          for (const h of halos) bases.push(sur(h, opaque));
+          bases.push(halos.reduce((acc, h) => sur(h, acc), opaque));
+        }
+        return bases.map((base) => couches.reduceRight((acc, c) => sur(c, acc), base));
       };
       const ratio = (a, b) => {
         const l1 = lum(a), l2 = lum(b);
@@ -113,7 +135,7 @@ for (const url of PAGES) {
         const gras = parseInt(st.fontWeight, 10) >= 700;
         const grand = px >= 24 || (gras && px >= 18.66);
         const exige = grand ? 3 : 4.5;
-        const obtenu = ratio(av.c, fondDe(el));
+        const obtenu = Math.min(...fondsDe(el).map((f) => ratio(av.c, f)));
         if (obtenu < exige) {
           out.push({
             sel: el.tagName.toLowerCase() + (el.className && typeof el.className === 'string' ? '.' + el.className.trim().split(/\s+/).join('.') : ''),

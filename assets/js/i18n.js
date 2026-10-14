@@ -41,7 +41,7 @@
     'composer.surprise': { fr: 'Exemple', en: 'Example' },
     'composer.clear': { fr: 'Effacer', en: 'Clear' },
     'composer.settings': { fr: 'Réglages du prompt', en: 'Prompt settings' },
-    'composer.advanced': { fr: 'Options avancées', en: 'Advanced options' },
+    'composer.advanced': { fr: 'Réglages : domaine, IA cible, profondeur…', en: 'Settings: domain, target AI, depth…' },
     'composer.detected': { fr: 'Domaine détecté', en: 'Detected domain' },
     'composer.words': { fr: 'mots', en: 'words' },
 
@@ -208,6 +208,21 @@
 
     'nav.examples': { fr: 'Exemples', en: 'Examples' },
     'nav.offers': { fr: 'Soutenir', en: 'Support' },
+    'nav.tools': { fr: 'Outils', en: 'Tools' },
+    'nav.app': { fr: 'Application', en: 'App' },
+    'outils.title': { fr: 'Les outils', en: 'The tools' },
+    'outils.lede': {
+      fr: 'Gratuits, sans compte, et tout se calcule sur votre appareil.',
+      en: 'Free, no account, and everything is computed on your device.'
+    },
+    'tuile.partage': { fr: 'Qui doit combien à qui après un week-end', en: 'Who owes whom after a weekend away' },
+    'tuile.abonnements': { fr: 'Le coût réel de vos abonnements, et leur date de reconduction', en: 'What your subscriptions really cost, and when they renew' },
+    'tuile.vrai-prix': { fr: 'Ce qu\'un abonnement coûte sur 1, 3 et 5 ans', en: 'What a subscription costs over 1, 3 and 5 years' },
+    'tuile.passe': { fr: 'La solidité réelle d\'un mot de passe', en: 'How strong a password really is' },
+    'tuile.photo': { fr: 'Voir et effacer la position cachée dans une photo', en: 'See and remove the location hidden in a photo' },
+    'tuile.empreinte': { fr: 'Ce que votre navigateur révèle sans vous demander', en: 'What your browser gives away without asking' },
+    'tuile.clause': { fr: 'Ce qu\'une politique de confidentialité autorise vraiment', en: 'What a privacy policy actually allows' },
+    'tuile.application': { fr: 'Tout le site sur votre écran d\'accueil, même hors connexion', en: 'The whole site on your home screen, even offline' },
 
     'liste.title': { fr: 'Être prévenu des prochains outils', en: 'Hear about the next tools' },
     'liste.lede': {

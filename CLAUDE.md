@@ -16,6 +16,9 @@ navigateur. C'est une contrainte technique, pas un argument marketing : il n'y a
 pas de serveur.
 
 - `index.html` + `assets/` — PromptForge, le générateur de prompts
+- `assets/css/verre.css` — le design commun (« verre ») : chargé en dernier
+  par chaque page, il redéfinit surtout des jetons. Toute page porte aussi
+  les deux barres de navigation (haut et bas) ; `npm test` le vérifie
 - `application/`, `manifest.webmanifest`, `sw.js` — le site installable comme
   application, hors connexion compris. La liste des fichiers de `sw.js` et les
   icônes sont **générées** par `npm run app` : à relancer après l'ajout d'une
