@@ -33,7 +33,10 @@ export const ICONES = [
 const cheminPage = (url) => (url === '/' ? './' : url.replace(/^\//, ''));
 
 export function fichiersHorsLigne() {
-  const out = new Set([MANIFESTE, ...ICONES.map((i) => i.fichier)]);
+  /* La police n'est chargée par aucune balise : c'est la feuille commune
+     qui la demande. Elle est donc ajoutée ici, sinon l'application hors
+     connexion s'afficherait dans la police de secours. */
+  const out = new Set([MANIFESTE, 'assets/polices/inter.woff2', ...ICONES.map((i) => i.fichier)]);
   for (const url of PAGES) {
     out.add(cheminPage(url));
     const dossier = path.join(RACINE, url);

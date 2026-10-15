@@ -18,7 +18,12 @@ pas de serveur.
 - `index.html` + `assets/` — PromptForge, le générateur de prompts
 - `assets/css/verre.css` — le design commun (« verre ») : chargé en dernier
   par chaque page, il redéfinit surtout des jetons. Toute page porte aussi
-  les deux barres de navigation (haut et bas) ; `npm test` le vérifie
+  les deux barres de navigation (haut et bas) ; `npm test` le vérifie.
+  Le verre est la variante la plus transparente : teinte quasi nulle,
+  liseré en anneau masqué (jamais en fond, il rendrait le panneau laiteux).
+  La police Inter est servie par le site (`assets/polices/`, licence OFL
+  jointe) ; `assets/js/effets.js` porte la lueur des cartes et l'état
+  « défilé » de l'en-tête
 - `application/`, `manifest.webmanifest`, `sw.js` — le site installable comme
   application, hors connexion compris. La liste des fichiers de `sw.js` et les
   icônes sont **générées** par `npm run app` : à relancer après l'ajout d'une

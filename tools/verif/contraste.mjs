@@ -75,7 +75,11 @@ for (const url of PAGES) {
     /* Les couleurs changent en fondu quand le thème bascule : mesurer pendant
        le fondu donne la couleur d'un état qui n'existe pas. On attend la fin
        de toutes les transitions en cours. */
-    await page.evaluate(() => Promise.all(document.getAnimations().map((a) => a.finished.catch(() => {}))));
+    /* Seules les transitions ont une fin : le fond dérive en boucle, et
+       attendre sa fin bloquerait la suite pour toujours. */
+    await page.evaluate(() => Promise.all(document.getAnimations()
+      .filter((a) => a.effect && a.effect.getTiming().iterations !== Infinity)
+      .map((a) => a.finished.catch(() => {}))));
 
     const mauvais = await page.evaluate(() => {
       const lum = (c) => {
@@ -97,7 +101,7 @@ for (const url of PAGES) {
          C'est le pire de ces fonds qui compte. */
       const sur = (dessus, dessous) => dessus.c.map((v, i) => v * dessus.a + dessous[i] * (1 - dessus.a));
       const racine = getComputedStyle(document.documentElement);
-      const halos = ['--halo-1', '--halo-2', '--halo-3']
+      const halos = ['--halo-1', '--halo-2', '--halo-3', '--halo-4', '--halo-5', '--halo-6']
         .map((v) => rgb(racine.getPropertyValue(v).trim())).filter(Boolean);
       const fondsDe = (el) => {
         const couches = [];

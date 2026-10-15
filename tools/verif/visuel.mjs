@@ -144,7 +144,9 @@ for (const [nom, url, masques, action] of SCENARIOS) {
   const page = await ctx.newPage();
   await page.clock.install({ time: FIXE });
   await page.goto(base + url, { waitUntil: 'networkidle' });
-  await page.evaluate(() => document.documentElement.setAttribute('data-theme', 'dark'));
+  /* La police est servie par le site : on attend qu'elle soit appliquée,
+     sinon la capture peut sortir dans la police de secours. */
+  await page.evaluate(() => { document.documentElement.setAttribute('data-theme', 'dark'); return document.fonts.ready.then(() => {}); });
   await action(page);
   await page.waitForTimeout(700);
   /* Le focus laissé par la saisie dessinerait un anneau selon l'ordre des
