@@ -78,8 +78,11 @@ const visiteur = await contexte();
   await page.goto(base + '/outils/passe/', { waitUntil: 'networkidle' });
   dire(await pret(page), 'le service worker est actif');
   await page.waitForTimeout(1500);
+  /* Ce que la page Passe charge elle-même — feuilles, scripts, la police
+     demandée par verre.css — plus le service worker et l'application.
+     Rien d'autre : le reste du site ne doit pas venir. */
   const permis = new Set(['/outils/passe/', '/outils/passe/passe.css', '/outils/passe/mots.js', '/outils/passe/passe.js',
-    '/assets/js/installation.js', '/assets/css/verre.css', '/sw.js', '/manifest.webmanifest', '/assets/app/icone-180.png',
+    '/assets/js/installation.js', '/assets/js/effets.js', '/assets/css/verre.css', '/assets/polices/inter.woff2', '/sw.js', '/manifest.webmanifest', '/assets/app/icone-180.png',
     '/assets/app/icone-192.png', '/assets/app/icone-512.png', '/assets/app/icone-masquable-512.png']);
   const autres = [...new Set(recus)].filter((u) => !permis.has(u));
   dire(autres.length === 0, `aucun autre fichier du site demandé au serveur${autres.length ? ' → ' + autres.slice(0, 4).join(', ') : ''}`);
