@@ -219,3 +219,14 @@ test('analyser des données n\'est pas critiquer un document', () => {
   assert.match(texte(out, 'output'), /Tableau/);
   assert.equal(engine.build('analyse ce contrat de bail', {}).analysis.task.id, 'review');
 });
+
+test('le moteur reste rapide sur un texte énorme et sans structure', () => {
+  /* Une règle en « [a-z]+error » reparcourait le texte depuis chaque lettre :
+     14 secondes sur 100 000 « a ». Chaque cas ci-dessous a coûté au moins
+     une seconde à une version du moteur. */
+  for (const s of ['a'.repeat(100000), '[coller '.repeat(12000), '[Collez ici '.repeat(8000), '«'.repeat(100000)]) {
+    const t = Date.now();
+    engine.build(s, {});
+    assert.ok(Date.now() - t < 3000, `${JSON.stringify(s.slice(0, 10))} : ${Date.now() - t} ms`);
+  }
+});

@@ -508,13 +508,18 @@
     var s = String(raw || '');
     var i = s.indexOf('```');
     if (i !== -1) return i;
-    var m = s.match(/\[\s*(coller|collez|colle|paste|insert|ins[ée]rer|ins[ée]rez)\b[^\]]*\]/i);
+    var m = s.match(/\[\s*(coller|collez|colle|paste|insert|ins[ée]rer|ins[ée]rez)\b[^\]]{0,200}\]/i);
     if (m) return m.index;
     i = s.indexOf('\n');
     if (i !== -1 && s.slice(i).trim().length >= 60) return i;
     i = s.indexOf(':');
     if (i !== -1 && i <= 50 && !/[.!?]/.test(s.slice(0, i)) && s.slice(i + 1).trim().length >= 40) return i;
-    return /["“«][^"”»]{40,}["”»]/.test(s) ? s.length : -1;
+    /* Un long passage entre guillemets : cherché en un seul passage sur le
+       texte (une expression régulière reparcourait la fin depuis chaque
+       guillemet ouvrant). */
+    var q = s.search(/["“«]/);
+    var fin = q === -1 ? -1 : s.slice(q + 1).search(/["”»]/);
+    return fin >= 40 ? s.length : -1;
   }
   function inlineContent(raw) { return contentStart(raw) !== -1; }
 
@@ -546,7 +551,7 @@
   var CODE_NOUNS = ['code', 'script', 'fonction', 'function', 'programme', 'program', 'requete', 'query'];
 
   var CODE_CUE = /\b(code|script|fonction|function|programme|program|python|javascript|typescript|java|php|ruby|rust|golang|kotlin|swift|sql|bash|powershell|html|css|react|node|api|regex|classe|class|methode|method|vba|macro)\b/;
-  var ERROR_CUE = /(\bbugs?\b|\berreurs?\b|\berrors?\b|\bexceptions?\b|\bplante\b|\bcrash|marche pas|fonctionne pas|doesn'?t work|does not work|not working|traceback|stack ?trace|[a-z]+error\b|segfault|undefined is not)/;
+  var ERROR_CUE = /(\bbugs?\b|\berreurs?\b|\berrors?\b|\bexceptions?\b|\bplante\b|\bcrash|marche pas|fonctionne pas|doesn'?t work|does not work|not working|traceback|stack ?trace|\b[a-z]{0,30}error\b|segfault|undefined is not)/;
   var CODE_LANG = /\b(python|javascript|typescript|java|php|ruby|rust|golang|kotlin|swift|sql|bash|powershell|c\+\+|c#|csharp|dart|scala|vba|html|css|react|node(?:\.?js)?)\b/;
 
   var START = function (re) { return function (n, o) { return re.test(o); }; };
@@ -1394,7 +1399,7 @@
   /* Le nombre ouvre-t-il la demande (« donne-moi 5 conseils ») ou n'est-il
      qu'un détail d'un livrable plus large (« un article avec 5 exemples ») ? */
   function countPlaceholders(text) {
-    return (String(text || '').match(/\[(?:Collez ici|Paste )[^\]]*\]/g) || []).length;
+    return (String(text || '').match(/\[(?:Collez ici|Paste )[^\]\n]{0,200}\]/g) || []).length;
   }
 
   function countLeads(objective, count) {
