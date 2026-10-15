@@ -135,6 +135,9 @@
     'analysis.signals': { fr: 'Éléments repérés dans votre demande', en: 'Signals found in your request' },
     'analysis.nosignal': { fr: 'Aucun élément concret repéré : ajoutez des chiffres, des noms ou un format attendu.', en: 'No concrete signal found: add numbers, names or an expected format.' },
     'analysis.domainConfidence': { fr: 'confiance', en: 'confidence' },
+    'analysis.task': { fr: 'tâche : ', en: 'task: ' },
+    'result.fill.one': { fr: 'Avant d\'envoyer ce prompt, remplacez l\'emplacement entre crochets par votre contenu.', en: 'Before sending this prompt, replace the placeholder in square brackets with your content.' },
+    'result.fill.many': { fr: 'Avant d\'envoyer ce prompt, remplacez les {n} emplacements entre crochets par votre contenu.', en: 'Before sending this prompt, replace the {n} placeholders in square brackets with your content.' },
     'analysis.method': { fr: 'Le barème est le même pour votre demande et pour le prompt généré : la comparaison est donc directe.', en: 'The same scale is applied to your request and to the generated prompt, so the comparison is direct.' },
 
     'signal.quantity': { fr: 'Volume demandé', en: 'Requested volume' },

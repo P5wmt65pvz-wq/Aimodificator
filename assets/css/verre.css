@@ -665,3 +665,7 @@ h2 { font-size: clamp(1.35rem, 2.4vw, 1.75rem); }
 /* Quand le contenu passe dessous, l'en-tête prend juste assez de teinte pour
    rester lisible : c'est ce que fait iOS avec le verre clair. */
 .a-defile .site-header { --verre: var(--verre-fort); }
+
+/* Le rappel d'un emplacement à remplir dans le prompt (texte à résumer,
+   code à corriger…). */
+.a-remplir { margin: 8px 0 0; font-size: .86rem; color: var(--text); }

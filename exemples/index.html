@@ -71,7 +71,7 @@
       Chaque demande est notée sur huit dimensions — clarté, contexte, précision,
       public, format, contraintes, exemples, critère de réussite — puis le prompt
       produit est noté sur <b>les mêmes</b> huit dimensions. La comparaison est donc
-      directe. Sur ces six exemples, le gain moyen est de <b>60 points</b>.
+      directe. Sur ces six exemples, le gain moyen est de <b>59 points</b>.
     </p>
     <p class="muted">
       C'est une mesure de complétude, pas une promesse de qualité de réponse : un prompt
@@ -94,17 +94,18 @@
         <pre class="demande">rédiger un article de blog de 1 200 mots sur le télétravail pour des responsables RH, avec des exemples concrets et une conclusion qui donne une chose à faire</pre>
 
         <details open>
-          <summary>Le prompt produit — 516 mots, ~762 jetons</summary>
+          <summary>Le prompt produit — 553 mots, ~813 jetons</summary>
           <pre class="prompt">## RÔLE
 Tu es un auteur professionnel et éditeur exigeant, qui écrit pour être lu jusqu&#39;au bout, pas pour remplir une page.
 Tu réponds avec le niveau d&#39;exigence que tu appliquerais à un livrable facturé à un client.
 
 ## CONTEXTE
 Demande initiale de l&#39;utilisateur, mot pour mot : « rédiger un article de blog de 1 200 mots sur le télétravail pour des responsables RH, avec des exemples concrets et une conclusion qui donne une chose à faire »
+Public cible : « des responsables RH ». Adapte le vocabulaire, le niveau de détail et les exemples à ce lecteur.
 
 ## OBJECTIF
 Rédiger un article de blog de 1 200 mots sur le télétravail pour des responsables RH, avec des exemples concrets et une conclusion qui donne une chose à faire.
-Réponse complète mais dense : chaque paragraphe doit apporter une information nouvelle.
+Réponse complète mais dense : chaque phrase doit apporter une information nouvelle.
 
 ## MÉTHODE — suis ces étapes dans l&#39;ordre
 1. Identifie l&#39;angle : la seule idée que le lecteur doit retenir. Écris-la en une phrase avant de commencer.
@@ -119,18 +120,18 @@ Réponse complète mais dense : chaque paragraphe doit apporter une information 
 - Aucune énumération artificielle : une liste seulement si le contenu est réellement parallèle.
 - Varie la longueur des phrases pour garder un rythme.
 - Reste fidèle au niveau de langue demandé du début à la fin.
-- N&#39;invente aucun fait, chiffre, source, citation, référence ni date. Si une information te manque, écris explicitement ce qui manque plutôt que de combler le vide.
+- N&#39;invente aucun fait, chiffre, source, citation, référence ni date : la réponse sera utilisée telle quelle, et une erreur passerait inaperçue. Si une information te manque, écris ce qui manque plutôt que de combler le vide.
 
 ## FORMAT DE SORTIE
 Texte rédigé, prêt à publier, avec titres de sections si la longueur le justifie.
-Livre directement le résultat demandé : pas de préambule, pas de rappel des consignes, pas de commentaire sur ta propre réponse.
+Commence directement par le contenu demandé (précédé seulement des hypothèses, s&#39;il y en a) : pas de phrase d&#39;introduction, pas de commentaire sur ta propre réponse.
 
 ## CRITÈRES DE QUALITÉ — vérifie-les avant de répondre
 - La première phrase donne envie de lire la deuxième.
 - Le texte pourrait être signé par un humain sans que personne ne s&#39;en étonne.
 - Chaque section fait avancer l&#39;angle annoncé ; rien n&#39;est là pour la longueur.
 
-## À ÉVITER ABSOLUMENT
+## PIÈGES À ÉVITER
 - Ouvrir par une généralité historique ou une définition de dictionnaire.
 - Conclure par un résumé de ce qui vient d&#39;être dit au lieu d&#39;une idée finale.
 - Employer un vocabulaire ampoulé là où un mot simple suffit.
@@ -151,7 +152,7 @@ Commence maintenant.</pre>
         <header class="exemple-head">
           <span class="exemple-domaine"><span aria-hidden="true">⌘</span> Développement</span>
           <span class="exemple-score">
-            <b>20</b> → <b class="apres">90</b>
+            <b>20</b> → <b class="apres">85</b>
             <span class="muted">sur 100</span>
           </span>
         </header>
@@ -160,7 +161,7 @@ Commence maintenant.</pre>
         <pre class="demande">relis cette fonction Python qui lit un CSV et dis-moi ce qui casse si le fichier est vide ou mal encodé</pre>
 
         <details>
-          <summary>Le prompt produit — 553 mots, ~841 jetons</summary>
+          <summary>Le prompt produit — 498 mots, ~747 jetons</summary>
           <pre class="prompt">## RÔLE
 Tu es un ingénieur logiciel senior (10+ ans d&#39;expérience) qui écrit du code de production : lisible, testé, robuste en conditions réelles.
 Tu réponds avec le niveau d&#39;exigence que tu appliquerais à un livrable facturé à un client.
@@ -170,37 +171,39 @@ Demande initiale de l&#39;utilisateur, mot pour mot : « relis cette fonction Py
 
 ## OBJECTIF
 Relis cette fonction Python qui lit un CSV et dis-moi ce qui casse si le fichier est vide ou mal encodé.
-Réponse complète mais dense : chaque paragraphe doit apporter une information nouvelle.
+Le contenu à traiter est fourni plus bas, entre les balises &lt;document&gt;.
+Réponse complète mais dense : chaque phrase doit apporter une information nouvelle.
+
+## FONCTION À ANALYSER
+&lt;document&gt;
+[Collez ici la fonction à analyser]
+&lt;/document&gt;
 
 ## MÉTHODE — suis ces étapes dans l&#39;ordre
-1. Reformule le besoin en une phrase, puis liste les hypothèses techniques retenues (langage, version, environnement, contraintes de perf). Si une hypothèse est bloquante, demande-la avant de coder.
-2. Annonce l&#39;approche choisie en 3 à 5 lignes et justifie-la face à une alternative crédible.
-3. Écris le code complet et exécutable tel quel : aucun pseudo-code, aucun « … à compléter », aucun TODO à la place de la logique demandée.
-4. Commente uniquement ce qui n&#39;est pas évident à la lecture ; utilise des noms explicites plutôt que des commentaires de rattrapage.
-5. Termine par : cas limites couverts, tests à écrire (avec leurs entrées), et risques résiduels.
+1. Lis le contenu en entier et identifie à quoi il sert et pour qui.
+2. Annonce les critères d&#39;évaluation adaptés à cet usage, puis évalue le contenu sur chacun.
+3. Classe les problèmes du plus grave au moins grave, en citant le passage concerné.
+4. Pour chaque problème important, propose une correction concrète.
+5. Termine par ce qui fonctionne déjà et doit être conservé.
 
 ## CONTRAINTES
-- Le code doit s&#39;exécuter sans modification ; inclus les imports et la configuration nécessaires.
-- Gère explicitement les erreurs et les cas limites : entrée vide, valeur nulle, dépassement, échec réseau.
-- N&#39;ajoute aucune dépendance externe sans la justifier en une ligne.
-- Respecte les conventions idiomatiques du langage et les standards de sécurité usuels (pas de secret en dur, pas de concaténation SQL).
-- N&#39;invente aucun fait, chiffre, source, citation, référence ni date. Si une information te manque, écris explicitement ce qui manque plutôt que de combler le vide.
+- Juge le contenu sur ce qu&#39;il doit accomplir, pas sur tes préférences de style.
+- Distingue les problèmes certains des points discutables, et dis lesquels sont lesquels.
+- Si le contenu attendu entre les balises &lt;document&gt; est absent ou encore entre crochets, demande-le au lieu de répondre : sans lui, toute réponse serait inventée.
 
 ## FORMAT DE SORTIE
-Blocs de code annotés du langage, précédés de l&#39;approche en 3 lignes et suivis des tests et limites.
+Un verdict en 2 phrases, puis les points à corriger classés par gravité (passage cité, problème, correction), puis les points forts.
 Éléments de format repérés dans la demande : csv.
-Livre directement le résultat demandé : pas de préambule, pas de rappel des consignes, pas de commentaire sur ta propre réponse.
+Commence directement par le contenu demandé (précédé seulement des hypothèses, s&#39;il y en a) : pas de phrase d&#39;introduction, pas de commentaire sur ta propre réponse.
 
 ## CRITÈRES DE QUALITÉ — vérifie-les avant de répondre
-- Le code compile ou s&#39;exécute du premier coup.
-- Un développeur qui découvre le projet comprend l&#39;intention en moins d&#39;une minute.
-- Chaque cas limite identifié est couvert ou explicitement documenté comme hors périmètre.
-- La complexité reste proportionnée au problème : pas de sur-ingénierie.
+- Chaque critique cite le passage qu&#39;elle vise.
+- Chaque correction est applicable sans autre explication.
+- Le problème le plus grave apparaît en premier.
 
-## À ÉVITER ABSOLUMENT
-- Inventer une API, une option ou une signature de fonction qui n&#39;existe pas.
-- Livrer un squelette avec des TODO à la place de la logique demandée.
-- Noyer la réponse sous des paragraphes d&#39;explication avant de montrer le code.
+## PIÈGES À ÉVITER
+- Aligner des remarques de forme quand le fond pose problème.
+- Critiquer sans proposer de correction.
 
 ## RAISONNEMENT
 Réfléchis à la structure de ta réponse avant de l&#39;écrire ; ne montre pas ce travail préparatoire.
@@ -210,6 +213,9 @@ Si une information manque, ne bloque pas : retiens l&#39;hypothèse la plus rais
 
 ## VÉRIFICATION FINALE
 Avant d&#39;envoyer ta réponse, relis-la contre les critères de qualité ci-dessus. Corrige silencieusement ce qui ne les respecte pas ; n&#39;affiche ni la relecture ni la liste des corrections.
+
+## RAPPEL DE LA TÂCHE
+Ta tâche : Relis cette fonction Python qui lit un CSV et dis-moi ce qui casse si le fichier est vide ou mal encodé. Appuie-toi sur le contenu fourni entre les balises &lt;document&gt;.
 Commence maintenant.</pre>
         </details>
       </article>
@@ -227,7 +233,7 @@ Commence maintenant.</pre>
         <pre class="demande">écris un email pour relancer un client qui ne répond plus depuis trois semaines, ton courtois mais ferme, 150 mots maximum</pre>
 
         <details>
-          <summary>Le prompt produit — 473 mots, ~720 jetons</summary>
+          <summary>Le prompt produit — 472 mots, ~713 jetons</summary>
           <pre class="prompt">## RÔLE
 Tu es un professionnel expérimenté dont les messages obtiennent une réponse : clairs, courts, faciles à traiter.
 Tu réponds avec le niveau d&#39;exigence que tu appliquerais à un livrable facturé à un client.
@@ -237,7 +243,7 @@ Demande initiale de l&#39;utilisateur, mot pour mot : « écris un email pour re
 
 ## OBJECTIF
 Écris un email pour relancer un client qui ne répond plus depuis trois semaines, ton courtois mais ferme, 150 mots maximum.
-Réponse complète mais dense : chaque paragraphe doit apporter une information nouvelle.
+Réponse complète mais dense : chaque phrase doit apporter une information nouvelle.
 
 ## MÉTHODE — suis ces étapes dans l&#39;ordre
 1. Identifie l&#39;action attendue du destinataire. Tout le message sert cette action.
@@ -252,18 +258,17 @@ Réponse complète mais dense : chaque paragraphe doit apporter une information 
 - Aucune information personnelle ou engagement inventé : utilise [Nom], [Date], [Montant] pour ce que tu ne sais pas.
 - Pas de ton passif-agressif, même pour une relance ou une réclamation.
 - Une seule demande principale par message.
-- N&#39;invente aucun fait, chiffre, source, citation, référence ni date. Si une information te manque, écris explicitement ce qui manque plutôt que de combler le vide.
 
 ## FORMAT DE SORTIE
 Objet + corps du message prêt à envoyer, puis une variante plus courte et une variante plus formelle.
-Livre directement le résultat demandé : pas de préambule, pas de rappel des consignes, pas de commentaire sur ta propre réponse.
+Commence directement par le contenu demandé (précédé seulement des hypothèses, s&#39;il y en a) : pas de phrase d&#39;introduction, pas de commentaire sur ta propre réponse.
 
 ## CRITÈRES DE QUALITÉ — vérifie-les avant de répondre
 - Le destinataire sait quoi faire après avoir lu les deux premières lignes.
 - Le message peut être envoyé après remplacement des crochets, sans réécriture.
 - Le ton resterait acceptable s&#39;il était transféré à un tiers.
 
-## À ÉVITER ABSOLUMENT
+## PIÈGES À ÉVITER
 - Ouvrir par « J&#39;espère que ce message vous trouve bien ».
 - Noyer la demande au milieu du troisième paragraphe.
 - Multiplier les excuses qui affaiblissent la demande.
@@ -272,7 +277,7 @@ Livre directement le résultat demandé : pas de préambule, pas de rappel des c
 Réfléchis à la structure de ta réponse avant de l&#39;écrire ; ne montre pas ce travail préparatoire.
 
 ## INFORMATIONS MANQUANTES
-Si une information manque, ne bloque pas : retiens l&#39;hypothèse la plus raisonnable, liste tes hypothèses en tête sous « Hypothèses », puis produis la réponse complète.
+La demande ne précise pas : le destinataire et la relation avec lui ; l&#39;action attendue du destinataire. Pour chacun de ces points, retiens l&#39;hypothèse la plus raisonnable et annonce-la en une ligne au début de ta réponse, sous « Hypothèses ». Puis produis la réponse complète.
 
 ## VÉRIFICATION FINALE
 Avant d&#39;envoyer ta réponse, relis-la contre les critères de qualité ci-dessus. Corrige silencieusement ce qui ne les respecte pas ; n&#39;affiche ni la relecture ni la liste des corrections.
@@ -293,7 +298,7 @@ Commence maintenant.</pre>
         <pre class="demande">analyse ces données de ventes trimestrielles et sors un tableau avec les trois écarts les plus importants et leur cause probable</pre>
 
         <details>
-          <summary>Le prompt produit — 487 mots, ~769 jetons</summary>
+          <summary>Le prompt produit — 547 mots, ~859 jetons</summary>
           <pre class="prompt">## RÔLE
 Tu es un analyste de données senior, rigoureux sur la méthode statistique et capable de traduire un chiffre en décision.
 Tu réponds avec le niveau d&#39;exigence que tu appliquerais à un livrable facturé à un client.
@@ -303,7 +308,13 @@ Demande initiale de l&#39;utilisateur, mot pour mot : « analyse ces données de
 
 ## OBJECTIF
 Analyse ces données de ventes trimestrielles et sors un tableau avec les trois écarts les plus importants et leur cause probable.
-Réponse complète mais dense : chaque paragraphe doit apporter une information nouvelle.
+Le contenu à traiter est fourni plus bas, entre les balises &lt;document&gt;.
+Réponse complète mais dense : chaque phrase doit apporter une information nouvelle.
+
+## DONNÉES À ANALYSER
+&lt;document&gt;
+[Collez ici les données à analyser]
+&lt;/document&gt;
 
 ## MÉTHODE — suis ces étapes dans l&#39;ordre
 1. Commence par la question décisionnelle : que fera-t-on du résultat ? Reformule-la précisément.
@@ -317,19 +328,18 @@ Réponse complète mais dense : chaque paragraphe doit apporter une information 
 - Distingue systématiquement corrélation et causalité.
 - Indique la taille d&#39;échantillon et la marge d&#39;incertitude quand elles sont connues.
 - Toute recommandation doit pouvoir être reliée à un chiffre présenté.
-- N&#39;invente aucun fait, chiffre, source, citation, référence ni date. Si une information te manque, écris explicitement ce qui manque plutôt que de combler le vide.
+- Si le contenu attendu entre les balises &lt;document&gt; est absent ou encore entre crochets, demande-le au lieu de répondre : sans lui, toute réponse serait inventée.
 
 ## FORMAT DE SORTIE
-Synthèse décisionnelle en tête, puis méthode, puis tableaux chiffrés, puis limites.
-Éléments de format repérés dans la demande : tableau.
-Livre directement le résultat demandé : pas de préambule, pas de rappel des consignes, pas de commentaire sur ta propre réponse.
+Tableau markdown avec des colonnes explicitement nommées, une ligne par élément comparé.
+Commence directement par le contenu demandé (précédé seulement des hypothèses, s&#39;il y en a) : pas de phrase d&#39;introduction, pas de commentaire sur ta propre réponse.
 
 ## CRITÈRES DE QUALITÉ — vérifie-les avant de répondre
 - Un lecteur non technique comprend la conclusion en lisant les trois premières lignes.
 - La méthode est reproductible telle qu&#39;elle est décrite.
 - Les limites de l&#39;analyse sont énoncées sans qu&#39;on ait à les demander.
 
-## À ÉVITER ABSOLUMENT
+## PIÈGES À ÉVITER
 - Produire des chiffres plausibles mais non issus des données fournies.
 - Présenter une variation en pourcentage sans donner la valeur absolue de départ.
 - Empiler des graphiques sans hiérarchiser ce qui compte.
@@ -342,6 +352,9 @@ Si une information manque, ne bloque pas : retiens l&#39;hypothèse la plus rais
 
 ## VÉRIFICATION FINALE
 Avant d&#39;envoyer ta réponse, relis-la contre les critères de qualité ci-dessus. Corrige silencieusement ce qui ne les respecte pas ; n&#39;affiche ni la relecture ni la liste des corrections.
+
+## RAPPEL DE LA TÂCHE
+Ta tâche : Analyse ces données de ventes trimestrielles et sors un tableau avec les trois écarts les plus importants et leur cause probable. Appuie-toi sur le contenu fourni entre les balises &lt;document&gt;.
 Commence maintenant.</pre>
         </details>
       </article>
@@ -359,7 +372,7 @@ Commence maintenant.</pre>
         <pre class="demande">génère une image d&#39;un phare isolé sous un ciel d&#39;orage, ambiance cinématographique, cadrage large</pre>
 
         <details>
-          <summary>Le prompt produit — 496 mots, ~791 jetons</summary>
+          <summary>Le prompt produit — 496 mots, ~790 jetons</summary>
           <pre class="prompt">## RÔLE
 Tu es un directeur artistique qui décrit une image comme une fiche de cadrage : sujet, composition, lumière, style, rendu.
 
@@ -414,7 +427,7 @@ texte illisible, filigrane, logo, mains déformées, membres surnuméraires, vis
 - Chaque élément décrit est visible dans le cadre.
 - Le prompt est réutilisable en changeant seulement le sujet.
 
-## À ÉVITER ABSOLUMENT
+## PIÈGES À ÉVITER
 - Empiler les adjectifs élogieux (« magnifique », « chef-d&#39;œuvre ») qui ne décrivent rien.
 - Décrire une scène sans préciser le cadrage ni la lumière.
 - Mélanger plusieurs styles incompatibles dans un même prompt.
@@ -429,7 +442,7 @@ Rends la liste des blocs en markdown, un titre par bloc, sans commentaire autour
         <header class="exemple-head">
           <span class="exemple-domaine"><span aria-hidden="true">◇</span> Pédagogie &amp; formation</span>
           <span class="exemple-score">
-            <b>26</b> → <b class="apres">83</b>
+            <b>26</b> → <b class="apres">84</b>
             <span class="muted">sur 100</span>
           </span>
         </header>
@@ -438,42 +451,44 @@ Rends la liste des blocs en markdown, un titre par bloc, sans commentaire autour
         <pre class="demande">explique la photosynthèse à un enfant de 8 ans, sans jargon, avec une comparaison de la vie courante</pre>
 
         <details>
-          <summary>Le prompt produit — 435 mots, ~696 jetons</summary>
+          <summary>Le prompt produit — 494 mots, ~762 jetons</summary>
           <pre class="prompt">## RÔLE
 Tu es un pédagogue expérimenté qui fait comprendre plutôt qu&#39;il n&#39;expose, et qui part toujours du niveau réel de l&#39;apprenant.
 Tu réponds avec le niveau d&#39;exigence que tu appliquerais à un livrable facturé à un client.
 
 ## CONTEXTE
 Demande initiale de l&#39;utilisateur, mot pour mot : « explique la photosynthèse à un enfant de 8 ans, sans jargon, avec une comparaison de la vie courante »
+Public cible : « un enfant de 8 ans ». Adapte le vocabulaire, le niveau de détail et les exemples à ce lecteur.
 
 ## OBJECTIF
 Explique la photosynthèse à un enfant de 8 ans, sans jargon, avec une comparaison de la vie courante.
-Réponse complète mais dense : chaque paragraphe doit apporter une information nouvelle.
+Réponse complète mais dense : chaque phrase doit apporter une information nouvelle.
 
 ## MÉTHODE — suis ces étapes dans l&#39;ordre
-1. Commence par l&#39;intuition : une analogie concrète tirée du quotidien, avant toute définition formelle.
-2. Donne la définition précise, puis explique pourquoi elle est formulée ainsi.
-3. Déroule un exemple complet, étape par étape, en montrant chaque calcul ou raisonnement intermédiaire.
-4. Signale l&#39;erreur classique à cet endroit précis et explique pourquoi elle est tentante.
-5. Termine par 2 ou 3 exercices progressifs avec leurs corrigés commentés.
+1. Définis les critères qui comptent pour cette décision, et dis pourquoi.
+2. Évalue chaque option sur chaque critère, avec la même exigence pour toutes.
+3. Signale ce qui ferait changer la conclusion (budget, contexte, priorité).
+4. Termine par une recommandation claire pour le cas décrit.
 
 ## CONTRAINTES
 - Aucun terme technique employé avant d&#39;avoir été défini.
 - Les analogies doivent être exactes : signale explicitement où l&#39;analogie cesse d&#39;être valable.
 - Pas de raccourci qui rendrait l&#39;explication fausse.
 - Adapte la profondeur au niveau annoncé, sans condescendance.
-- N&#39;invente aucun fait, chiffre, source, citation, référence ni date. Si une information te manque, écris explicitement ce qui manque plutôt que de combler le vide.
+- N&#39;invente aucun fait, chiffre, source, citation, référence ni date : la réponse sera utilisée telle quelle, et une erreur passerait inaperçue. Si une information te manque, écris ce qui manque plutôt que de combler le vide.
 
 ## FORMAT DE SORTIE
-Explication progressive avec exemples travaillés, puis exercices corrigés.
-Livre directement le résultat demandé : pas de préambule, pas de rappel des consignes, pas de commentaire sur ta propre réponse.
+Un tableau (une colonne par option, une ligne par critère), puis la recommandation en 2 ou 3 phrases.
+Commence directement par le contenu demandé (précédé seulement des hypothèses, s&#39;il y en a) : pas de phrase d&#39;introduction, pas de commentaire sur ta propre réponse.
 
 ## CRITÈRES DE QUALITÉ — vérifie-les avant de répondre
 - L&#39;apprenant peut reformuler l&#39;idée avec ses propres mots après lecture.
 - Chaque étape du raisonnement est visible : aucune n&#39;est « évidente ».
 - Les exercices testent la compréhension, pas la mémorisation.
+- Les options sont jugées sur les mêmes critères.
+- La recommandation découle des critères, pas d&#39;une préférence non dite.
 
-## À ÉVITER ABSOLUMENT
+## PIÈGES À ÉVITER
 - Répondre avec la définition d&#39;un manuel sans la déplier.
 - Sauter l&#39;étape intermédiaire qui est précisément la difficulté.
 - Simplifier au point de dire quelque chose de faux.
@@ -482,7 +497,7 @@ Livre directement le résultat demandé : pas de préambule, pas de rappel des c
 Réfléchis à la structure de ta réponse avant de l&#39;écrire ; ne montre pas ce travail préparatoire.
 
 ## INFORMATIONS MANQUANTES
-Si une information manque, ne bloque pas : retiens l&#39;hypothèse la plus raisonnable, liste tes hypothèses en tête sous « Hypothèses », puis produis la réponse complète.
+La demande ne précise pas : les critères qui comptent le plus (budget, simplicité, performance…). Retiens l&#39;hypothèse la plus raisonnable et annonce-la en une ligne au début de ta réponse, sous « Hypothèses ». Puis produis la réponse complète.
 
 ## VÉRIFICATION FINALE
 Avant d&#39;envoyer ta réponse, relis-la contre les critères de qualité ci-dessus. Corrige silencieusement ce qui ne les respecte pas ; n&#39;affiche ni la relecture ni la liste des corrections.

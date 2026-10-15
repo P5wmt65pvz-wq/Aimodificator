@@ -235,11 +235,21 @@
     return 'good';
   }
 
+  /* Le prompt contient un emplacement à remplir (le texte à résumer, le code
+     à corriger…) : sans ce rappel, on l'enverrait tel quel. */
+  function renderFill(text) {
+    var n = engine.countPlaceholders(text);
+    var note = $('#a-remplir');
+    note.hidden = !n;
+    note.textContent = n ? t(n > 1 ? 'result.fill.many' : 'result.fill.one').replace('{n}', n) : '';
+  }
+
   function render(result) {
     state.result = result;
     $('#empty-state').hidden = true;
     $('#output').textContent = result.text;
     $('#token-count').textContent = '≈ ' + result.meta.tokens + ' ' + t('result.tokens');
+    renderFill(result.text);
     renderFormatChips();
     renderAnalysis(result);
   }
@@ -268,6 +278,7 @@
     html += '<div class="analysis-block"><h3>' + escapeHtml(t('composer.detected')) + '</h3>' +
       '<p class="muted">' + escapeHtml(domainLabel) +
       (a.domain.forced ? '' : (a.domain.confidence ? ' · ' + a.domain.confidence + ' % ' + escapeHtml(t('analysis.domainConfidence')) : '')) +
+      ' · ' + escapeHtml(t('analysis.task')) + escapeHtml(a.task.label[state.lang]) +
       '</p></div>';
 
     html += '<div class="analysis-block"><h3>' + escapeHtml(t('analysis.dimensions')) + '</h3><div class="meters">';
@@ -598,6 +609,7 @@
       $('#output').textContent = text;
       state.result.text = text;
       $('#token-count').textContent = '≈ ' + engine.estimateTokens(text) + ' ' + t('result.tokens');
+      renderFill(text);
       closeRefine();
       toast(t('refine.done'));
     }, function (e) {
@@ -630,6 +642,7 @@
       $('#output').textContent = '';
       $('#empty-state').hidden = false;
       $('#token-count').textContent = '';
+      renderFill('');
       $('#live-domain').hidden = true;
       $('#live-count').textContent = '';
       $('#analysis-body').innerHTML = '<p class="muted">' + escapeHtml(t('result.empty.body')) + '</p>';

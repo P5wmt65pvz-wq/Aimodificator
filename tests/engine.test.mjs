@@ -97,12 +97,24 @@ test('le format JSON produit un objet JSON valide', () => {
   assert.equal(typeof parsed.original_request, 'string');
 });
 
-test('le format XML ouvre et ferme chaque balise', () => {
-  const out = engine.build('rédige une note de synthèse sur le budget 2026', { format: 'xml' });
-  const opened = [...out.text.matchAll(/<([a-z_]+)>/g)].map(m => m[1]);
-  const closed = [...out.text.matchAll(/<\/([a-z_]+)>/g)].map(m => m[1]);
-  assert.deepEqual(opened, closed);
-  assert.ok(opened.length >= 5);
+test('le format XML ouvre et ferme chaque balise, dans le bon ordre', () => {
+  /* Avec un contenu à fournir, les balises s'emboîtent (<inputs><document>) :
+     on vérifie l'imbrication avec une pile, pas seulement les mêmes noms.
+     Seules comptent les balises de structure, seules sur leur ligne : le
+     texte peut nommer une balise (« entre les balises <document> »), comme
+     le font les exemples d'Anthropic (« in <quotes> tags »). */
+  for (const raw of ['rédige une note de synthèse sur le budget 2026', 'résume ce rapport en 3 points',
+    'corrige mon code python qui plante avec KeyError']) {
+    const out = engine.build(raw, { format: 'xml' });
+    const pile = [];
+    let balises = 0;
+    for (const m of out.text.matchAll(/^<(\/?)([a-z_]+)>$/gm)) {
+      if (!m[1]) { pile.push(m[2]); balises++; continue; }
+      assert.equal(pile.pop(), m[2], `« ${raw} » : </${m[2]}> ferme une autre balise`);
+    }
+    assert.equal(pile.length, 0, `« ${raw} » : balise non fermée`);
+    assert.ok(balises >= 5);
+  }
 });
 
 test('le prompt généré score plus haut que la demande brute', () => {
