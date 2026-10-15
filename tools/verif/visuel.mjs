@@ -158,7 +158,10 @@ for (const [nom, url, masques, action] of SCENARIOS) {
      rendus possibles, au hasard, à page identique. Avec le flou coupé, dix
      captures sur dix sont identiques. Cette suite compare la mise en page et
      les couleurs ; le flou n'y change rien, on le coupe pour la capture. */
-  await page.addStyleTag({ content: '*, *::before, *::after { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }' });
+  /* La notification passagère (« Prompt forgé ») reste 2,6 s, en temps
+     réel : selon la durée des captures répétées, elle y est ou non. Elle
+     n'est pas de la mise en page ; on la retire aussi. */
+  await page.addStyleTag({ content: '*, *::before, *::after { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; } .toast { display: none !important; }' });
   await page.waitForTimeout(100);
 
   /* Depuis les surfaces de verre (flou d'arrière-plan, calque fixe), une
