@@ -45,9 +45,20 @@ export async function chromium() {
    travers du contraste, du clavier et du redimensionnement. */
 export const PAGES = [
   '/', '/outils/empreinte/', '/outils/photo/', '/outils/clause/',
-  '/outils/abonnements/', '/outils/passe/', '/outils/vrai-prix/', '/outils/partage/',
+  '/outils/abonnements/', '/outils/passe/', '/outils/vrai-prix/', '/outils/partage/', '/outils/humain/',
   '/en/fingerprint/', '/exemples/', '/application/'
 ];
+
+/* Un texte tel qu'une IA le rend, avec de quoi déclencher chaque famille de
+   règles de Humain (restes de conversation, ouvertures creuses, connecteurs
+   en rafale, tirets, mise en forme, phrase interminable) et un signalement. */
+export const TEXTE_HUMAIN = "Bien sûr ! Voici un article sur le télétravail :\n\n## Le télétravail en 2026\n\n"
+  + "Dans le monde d'aujourd'hui, le télétravail est un véritable game-changer — il transforme la façon dont les entreprises fonctionnent. "
+  + "Il est important de noter que de nombreuses équipes ont adopté ce modèle afin de gagner en flexibilité. "
+  + "De plus, les salariés économisent du temps. Par ailleurs, ils gagnent en autonomie. En outre, les coûts de bureau baissent. "
+  + "Cependant, il convient de rester vigilant : l'isolement est un enjeu **crucial**.\n\n"
+  + "À l'heure actuelle, un grand nombre d'entreprises mettent en place des chartes qui précisent les jours de présence, les règles de joignabilité, les outils autorisés et les modalités d'évaluation du travail à distance ; elles s'appuient sur des accords collectifs au sein des équipes pour que chacun sache ce qu'on attend de lui.\n\n"
+  + "En conclusion, le télétravail est ici pour rester. N'hésitez pas à me demander si vous souhaitez approfondir ! 🚀";
 
 export function rapport(pb, quandCestVert) {
   console.log('\n' + (pb.length

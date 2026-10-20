@@ -22,6 +22,7 @@ const E   = require(path.join(RACINE, 'assets/js/engine.js'));
 const EMP = require(path.join(RACINE, 'outils/empreinte/empreinte.js'));
 const PHO = require(path.join(RACINE, 'outils/photo/photo.js'));
 const CLA = require(path.join(RACINE, 'outils/clause/clause.js'));
+const HUM = require(path.join(RACINE, 'outils/humain/humain.js'));
 const ABO = require(path.join(RACINE, 'outils/abonnements/abonnements.js'));
 const PAS = require(path.join(RACINE, 'outils/passe/passe.js'));
 const VPX = require(path.join(RACINE, 'outils/vrai-prix/vrai-prix.js'));
@@ -156,6 +157,12 @@ eprouve('empreinte.scoreFrom', (x) => EMP.scoreFrom(x), CONSTATS);
 eprouve('empreinte.verdictFor', (x) => EMP.verdictFor(x), NOMBRES);
 eprouve('empreinte.niveau', (x) => EMP.niveau(x), NOMBRES);
 eprouve('empreinte.shortHash', (x) => EMP.shortHash(x), TEXTES.filter((x) => typeof x === 'string'));
+
+console.log('Humain — texte collé');
+eprouve('humain.analyse', (x) => HUM.analyse(x, { intensite: 'fort' }), TEXTES);
+eprouve('humain.analyse léger', (x) => HUM.analyse(x, { intensite: 'leger', garderForme: true }), TEXTES);
+eprouve('humain.mesures', (x) => HUM.mesures(x), TEXTES);
+eprouve('humain.phrases', (x) => HUM.phrases(x), TEXTES);
 
 console.log('Clause — texte collé');
 eprouve('clause.normalize', (x) => CLA.normalize(x), TEXTES);

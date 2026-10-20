@@ -40,6 +40,7 @@ const CIBLES = [
   ['/outils/abonnements/', 'abonnements.theme'],
   ['/outils/passe/', 'passe.theme'],
   ['/outils/clause/', 'clause.theme'],
+  ['/outils/humain/', 'humain.theme'],
   ['/outils/photo/', 'photo.theme'],
   ['/outils/empreinte/', 'empreinte.theme'],
   ['/outils/vrai-prix/', 'vraiprix.theme'],

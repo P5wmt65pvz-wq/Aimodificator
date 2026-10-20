@@ -7,7 +7,7 @@
  *
  * Un outil peut être parfaitement accessible et donner un résultat faux.
  */
-import { servir, chromium, RACINE, rapport } from './serveur.mjs';
+import { servir, chromium, RACINE, rapport, TEXTE_HUMAIN } from './serveur.mjs';
 import { construitJpeg } from './jpeg.mjs';
 import path from 'node:path';
 
@@ -93,6 +93,57 @@ console.log('\n=== Clause — une politique qui coche toutes les cases ===');
   const compteur = (await c.page.locator('#compteur').innerText()).trim();
   dire(compteur === '1 mot analysé', `Clause : un seul mot est accordé au singulier (« ${compteur} »)`);
   await fermer('Clause', c);
+}
+
+/* ------------------------------------------------------------------ Humain */
+console.log('\n=== Humain — un texte tel qu’une IA le rend ===');
+{
+  const c = await ouvrir('/outils/humain/');
+  dire(!(await c.page.locator('#resultat').isVisible()), 'Humain : rien n’est affiché avant qu’un texte soit collé');
+  await c.page.fill('#texte', TEXTE_HUMAIN);
+  await c.page.waitForTimeout(400);
+  dire(await c.page.locator('#resultat').isVisible(), 'Humain : le résultat apparaît');
+  const sortie = await c.page.locator('#sortie').innerText();
+  dire(!/Bien sûr|N’hésitez|N'hésitez|🚀|\*\*|##/.test(sortie), 'Humain : restes de conversation et mise en forme retirés');
+  dire(!/Dans le monde d.aujourd/.test(sortie), 'Humain : l’ouverture creuse est retirée');
+  dire(/^Le télétravail en 2026/.test(sortie), `Humain : le texte commence par le vrai titre (« ${sortie.slice(0, 30)} »)`);
+  const n = await c.page.locator('#modifs input[type=checkbox]').count();
+  dire(n >= 8, `Humain : les modifications sont listées une à une (${n})`);
+  dire((await c.page.locator('#mesures li').count()) === 4, 'Humain : quatre mesures avant → après');
+  dire((await c.page.locator('#signaux .card').count()) >= 1, 'Humain : au moins un signalement que l’outil ne corrige pas');
+
+  /* Refuser une modification rétablit exactement ce passage. */
+  const avant = (await c.page.locator('#sortie').innerText()).length;
+  const premiere = c.page.locator('#modifs input[type=checkbox]').first();
+  await premiere.uncheck();
+  await c.page.waitForTimeout(100);
+  const apres = (await c.page.locator('#sortie').innerText()).length;
+  dire(apres > avant, `Humain : refuser une modification la rétablit (${avant} → ${apres} caractères)`);
+  await premiere.check();
+
+  /* L’intensité change le résultat : « léger » en fait moins que « fort ». */
+  await c.page.check('input[name=intensite][value=leger]');
+  await c.page.waitForTimeout(300);
+  const leger = await c.page.locator('#modifs input[type=checkbox]').count();
+  await c.page.check('input[name=intensite][value=fort]');
+  await c.page.waitForTimeout(300);
+  const fort = await c.page.locator('#modifs input[type=checkbox]').count();
+  dire(leger < n && n < fort, `Humain : l’intensité compte (${leger} < ${n} < ${fort})`);
+
+  /* Garder la mise en forme laisse les titres et le gras. */
+  await c.page.check('input[name=intensite][value=standard]');
+  await c.page.check('#garder-forme');
+  await c.page.waitForTimeout(300);
+  const gardee = await c.page.locator('#sortie').innerText();
+  dire(/## Le télétravail/.test(gardee) && /\*\*\w+\*\*/.test(gardee) && /🚀/.test(gardee), 'Humain : « garder la mise en forme » laisse titre, gras et pictogramme');
+
+  await c.page.fill('#texte', '');
+  await c.page.waitForTimeout(300);
+  dire(!(await c.page.locator('#resultat').isVisible()), 'Humain : un champ vidé masque le résultat');
+  await c.page.fill('#texte', 'mot');
+  await c.page.waitForTimeout(300);
+  dire((await c.page.locator('#compteur').innerText()) === '1 mot', `Humain : un seul mot est accordé au singulier`);
+  await fermer('Humain', c);
 }
 
 /* ------------------------------------------------------------ Abonnements */

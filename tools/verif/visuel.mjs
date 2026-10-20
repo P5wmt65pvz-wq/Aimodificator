@@ -21,7 +21,7 @@
  * Après --maj, REGARDER les captures avant de commiter : une référence n'est
  * juste que si quelqu'un l'a vue.
  */
-import { servir, chromium, rapport } from './serveur.mjs';
+import { servir, chromium, rapport, TEXTE_HUMAIN } from './serveur.mjs';
 import { construitJpeg } from './jpeg.mjs';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -71,6 +71,7 @@ const SCENARIOS = [
       buffer: Buffer.from(construitJpeg({ exif: true })) });
   }],
   ['clause', '/outils/clause/', [], async (p) => { await p.fill('#texte', POLITIQUE); }],
+  ['humain', '/outils/humain/', [], async (p) => { await p.fill('#texte', TEXTE_HUMAIN); await p.waitForTimeout(400); }],
   ['passe', '/outils/passe/', [], async (p) => { await p.fill('#mdp', 'Motdepasse2024!'); }],
   ['abonnements', '/outils/abonnements/', [], async (p) => {
     for (const [n, prix, cyc] of [['Streaming vidéo', '9.99', 'mensuel'],

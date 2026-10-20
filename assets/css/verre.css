@@ -645,6 +645,7 @@ h2 { font-size: clamp(1.35rem, 2.4vw, 1.75rem); }
 .t-photo { --t1: #ff375f; --t2: #c81d82; }
 .t-empreinte { --t1: #8e6cff; --t2: #b54ae8; }
 .t-clause { --t1: #32ade6; --t2: #0a62e0; }
+.t-humain { --t1: #ff7a45; --t2: #d6336c; }
 .t-application { --t1: #6f5cff; --t2: #1fa6bf; }
 
 @media (max-width: 760px) {
