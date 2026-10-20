@@ -105,6 +105,15 @@ test('les opérations ne se chevauchent pas et suivent l\'ordre du texte', () =>
   assert.equal(src.slice(ops[0].deb, ops[0].fin), ops[0].avant);
 });
 
+test('le niveau complet relie deux phrases très courtes et simplifie le vocabulaire', () => {
+  const s = "Le télétravail progresse. Les équipes s'adaptent. Les coûts baissent.";
+  assert.equal(t(s, 'complet'), "Le télétravail progresse, et les équipes s'adaptent. Les coûts baissent.");
+  assert.equal(t(s, 'fort'), s);
+  assert.equal(t('Cette étude met en lumière un éventail de pratiques.', 'complet'), 'Cette étude montre toute une série de pratiques.');
+  assert.equal(t('Ils sont en mesure de choisir.', 'fort'), 'Ils peuvent choisir.');
+  assert.equal(t('Un nom propre. Marie arrive.', 'complet'), 'Un nom propre. Marie arrive.', 'jamais de minuscule sur un nom propre');
+});
+
 test('un texte déjà propre ne change pas, à aucune intensité', () => {
   const s = "Le chat dort sur le canapé. Il a plu toute la nuit, et la rue sent le pain chaud.";
   for (const i of ['leger', 'standard', 'fort']) {

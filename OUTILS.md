@@ -69,7 +69,7 @@ traitable sans serveur.
 
 | # | Outil | Ce qu'il fait | État |
 |---|---|---|---|
-| 16 | **Humain** (ex-« Tics ») | Retire d'un texte les tics d'écriture automatique : restes de conversation, formules creuses, connecteurs en rafale, tirets, phrases interminables. Chaque changement est montré et refusable ; ce que seul l'auteur peut apporter (faits, noms, rythme) est signalé, pas inventé. **Ne promet rien sur les détecteurs d'IA.** Français uniquement. | ✅ en ligne |
+| 16 | **Humaniseur** (ex-« Tics ») | Réécrit un texte d'IA pour qu'il sonne plus naturel, en local, par règles écrites : restes de conversation, formules creuses, connecteurs en rafale, tirets, rythme des phrases, vocabulaire courant. Chaque changement est montré et refusable ; ce que seul l'auteur peut apporter (faits, noms, rythme) est signalé, pas inventé. **Ne promet rien sur les détecteurs d'IA.** Français uniquement. | ✅ en ligne |
 | 17 | **Titre** | Teste un titre : longueur, promesse, clarté. Pour articles, vidéos, pages. | à faire |
 | 18 | **Alt** | Aide à écrire les textes alternatifs d'images correctement, avec les règles d'accessibilité. | à faire |
 | 19 | **Extrait** | Génère les balises de partage d'une page et montre l'aperçu obtenu sur les réseaux. | à faire |

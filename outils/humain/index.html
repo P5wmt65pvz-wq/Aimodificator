@@ -3,20 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Humain — retire d'un texte les tics d'une écriture automatique</title>
-<meta name="description" content="Collez un texte écrit par une IA : l'outil retire les formules creuses, les connecteurs en rafale et les tirets en série, montre chaque changement et dit ce que lui seul ne peut pas corriger. Tout reste dans votre navigateur.">
+<title>Humaniseur de texte — rend un texte d'IA plus naturel, sans l'envoyer nulle part</title>
+<meta name="description" content="Collez un texte écrit par une IA : l'humaniseur le réécrit — formules creuses, connecteurs en rafale, tirets, rythme, vocabulaire — et montre chaque changement. Tout reste dans votre navigateur.">
 <meta name="color-scheme" content="dark light">
 <meta name="theme-color" content="#0b0b10">
 <link rel="canonical" href="https://p5wmt65pvz-wq.github.io/Aimodificator/outils/humain/">
-<meta property="og:title" content="Humain — retire d'un texte les tics d'une écriture automatique">
-<meta property="og:description" content="Chaque changement est montré et peut être refusé. Aucune promesse sur les détecteurs d'IA. Entièrement local.">
+<meta property="og:title" content="Humaniseur de texte — rend un texte d'IA plus naturel, sans l'envoyer nulle part">
+<meta property="og:description" content="Réécriture instantanée, chaque changement refusable, aucune promesse sur les détecteurs d'IA. Entièrement local.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://p5wmt65pvz-wq.github.io/Aimodificator/outils/humain/">
 <meta property="og:locale" content="fr_FR">
 <meta property="og:image" content="https://p5wmt65pvz-wq.github.io/Aimodificator/assets/og/humain.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Humain — Un texte d'IA se reconnaît à ses tics. Voici lesquels.">
+<meta property="og:image:alt" content="Humaniseur — Rendez un texte d'IA plus humain.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://p5wmt65pvz-wq.github.io/Aimodificator/assets/og/humain.png">
 <link rel="manifest" href="../../manifest.webmanifest">
@@ -35,7 +35,7 @@
         <path d="M4 20l1.2-4.2L16.5 4.5a2.1 2.1 0 0 1 3 3L8.2 18.8z"/><path d="M14.5 6.5l3 3"/><path d="M13 20h7"/>
       </svg>
     </span>
-    <span class="brand-text"><strong>Humain</strong><small>Les tics d'une écriture automatique</small></span>
+    <span class="brand-text"><strong>Humaniseur</strong><small>Un texte d'IA, en plus naturel</small></span>
   </a>
   <nav class="barre barre-haut" aria-label="Navigation du site">
     <a href="../../#workshop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20 14.5 9.5"/><path d="m13 8 3 3"/><path d="M17 3v3M15.5 4.5h3"/><path d="M20 9v2M19 10h2"/><path d="M9 4v2M8 5h2"/></svg><span>Atelier</span></a>
@@ -51,11 +51,12 @@
 
 <main>
   <section class="hero">
-    <h1>Un texte d'IA se reconnaît à ses tics.<br><em>Voici lesquels.</em></h1>
+    <h1>Rendez un texte d'IA<br><em>plus humain.</em></h1>
     <p class="lede">
-      Collez le texte : l'outil retire les formules creuses, les connecteurs en rafale, les tirets
-      en série et les restes de conversation, coupe les phrases interminables, et vous montre
-      <b>chaque changement</b>. Vous gardez ceux que vous voulez, vous refusez les autres.
+      Collez le texte : il est réécrit sur le champ. L'humaniseur retire les formules creuses, les
+      restes de conversation et les tirets en série, varie le rythme des phrases et remplace les
+      tournures de rapport par des mots courants. Il vous montre <b>chaque changement</b> : vous
+      gardez ceux que vous voulez, vous refusez les autres.
     </p>
     <p class="pledge">
       <b>Le texte reste chez vous.</b> Il n'est envoyé à aucun serveur et aucun service extérieur
@@ -65,7 +66,7 @@
 
   <section class="saisie">
     <div class="saisie-head">
-      <label for="texte">Le texte à retravailler</label>
+      <label for="texte">Le texte à humaniser</label>
       <div class="saisie-tools">
         <span class="muted" id="compteur"></span>
         <button type="button" class="btn-ghost" id="vider">Vider</button>
@@ -79,6 +80,7 @@
       <label class="choix"><input type="radio" name="intensite" value="leger"><span><b>Léger</b> restes de conversation, ouvertures creuses</span></label>
       <label class="choix"><input type="radio" name="intensite" value="standard" checked><span><b>Standard</b> + tournures lourdes, connecteurs en rafale, tirets, phrases très longues</span></label>
       <label class="choix"><input type="radio" name="intensite" value="fort"><span><b>Fort</b> + registre courant, phrases coupées plus tôt, aucun tiret cadratin</span></label>
+      <label class="choix"><input type="radio" name="intensite" value="complet"><span><b>Complet</b> + vocabulaire plus simple, phrases très courtes reliées, le plus de réécriture possible</span></label>
       <label class="coche"><input type="checkbox" id="garder-forme"><span>Garder la mise en forme (titres, gras, pictogrammes)</span></label>
     </fieldset>
   </section>
@@ -86,7 +88,7 @@
   <section id="resultat" hidden aria-live="polite">
     <div class="sortie-bloc">
       <div class="saisie-head">
-        <h2 id="titre-sortie">Le texte retravaillé</h2>
+        <h2 id="titre-sortie">Le texte humanisé</h2>
         <div class="saisie-tools">
           <span class="muted" id="compteur-sortie"></span>
           <label class="coche mini"><input type="checkbox" id="surligner" checked><span>Surligner les changements</span></label>
@@ -123,8 +125,8 @@
       <p>
         Il applique des règles écrites, une par une, que vous pouvez lire dans la liste des
         modifications. Il n'« imite » pas un humain et ne <b>réécrit pas avec une IA</b> : il n'y en a
-        pas dans cette page. Il retire ce qui est mécanique ; il ne fabrique pas ce qui fait un
-        texte vivant.
+        pas dans cette page, puisque rien ne quitte votre navigateur. Il réécrit ce qui est mécanique ;
+        il ne fabrique pas ce qui fait un texte vivant.
       </p>
       <p>
         <b>Il ne garantit rien sur les détecteurs d'IA.</b> Ces outils se trompent dans les deux sens,

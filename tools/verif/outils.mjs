@@ -128,7 +128,10 @@ console.log('\n=== Humain — un texte tel qu’une IA le rend ===');
   await c.page.check('input[name=intensite][value=fort]');
   await c.page.waitForTimeout(300);
   const fort = await c.page.locator('#modifs input[type=checkbox]').count();
-  dire(leger < n && n < fort, `Humain : l’intensité compte (${leger} < ${n} < ${fort})`);
+  await c.page.check('input[name=intensite][value=complet]');
+  await c.page.waitForTimeout(300);
+  const complet = await c.page.locator('#modifs input[type=checkbox]').count();
+  dire(leger < n && n < fort && fort <= complet, `Humain : l’intensité compte (${leger} < ${n} < ${fort} ≤ ${complet})`);
 
   /* Garder la mise en forme laisse les titres et le gras. */
   await c.page.check('input[name=intensite][value=standard]');

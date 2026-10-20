@@ -17,9 +17,9 @@
 })(typeof globalThis !== 'undefined' ? globalThis : this, function () {
   'use strict';
 
-  /* Intensité : 1 = léger, 2 = standard, 3 = fort. Une règle de niveau n ne
+  /* Intensité : 1 = léger, 2 = standard, 3 = fort, 4 = complet. Une règle de niveau n ne
      s'applique qu'à partir de l'intensité n. */
-  var NIVEAUX = { leger: 1, standard: 2, fort: 3 };
+  var NIVEAUX = { leger: 1, standard: 2, fort: 3, complet: 4 };
 
   var CATEGORIES = {
     robot:  { label: 'Restes de conversation', aide: 'Phrases d\'assistant collées avec le texte : « Bien sûr ! », « N\'hésitez pas… ».' },
@@ -28,7 +28,8 @@
     liaison:{ label: 'Connecteurs en rafale', aide: 'Quand chaque phrase s\'ouvre sur un connecteur, le rythme devient mécanique.' },
     tiret:  { label: 'Tirets cadratins', aide: 'Un texte qui en abuse se reconnaît de loin.' },
     format: { label: 'Mise en forme', aide: 'Gras, titres et pictogrammes ajoutés par réflexe.' },
-    rythme: { label: 'Phrases coupées', aide: 'Une phrase très longue est scindée à un endroit où la grammaire le permet.' }
+    rythme: { label: 'Rythme des phrases', aide: 'Les phrases très longues sont coupées où la grammaire le permet ; au niveau complet, deux phrases très courtes à la suite sont reliées.' },
+    mots:   { label: 'Vocabulaire plus simple', aide: 'Un mot ou une tournure de la langue courante à la place d\'une formule de rapport.' }
   };
 
   /* Bornes de mot qui comprennent les lettres accentuées, ce que \b ne fait
@@ -102,6 +103,36 @@
       re: '(?<=(?:^|[^\\p{L}])(?:un|une|de|des|du|le|la|les|ce|cette|ces) )v[ée]ritables? ',
       vers: '', pourquoi: '« Un véritable défi » dit la même chose que « un défi », avec plus de bruit.' },
 
+
+    /* ---- vocabulaire : la langue courante à la place du rapport */
+    { id: 'met-en-lumiere', cat: 'mots', niveau: 3, re: D + '(met|mettent|mettre|mettant) en lumi[èe]re' + F,
+      vers: function (m) { return { met: 'montre', mettent: 'montrent', mettre: 'montrer', mettant: 'montrant' }[m[1].toLowerCase()]; },
+      pourquoi: '« Montrer » est plus direct.' },
+    { id: 'en-mesure', cat: 'mots', niveau: 3, re: D + '(est|sont|[êe]tre) en mesure de ',
+      vers: function (m) { return { est: 'peut ', sont: 'peuvent ' }[m[1].toLowerCase()] || 'pouvoir '; },
+      pourquoi: '« Pouvoir » dit la même chose en moins de mots.' },
+    { id: 'a-pour-but', cat: 'mots', niveau: 3, re: D + '(a|ont) pour (?:but|objectif) (?:de|d' + APO + ')\\s*',
+      vers: function (m) { return m[1].toLowerCase() === 'a' ? 'vise \u00e0 ' : 'visent \u00e0 '; },
+      pourquoi: '« Viser à » est plus court.' },
+    { id: 'par-le-biais', cat: 'mots', niveau: 3, re: D + 'par le biais (?:de la|de l' + APO + '|du|des)' + F + '\\s*',
+      vers: function (m) { var t = m[0].toLowerCase(); return /de la/.test(t) ? 'par la ' : /de l/.test(t) ? 'par l\'' : /du/.test(t) ? 'par le ' : 'par les '; },
+      pourquoi: '« Par » suffit.' },
+    { id: 'ainsi-que', cat: 'mots', niveau: 4, re: D + 'ainsi que' + F, vers: 'et',
+      pourquoi: '« Et » suffit.' },
+    { id: 'il-existe', cat: 'mots', niveau: 3, re: D + 'il existe (?=(?:de |des |un |une |plusieurs|diff))', vers: 'il y a ',
+      pourquoi: '« Il y a » est de la langue parlée.' },
+    { id: 'eventail', cat: 'mots', niveau: 4, re: D + 'un (?:large |vaste )?[ée]ventail de' + F, vers: 'toute une série de',
+      pourquoi: 'Une image de moins.' },
+    { id: 'nombreuses-reprises', cat: 'mots', niveau: 3, re: D + '[àa] de nombreuses reprises' + F, vers: 'souvent',
+      pourquoi: 'Un mot pour quatre.' },
+    { id: 'de-maniere', cat: 'mots', niveau: 4, re: D + 'de (?:mani[èe]re|fa[çc]on) (?:tr[èe]s )?(efficace|significative|optimale|r[ée]guli[èe]re)' + F,
+      vers: function (m) { return { efficace: 'efficacement', significative: 'nettement', optimale: 'au mieux', 'régulière': 'régulièrement', 'reguliere': 'régulièrement' }[m[1].toLowerCase()]; },
+      pourquoi: 'Un adverbe dit la même chose.' },
+    { id: 'il-s-avere', cat: 'mots', niveau: 4, re: D + 'il s' + APO + 'av[èe]re que' + F, vers: 'en fait,',
+      pourquoi: 'Plus parlé.' },
+    { id: 'cependant-mid', cat: 'mots', niveau: 4, re: ',\\s*cependant\\s*,\\s*', vers: ', mais ',
+      pourquoi: '« Mais » est le connecteur de la parole.' },
+
     /* ---- tournures lourdes */
     { id: 'crucial', cat: 'lourd', niveau: 2,
       re: D + '(crucia|primordia)(l|le|ux|les)' + F,
@@ -148,7 +179,7 @@
   /* Début d'une proposition indépendante : pronom sujet. */
   var SUJET = /^(?:il|elle|ils|elles|on|ce|cela|ça|c['’])(?![\p{L}])/iu;
 
-  var BUDGET_TIRETS = { 1: 2, 2: 1, 3: 0 };
+  var BUDGET_TIRETS = { 1: 2, 2: 1, 3: 0, 4: 0 };
 
   /* ------------------------------------------------------------ phrases */
 
@@ -352,7 +383,30 @@
   }
 
   /* Phrases très longues, coupées à un point de grammaire sûr. */
-  var LIMITE_COUPE = { 2: 38, 3: 26 };
+  var LIMITE_COUPE = { 2: 38, 3: 26, 4: 22 };
+  /* Deux phrases très courtes à la suite, dans le même paragraphe, sont reliées
+     par « , et » : une rafale de phrases de quatre mots sonne comme une liste.
+     Niveau complet seulement, une fusion sur trois phrases au plus, et
+     seulement quand la seconde s'ouvre sur un mot-outil (la minuscule ne peut
+     alors pas défaire un nom propre). */
+  var OUTIL = /^(?:le|la|les|l['’]|un|une|des|ils|elles|il|elle|on|nous|vous|cela|ça)(?![\p{L}])/iu;
+  function opsFusion(txt, niveau) {
+    if (niveau < 4) return [];
+    var ph = phrases(txt), ops = [], dernier = -9;
+    for (var i = 0; i + 1 < ph.length; i++) {
+      var a = ph[i], b = ph[i + 1];
+      if (i - dernier < 3) continue;
+      if (mots(a.texte) > 7 || mots(b.texte) > 7 || mots(a.texte) < 2) continue;
+      if (a.texte.charAt(a.texte.length - 1) !== '.' || /[:;?!]/.test(a.texte + b.texte)) continue;
+      var entre = txt.slice(a.fin, b.deb);
+      if (!/^[ \t]+$/.test(entre) || !OUTIL.test(b.texte)) continue;
+      ops.push({ rule: 'fusion', cat: 'rythme', deb: a.fin - 1, fin: b.deb, avant: '.' + entre, apres: ', et ', min: true, niveau: 4,
+        pourquoi: 'Deux phrases de quelques mots à la suite : reliées, elles respirent comme à l\'oral.' });
+      dernier = i;
+    }
+    return ops;
+  }
+
   function opsRythme(txt, niveau) {
     if (niveau < 2) return [];
     var lim = LIMITE_COUPE[niveau], ops = [];
@@ -385,7 +439,7 @@
     opts = opts || {};
     var niveau = NIVEAUX[opts.intensite] || 2;
     var toutes = opsDesRegles(txt, niveau)
-      .concat(opsLiaison(txt, niveau), opsRythme(txt, niveau), opsTirets(txt, niveau));
+      .concat(opsLiaison(txt, niveau), opsRythme(txt, niveau), opsFusion(txt, niveau), opsTirets(txt, niveau));
     if (!opts.garderForme) toutes = toutes.concat(opsFormat(txt));
     /* Balayage de gauche à droite ; quand deux opérations se chevauchent, la
        plus longue des deux reste (une phrase entière retirée l'emporte sur un
@@ -405,15 +459,15 @@
      appliqué, sauf ce qui est refusé. Rend le texte et, pour chaque opération
      appliquée, sa position dans le texte de sortie (pour la surbrillance). */
   function appliquer(txt, ops, refus) {
-    var sortie = '', curseur = 0, marques = [], maj = false;
+    var sortie = '', curseur = 0, marques = [], maj = false, min = false;
     refus = refus || {};
     /* La majuscule demandée par une opération s'applique à la première lettre
        qui suit, qu'elle vienne du texte d'origine ou de l'opération suivante. */
     var ajoute = function (morceau) {
-      if (maj && morceau) {
+      if ((maj || min) && morceau) {
         var c = morceau.charAt(0);
-        if (/\p{L}/u.test(c)) morceau = c.toUpperCase() + morceau.slice(1);
-        if (!/\s/.test(c)) maj = false;
+        if (/\p{L}/u.test(c)) morceau = (maj ? c.toUpperCase() : c.toLowerCase()) + morceau.slice(1);
+        if (!/\s/.test(c)) { maj = false; min = false; }
       }
       sortie += morceau;
     };
@@ -424,6 +478,7 @@
         var deb = sortie.length;
         ajoute(o.apres);
         if (o.maj) maj = true;
+        if (o.min) min = true;
         marques.push({ id: o.id, deb: deb, fin: sortie.length });
       }
       curseur = o.fin;

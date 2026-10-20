@@ -225,7 +225,7 @@
     'tuile.photo': { fr: 'Voir et effacer la position cachée dans une photo', en: 'See and remove the location hidden in a photo' },
     'tuile.empreinte': { fr: 'Ce que votre navigateur révèle sans vous demander', en: 'What your browser gives away without asking' },
     'tuile.clause': { fr: 'Ce qu\'une politique de confidentialité autorise vraiment', en: 'What a privacy policy actually allows' },
-    'tuile.humain': { fr: 'Retirer d\'un texte les tics d\'une écriture automatique', en: 'Strip the tell-tale habits of machine writing from a text' },
+    'tuile.humain': { fr: 'Rendre un texte d\'IA plus naturel, sans l\'envoyer nulle part', en: 'Make AI-written text read more naturally, without sending it anywhere' },
     'tuile.application': { fr: 'Tout le site sur votre écran d\'accueil, même hors connexion', en: 'The whole site on your home screen, even offline' },
 
     'liste.title': { fr: 'Être prévenu des prochains outils', en: 'Hear about the next tools' },
